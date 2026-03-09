@@ -34,6 +34,7 @@ public class NuclearWinter {
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
+        LOGGER.info("NuclearWinter common setup complete");
     }
 
     @SubscribeEvent
