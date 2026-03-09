@@ -1,0 +1,113 @@
+package net.tomato3017.nuclearwinter.command;
+
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import net.tomato3017.nuclearwinter.NuclearWinter;
+import net.tomato3017.nuclearwinter.stage.StageBase;
+import net.tomato3017.nuclearwinter.stage.StageFactory;
+import net.tomato3017.nuclearwinter.stage.StageManager;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.DimensionArgument;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
+
+import java.util.Map;
+
+public class NuclearWinterCommand {
+
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        dispatcher.register(Commands.literal("nuclearwinter")
+                .requires(source -> source.hasPermission(2))
+                .then(Commands.literal("start")
+                        .then(Commands.argument("dimension", DimensionArgument.dimension())
+                                .executes(NuclearWinterCommand::executeStart)))
+                .then(Commands.literal("stop")
+                        .then(Commands.argument("dimension", DimensionArgument.dimension())
+                                .executes(NuclearWinterCommand::executeStop)))
+                .then(Commands.literal("status")
+                        .executes(NuclearWinterCommand::executeStatusAll)
+                        .then(Commands.argument("dimension", DimensionArgument.dimension())
+                                .executes(NuclearWinterCommand::executeStatusDimension)))
+                .then(Commands.literal("setstage")
+                        .then(Commands.argument("dimension", DimensionArgument.dimension())
+                                .then(Commands.argument("stage", IntegerArgumentType.integer(0, StageFactory.MAX_STAGE_INDEX))
+                                        .executes(NuclearWinterCommand::executeSetStage))))
+        );
+    }
+
+    private static int executeStart(CommandContext<CommandSourceStack> ctx) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerLevel level = DimensionArgument.getDimension(ctx, "dimension");
+        StageManager mgr = NuclearWinter.getStageManager();
+        StageBase current = mgr.getStageForWorld(level.dimension());
+        if (current != null && current.getStageIndex() > 0) {
+            ctx.getSource().sendFailure(Component.literal("Apocalypse already active in " + level.dimension().location()));
+            return 0;
+        }
+        mgr.startApocalypse(level);
+        ctx.getSource().sendSuccess(() -> Component.literal("Apocalypse started in " + level.dimension().location()), true);
+        return 1;
+    }
+
+    private static int executeStop(CommandContext<CommandSourceStack> ctx) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerLevel level = DimensionArgument.getDimension(ctx, "dimension");
+        StageManager mgr = NuclearWinter.getStageManager();
+        mgr.stopApocalypse(level);
+        ctx.getSource().sendSuccess(() -> Component.literal("Apocalypse stopped in " + level.dimension().location()), true);
+        return 1;
+    }
+
+    private static int executeStatusAll(CommandContext<CommandSourceStack> ctx) {
+        StageManager mgr = NuclearWinter.getStageManager();
+        Map<ResourceKey<Level>, StageBase> stages = mgr.getAllStages();
+        if (stages.isEmpty()) {
+            ctx.getSource().sendSuccess(() -> Component.literal("No dimensions tracked."), false);
+            return 1;
+        }
+        for (var entry : stages.entrySet()) {
+            StageBase stage = entry.getValue();
+            String name = StageFactory.getStageName(stage.getStageIndex());
+            ctx.getSource().sendSuccess(() -> Component.literal(
+                    entry.getKey().location() + ": " + name +
+                    " (sky emission: " + stage.getSkyEmission() + " Rads/sec)"
+            ), false);
+        }
+        return 1;
+    }
+
+    private static int executeStatusDimension(CommandContext<CommandSourceStack> ctx) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerLevel level = DimensionArgument.getDimension(ctx, "dimension");
+        StageManager mgr = NuclearWinter.getStageManager();
+        StageBase stage = mgr.getStageForWorld(level.dimension());
+        if (stage == null) {
+            ctx.getSource().sendFailure(Component.literal("No stage data for " + level.dimension().location()));
+            return 0;
+        }
+        String name = StageFactory.getStageName(stage.getStageIndex());
+        long elapsed = level.getGameTime() - stage.getInitTick();
+        long remaining = stage.getDuration() > 0 ? stage.getDuration() - elapsed : -1;
+        String remainStr = remaining >= 0 ? String.format("%.0fs", remaining / 20.0) : "indefinite";
+
+        ctx.getSource().sendSuccess(() -> Component.literal(
+                level.dimension().location() + ": " + name +
+                " | Sky: " + stage.getSkyEmission() + " Rads/sec" +
+                " | Time remaining: " + remainStr
+        ), false);
+        return 1;
+    }
+
+    private static int executeSetStage(CommandContext<CommandSourceStack> ctx) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerLevel level = DimensionArgument.getDimension(ctx, "dimension");
+        int stageIndex = IntegerArgumentType.getInteger(ctx, "stage");
+        StageManager mgr = NuclearWinter.getStageManager();
+        mgr.setStage(level, stageIndex);
+        String name = StageFactory.getStageName(stageIndex);
+        ctx.getSource().sendSuccess(() -> Component.literal(
+                "Set " + level.dimension().location() + " to " + name
+        ), true);
+        return 1;
+    }
+}

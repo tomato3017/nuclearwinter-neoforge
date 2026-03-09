@@ -23,9 +23,11 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.tomato3017.nuclearwinter.command.NuclearWinterCommand;
 import net.tomato3017.nuclearwinter.stage.StageManager;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
@@ -122,6 +124,11 @@ public class NuclearWinter {
         if (stageManager != null) {
             stageManager.tickAllStages();
         }
+    }
+
+    @SubscribeEvent
+    public void onRegisterCommands(RegisterCommandsEvent event) {
+        NuclearWinterCommand.register(event.getDispatcher());
     }
 
     public static void onGatherData(GatherDataEvent event) {
