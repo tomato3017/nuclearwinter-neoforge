@@ -1,0 +1,55 @@
+package net.tomato3017.nuclearwinter.block;
+
+import net.tomato3017.nuclearwinter.NuclearWinter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
+import net.neoforged.neoforge.registries.DeferredBlock;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+public class NWBlocks {
+    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(NuclearWinter.MODID);
+
+    // --- Degradation blocks ---
+
+    public static final DeferredBlock<Block> DEAD_GRASS = BLOCKS.registerSimpleBlock("dead_grass",
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(0.6f).sound(SoundType.GRASS));
+
+    public static final DeferredBlock<Block> DEAD_LEAVES = BLOCKS.registerSimpleBlock("dead_leaves",
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BROWN).strength(0.2f).sound(SoundType.GRASS)
+                    .noOcclusion());
+
+    public static final DeferredBlock<Block> PARCHED_DIRT = BLOCKS.registerSimpleBlock("parched_dirt",
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(0.5f).sound(SoundType.GRAVEL));
+
+    public static final DeferredBlock<WastelandDustBlock> WASTELAND_DUST = BLOCKS.register("wasteland_dust",
+            () -> new WastelandDustBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GRAY)
+                    .strength(0.5f).sound(SoundType.SAND)));
+
+    public static final DeferredBlock<Block> CRACKED_STONE = BLOCKS.registerSimpleBlock("cracked_stone",
+            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(1.5f, 6.0f).sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops());
+
+    public static final DeferredBlock<Block> WASTELAND_RUBBLE = BLOCKS.registerSimpleBlock("wasteland_rubble",
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(1.5f, 6.0f).sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops());
+
+    public static final DeferredBlock<Block> DEADWOOD = BLOCKS.registerSimpleBlock("deadwood",
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GRAY)
+                    .strength(2.0f).sound(SoundType.WOOD));
+
+    public static final DeferredBlock<Block> RUINED_PLANKS = BLOCKS.registerSimpleBlock("ruined_planks",
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(2.0f, 3.0f)
+                    .sound(SoundType.WOOD));
+
+    // --- Shielding blocks ---
+
+    public static final DeferredBlock<Block> LEAD_BLOCK = BLOCKS.registerSimpleBlock("lead_block",
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(5.0f, 6.0f)
+                    .sound(SoundType.METAL).requiresCorrectToolForDrops());
+
+    public static final DeferredBlock<Block> REINFORCED_CONCRETE = BLOCKS.registerSimpleBlock("reinforced_concrete",
+            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(4.0f, 12.0f)
+                    .sound(SoundType.STONE).requiresCorrectToolForDrops());
+}

@@ -12,6 +12,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.tomato3017.nuclearwinter.block.NWBlocks;
 import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -29,6 +30,7 @@ public class NuclearWinter {
 
         CREATIVE_MODE_TABS.register(modEventBus);
         NWAttachmentTypes.ATTACHMENT_TYPES.register(modEventBus);
+        NWBlocks.BLOCKS.register(modEventBus);
 
         NeoForge.EVENT_BUS.register(this);
 
