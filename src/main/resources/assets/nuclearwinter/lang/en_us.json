@@ -1,0 +1,13 @@
+{
+  "itemGroup.nuclearwinter": "Example Mod Tab",
+  "block.nuclearwinter.example_block": "Example Block",
+  "item.nuclearwinter.example_item": "Example Item",
+
+  "nuclearwinter.configuration.title": "NuclearWinter Configs",
+  "nuclearwinter.configuration.section.nuclearwinter.common.toml": "NuclearWinter Configs",
+  "nuclearwinter.configuration.section.nuclearwinter.common.toml.title": "NuclearWinter Configs",
+  "nuclearwinter.configuration.items": "Item List",
+  "nuclearwinter.configuration.logDirtBlock": "Log Dirt Block",
+  "nuclearwinter.configuration.magicNumberIntroduction": "Magic Number Text",
+  "nuclearwinter.configuration.magicNumber": "Magic Number"
+}
