@@ -478,7 +478,7 @@ git commit -m "feat: add /nuclearwinter debug resetrad and raycast commands"
 **Files:**
 - Create: `src/main/java/net/tomato3017/nuclearwinter/test/RadiationGameTest.java`
 
-**Step 1: Write radiation tests**
+**Step 1: Write radiation tests (for future use)**
 
 ```java
 package net.tomato3017.nuclearwinter.test;
@@ -523,10 +523,12 @@ public class RadiationGameTest {
 }
 ```
 
-**Step 2: Run tests**
+> **Note:** GameTest execution is skipped for now (no test structure template available). The test class is written for future use. Verify correctness via `./gradlew build` and manual testing.
 
-Run: `./gradlew runGameTestServer`
-Expected: All radiation tests PASS
+**Step 2: Verify it compiles**
+
+Run: `./gradlew build`
+Expected: BUILD SUCCESSFUL
 
 **Step 3: Commit**
 

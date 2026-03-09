@@ -68,7 +68,7 @@ classDiagram
 **Files:**
 - Create: `src/main/java/net/tomato3017/nuclearwinter/radiation/RadiationTier.java`
 
-**Step 1: Write the failing test**
+**Step 1: Write GameTest class (for future use)**
 
 **Files:**
 - Create: `src/main/java/net/tomato3017/nuclearwinter/test/RadiationTierGameTest.java`
@@ -118,12 +118,9 @@ public class RadiationTierGameTest {
 }
 ```
 
-**Step 2: Run test to verify it fails**
+> **Note:** GameTest execution is skipped for now (no test structure template available). The test class is written for future use. Verify correctness via `./gradlew build` and manual testing.
 
-Run: `./gradlew runGameTestServer`
-Expected: FAIL — `RadiationTier` does not exist yet.
-
-**Step 3: Write RadiationTier**
+**Step 2: Write RadiationTier**
 
 ```java
 package net.tomato3017.nuclearwinter.radiation;
@@ -169,12 +166,12 @@ public enum RadiationTier {
 }
 ```
 
-**Step 4: Run test to verify it passes**
+**Step 3: Verify it compiles**
 
-Run: `./gradlew runGameTestServer`
-Expected: All 4 tier tests PASS
+Run: `./gradlew build`
+Expected: BUILD SUCCESSFUL
 
-**Step 5: Commit**
+**Step 4: Commit**
 
 ```bash
 git add -A

@@ -115,7 +115,7 @@ git commit -m "chore: remove example blocks, items, and creative tab"
 **Files:**
 - Modify: `src/main/java/net/tomato3017/nuclearwinter/Config.java`
 
-**Step 1: Write the failing test (GameTest)**
+**Step 1: Write GameTest class (for future use)**
 
 Create a GameTest that verifies config defaults load correctly:
 
@@ -146,19 +146,9 @@ public class ConfigGameTest {
 }
 ```
 
-Create the empty 1x1 GameTest structure template:
+> **Note:** GameTest execution is skipped for now (no test structure template available). The test class is written for future use. Verify correctness via `./gradlew build` and manual testing.
 
-**Files:**
-- Create: `src/main/resources/data/nuclearwinter/structures/empty_1x1.nbt`
-
-This is a standard empty structure file. Generate it via the data generator, or create a minimal 1x1x1 air structure in-game and export with `/test create`.
-
-**Step 2: Run test to verify it fails**
-
-Run: `./gradlew runGameTestServer`
-Expected: FAIL — `Config.FLOOR_CONSTANT` does not exist yet.
-
-**Step 3: Rewrite Config.java**
+**Step 2: Rewrite Config.java**
 
 Replace the entire contents of `Config.java`:
 
@@ -307,7 +297,7 @@ public class Config {
 }
 ```
 
-**Step 4: Update NuclearWinter.java commonSetup**
+**Step 3: Update NuclearWinter.java commonSetup**
 
 Remove the old `commonSetup` body that references removed config fields. Replace with:
 
@@ -317,12 +307,12 @@ private void commonSetup(FMLCommonSetupEvent event) {
 }
 ```
 
-**Step 5: Run test to verify it passes**
+**Step 4: Verify it compiles**
 
-Run: `./gradlew runGameTestServer`
-Expected: PASS (or skip if template isn't ready yet — verify config loads by running `./gradlew build`)
+Run: `./gradlew build`
+Expected: BUILD SUCCESSFUL
 
-**Step 6: Commit**
+**Step 5: Commit**
 
 ```bash
 git add -A

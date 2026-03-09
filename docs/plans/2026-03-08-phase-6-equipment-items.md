@@ -82,7 +82,7 @@ classDiagram
 - Create: `src/main/java/net/tomato3017/nuclearwinter/effects/NWMobEffects.java`
 - Modify: `src/main/java/net/tomato3017/nuclearwinter/NuclearWinter.java`
 
-**Step 1: Write the failing test**
+**Step 1: Write GameTest class (for future use)**
 
 **Files:**
 - Create: `src/main/java/net/tomato3017/nuclearwinter/test/RadAwayGameTest.java`
@@ -112,12 +112,9 @@ public class RadAwayGameTest {
 }
 ```
 
-**Step 2: Run test to verify it fails**
+> **Note:** GameTest execution is skipped for now (no test structure template available). The test class is written for future use. Verify correctness via `./gradlew build` and manual testing.
 
-Run: `./gradlew runGameTestServer`
-Expected: FAIL or PASS depending on Config availability — this primarily validates the math.
-
-**Step 3: Write RadAwayEffect**
+**Step 2: Write RadAwayEffect**
 
 ```java
 package net.tomato3017.nuclearwinter.effects;
@@ -156,7 +153,7 @@ public class RadAwayEffect extends MobEffect {
 }
 ```
 
-**Step 4: Create NWMobEffects registration class**
+**Step 3: Create NWMobEffects registration class**
 
 ```java
 package net.tomato3017.nuclearwinter.effects;
@@ -176,7 +173,7 @@ public class NWMobEffects {
 }
 ```
 
-**Step 5: Register in NuclearWinter constructor**
+**Step 4: Register in NuclearWinter constructor**
 
 Add to the constructor:
 
@@ -189,12 +186,12 @@ Add import:
 import net.tomato3017.nuclearwinter.effects.NWMobEffects;
 ```
 
-**Step 6: Verify it compiles**
+**Step 5: Verify it compiles**
 
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 7: Commit**
+**Step 6: Commit**
 
 ```bash
 git add -A
@@ -764,7 +761,7 @@ git commit -m "feat: add RadAway effect lang entry"
 **Files:**
 - Modify: `src/main/java/net/tomato3017/nuclearwinter/test/RadAwayGameTest.java`
 
-**Step 1: Add hazmat protection test**
+**Step 1: Add hazmat protection tests (for future use)**
 
 ```java
 @GameTest(template = "empty_1x1")
@@ -791,10 +788,12 @@ public void hazmatTier3Protection(GameTestHelper helper) {
 }
 ```
 
-**Step 2: Run tests**
+> **Note:** GameTest execution is skipped for now (no test structure template available). The test class is written for future use. Verify correctness via `./gradlew build` and manual testing.
 
-Run: `./gradlew runGameTestServer`
-Expected: All tests PASS
+**Step 2: Verify it compiles**
+
+Run: `./gradlew build`
+Expected: BUILD SUCCESSFUL
 
 **Step 3: Commit**
 

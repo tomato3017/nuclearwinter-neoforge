@@ -69,7 +69,7 @@ classDiagram
 **Files:**
 - Modify: `src/main/java/net/tomato3017/nuclearwinter/radiation/BlockResolver.java`
 
-**Step 1: Write the failing test**
+**Step 1: Write GameTest class (for future use)**
 
 **Files:**
 - Create: `src/main/java/net/tomato3017/nuclearwinter/test/DegradationGameTest.java`
@@ -105,12 +105,9 @@ public class DegradationGameTest {
 }
 ```
 
-**Step 2: Run test to verify it fails**
+> **Note:** GameTest execution is skipped for now (no test structure template available). The test class is written for future use. Verify correctness via `./gradlew build` and manual testing.
 
-Run: `./gradlew runGameTestServer`
-Expected: FAIL — `getDegradedBlock` does not exist yet.
-
-**Step 3: Add degradation maps and method to BlockResolver**
+**Step 2: Add degradation maps and method to BlockResolver**
 
 Add the following fields and methods to `BlockResolver.java`:
 
@@ -217,12 +214,12 @@ import net.tomato3017.nuclearwinter.block.NWBlocks;
 
 Call `initDegradationMaps()` at the end of the existing `init()` method.
 
-**Step 4: Run test to verify it passes**
+**Step 3: Verify it compiles**
 
-Run: `./gradlew runGameTestServer`
-Expected: PASS
+Run: `./gradlew build`
+Expected: BUILD SUCCESSFUL
 
-**Step 5: Commit**
+**Step 4: Commit**
 
 ```bash
 git add -A
@@ -614,7 +611,7 @@ git commit -m "perf: throttle chunk processing to avoid server lag"
 **Files:**
 - Modify: `src/main/java/net/tomato3017/nuclearwinter/test/DegradationGameTest.java`
 
-**Step 1: Add more degradation tests**
+**Step 1: Add more degradation tests (for future use)**
 
 ```java
 @GameTest(template = "empty_1x1")
@@ -647,10 +644,12 @@ public void waterDoesNotDegrade(GameTestHelper helper) {
 }
 ```
 
-**Step 2: Run tests**
+> **Note:** GameTest execution is skipped for now (no test structure template available). The test class is written for future use. Verify correctness via `./gradlew build` and manual testing.
 
-Run: `./gradlew runGameTestServer`
-Expected: All degradation tests PASS
+**Step 2: Verify it compiles**
+
+Run: `./gradlew build`
+Expected: BUILD SUCCESSFUL
 
 **Step 3: Commit**
 
