@@ -1,5 +1,11 @@
 package net.tomato3017.nuclearwinter;
 
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.tomato3017.nuclearwinter.datagen.NWBlockTagsProvider;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -21,6 +27,8 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.concurrent.CompletableFuture;
 
 @Mod(NuclearWinter.MODID)
 public class NuclearWinter {
@@ -49,6 +57,7 @@ public class NuclearWinter {
 
     public NuclearWinter(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
+        modEventBus.addListener(NuclearWinter::onGatherData);
 
         CREATIVE_MODE_TABS.register(modEventBus);
         NWAttachmentTypes.ATTACHMENT_TYPES.register(modEventBus);
@@ -67,5 +76,14 @@ public class NuclearWinter {
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
         LOGGER.info("HELLO from server starting");
+    }
+
+    public static void onGatherData(GatherDataEvent event) {
+        DataGenerator gen = event.getGenerator();
+        PackOutput output = gen.getPackOutput();
+        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+        ExistingFileHelper efh = event.getExistingFileHelper();
+        gen.addProvider(event.includeServer(),
+                new NWBlockTagsProvider(output, lookupProvider, efh));
     }
 }
