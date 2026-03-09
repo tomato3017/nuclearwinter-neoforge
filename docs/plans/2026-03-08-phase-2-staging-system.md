@@ -801,3 +801,13 @@ After completing all tasks above, perform these manual tests:
 7. **Stage advancement:** Set `graceDuration = 100` in the config (5 seconds). Start the apocalypse. Wait 5+ seconds. Run `/nuclearwinter status` — should have automatically advanced from Grace Period to Stage 1.
 
 8. **Per-dimension independence:** If Nether is loaded, verify `/nuclearwinter start minecraft:the_nether` starts only the Nether. Overworld should remain at whatever stage it was at.
+
+9. **`stages` subcommand lists all stages:** Run `/nuclearwinter stages`. Output should show one line per stage — all six entries (`INACTIVE` through `STAGE_4`) with their integer index and display name. No dimension argument required.
+
+10. **`setstage` accepts a stage name:** Run `/nuclearwinter setstage minecraft:overworld GRACE_PERIOD`. Status should show "Grace Period" as if `/nuclearwinter setstage minecraft:overworld 1` had been used. Run `/nuclearwinter stop minecraft:overworld` to reset.
+
+11. **`setstage` name matching is case-insensitive:** Run `/nuclearwinter setstage minecraft:overworld grace_period` (lowercase). Should work identically to the uppercase form. Run `/nuclearwinter stop minecraft:overworld` to reset.
+
+12. **`setstage` tab-completion offers stage names:** In-game, type `/nuclearwinter setstage minecraft:overworld ` and press Tab. The completion list should include `INACTIVE`, `GRACE_PERIOD`, `STAGE_1`, `STAGE_2`, `STAGE_3`, `STAGE_4`.
+
+13. **`setstage` rejects an invalid name:** Run `/nuclearwinter setstage minecraft:overworld STAGE_99`. Should return a failure message (red text) rather than an exception or silent no-op.

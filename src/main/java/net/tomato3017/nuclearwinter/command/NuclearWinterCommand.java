@@ -2,11 +2,13 @@ package net.tomato3017.nuclearwinter.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.tomato3017.nuclearwinter.NuclearWinter;
 import net.tomato3017.nuclearwinter.stage.StageBase;
 import net.tomato3017.nuclearwinter.stage.StageFactory;
 import net.tomato3017.nuclearwinter.stage.StageManager;
+import net.tomato3017.nuclearwinter.stage.StageType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.DimensionArgument;
@@ -15,6 +17,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class NuclearWinterCommand {
@@ -34,8 +37,18 @@ public class NuclearWinterCommand {
                                 .executes(NuclearWinterCommand::executeStatusDimension)))
                 .then(Commands.literal("setstage")
                         .then(Commands.argument("dimension", DimensionArgument.dimension())
-                                .then(Commands.argument("stage", IntegerArgumentType.integer(0, StageFactory.MAX_STAGE_INDEX))
-                                        .executes(NuclearWinterCommand::executeSetStage))))
+                                .then(Commands.argument("stage", IntegerArgumentType.integer(0, StageType.MAX_INDEX))
+                                        .executes(NuclearWinterCommand::executeSetStageByIndex))
+                                .then(Commands.argument("stageName", StringArgumentType.word())
+                                        .suggests((ctx, builder) -> {
+                                            Arrays.stream(StageType.values())
+                                                    .map(StageType::name)
+                                                    .forEach(builder::suggest);
+                                            return builder.buildFuture();
+                                        })
+                                        .executes(NuclearWinterCommand::executeSetStageByName))))
+                .then(Commands.literal("stages")
+                        .executes(NuclearWinterCommand::executeListStages))
         );
     }
 
@@ -99,7 +112,7 @@ public class NuclearWinterCommand {
         return 1;
     }
 
-    private static int executeSetStage(CommandContext<CommandSourceStack> ctx) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+    private static int executeSetStageByIndex(CommandContext<CommandSourceStack> ctx) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerLevel level = DimensionArgument.getDimension(ctx, "dimension");
         int stageIndex = IntegerArgumentType.getInteger(ctx, "stage");
         StageManager mgr = NuclearWinter.getStageManager();
@@ -108,6 +121,34 @@ public class NuclearWinterCommand {
         ctx.getSource().sendSuccess(() -> Component.literal(
                 "Set " + level.dimension().location() + " to " + name
         ), true);
+        return 1;
+    }
+
+    private static int executeSetStageByName(CommandContext<CommandSourceStack> ctx) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerLevel level = DimensionArgument.getDimension(ctx, "dimension");
+        String stageName = StringArgumentType.getString(ctx, "stageName");
+        StageType type;
+        try {
+            type = StageType.fromName(stageName);
+        } catch (IllegalArgumentException e) {
+            ctx.getSource().sendFailure(Component.literal(
+                    "Unknown stage \"" + stageName + "\". Use /nuclearwinter stages to list valid stages."
+            ));
+            return 0;
+        }
+        NuclearWinter.getStageManager().setStage(level, type.getIndex());
+        ctx.getSource().sendSuccess(() -> Component.literal(
+                "Set " + level.dimension().location() + " to " + type.getDisplayName()
+        ), true);
+        return 1;
+    }
+
+    private static int executeListStages(CommandContext<CommandSourceStack> ctx) {
+        for (StageType type : StageType.values()) {
+            ctx.getSource().sendSuccess(() -> Component.literal(
+                    "[" + type.getIndex() + "] " + type.name() + " \u2014 " + type.getDisplayName()
+            ), false);
+        }
         return 1;
     }
 }

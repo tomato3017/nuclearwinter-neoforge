@@ -67,7 +67,7 @@ public class StageManager {
         if (currentStage == null) return;
 
         int nextIndex = currentStage.getStageIndex() + 1;
-        if (nextIndex > StageFactory.MAX_STAGE_INDEX) return;
+        if (nextIndex > StageType.MAX_INDEX) return;
 
         currentStage.unload();
         StageBase nextStage = StageFactory.create(nextIndex);
@@ -103,11 +103,11 @@ public class StageManager {
         if (currentStage != null && currentStage.getStageIndex() > 0) {
             return;
         }
-        setStage(level, GracePeriod.INDEX);
+        setStage(level, StageType.GRACE_PERIOD.getIndex());
     }
 
     public void stopApocalypse(ServerLevel level) {
-        setStage(level, Stage0.INDEX);
+        setStage(level, StageType.INACTIVE.getIndex());
     }
 
     public StageBase getStageForWorld(ResourceKey<Level> dimKey) {
