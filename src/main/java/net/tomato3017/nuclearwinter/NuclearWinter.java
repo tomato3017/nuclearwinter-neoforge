@@ -23,8 +23,13 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.tomato3017.nuclearwinter.stage.StageManager;
+import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -34,6 +39,12 @@ import java.util.concurrent.CompletableFuture;
 public class NuclearWinter {
     public static final String MODID = "nuclearwinter";
     public static final Logger LOGGER = LogUtils.getLogger();
+
+    private static StageManager stageManager;
+
+    public static StageManager getStageManager() {
+        return stageManager;
+    }
 
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
@@ -75,7 +86,42 @@ public class NuclearWinter {
 
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-        LOGGER.info("HELLO from server starting");
+        stageManager = new StageManager();
+        stageManager.init(event.getServer());
+        LOGGER.info("NuclearWinter StageManager initialized");
+    }
+
+    @SubscribeEvent
+    public void onServerStopping(ServerStoppingEvent event) {
+        if (stageManager != null) {
+            stageManager.shutdown();
+            stageManager = null;
+        }
+    }
+
+    @SubscribeEvent
+    public void onWorldLoad(LevelEvent.Load event) {
+        if (event.getLevel() instanceof ServerLevel serverLevel) {
+            if (stageManager != null) {
+                stageManager.onWorldLoad(serverLevel);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onWorldUnload(LevelEvent.Unload event) {
+        if (event.getLevel() instanceof ServerLevel serverLevel) {
+            if (stageManager != null) {
+                stageManager.onWorldUnload(serverLevel);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onServerTick(ServerTickEvent.Post event) {
+        if (stageManager != null) {
+            stageManager.tickAllStages();
+        }
     }
 
     public static void onGatherData(GatherDataEvent event) {
