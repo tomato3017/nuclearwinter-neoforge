@@ -1,0 +1,50 @@
+---
+description: Prefer enums over multiple related constants
+alwaysApply: true
+---
+
+# Use Enums for Multiple Constants
+
+When you have several related constants (stages, modes, types, statuses), use an enum instead of separate constants or magic numbers/strings.
+
+## Why
+
+- Single source of truth and type safety
+- Easier to extend and refactor
+- Clear exhaustiveness in switches
+- No scattered literals
+
+## Do
+
+```java
+// ✅ GOOD: enum for stage types
+public enum StageType {
+    GRACE_PERIOD, STAGE_0, STAGE_1, STAGE_2, STAGE_3, STAGE_4
+}
+
+// ✅ GOOD: enum for modes or statuses
+public enum RadiationLevel { NONE, LOW, MEDIUM, HIGH }
+```
+
+## Don't
+
+```java
+// ❌ BAD: separate int constants
+public static final int STAGE_0 = 0;
+public static final int STAGE_1 = 1;
+public static final int STAGE_2 = 2;
+
+// ❌ BAD: string literals as "constants"
+if (status.equals("active")) { ... }
+
+// ❌ BAD: magic numbers
+if (level == 3) { ... }
+```
+
+## When to use enums
+
+- Two or more related named values (e.g. statuses, modes, types)
+- Values used in conditionals, method parameters, or return types
+- When you might add more values later
+
+Single, unrelated constants (e.g. `MAX_RETRIES = 3`) can stay as `static final` fields.
