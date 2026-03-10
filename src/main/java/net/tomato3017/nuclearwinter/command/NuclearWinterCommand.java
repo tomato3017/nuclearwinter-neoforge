@@ -5,6 +5,8 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.tomato3017.nuclearwinter.NuclearWinter;
+import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
+import net.tomato3017.nuclearwinter.data.WorldDataAttachment;
 import net.tomato3017.nuclearwinter.stage.StageBase;
 import net.tomato3017.nuclearwinter.stage.StageFactory;
 import net.tomato3017.nuclearwinter.stage.StageManager;
@@ -49,9 +51,14 @@ public class NuclearWinterCommand {
                                         .executes(NuclearWinterCommand::executeSetStageByName))))
                 .then(Commands.literal("stages")
                         .executes(NuclearWinterCommand::executeListStages))
+                .then(Commands.literal("advancetime")
+                        .then(Commands.argument("dimension", DimensionArgument.dimension())
+                                .then(Commands.argument("ticks", IntegerArgumentType.integer(1))
+                                        .executes(NuclearWinterCommand::executeAdvanceTime))))
         );
     }
 
+    // TODO Make more of a grand announcement for the start command.
     private static int executeStart(CommandContext<CommandSourceStack> ctx) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerLevel level = DimensionArgument.getDimension(ctx, "dimension");
         StageManager mgr = NuclearWinter.getStageManager();
@@ -80,6 +87,7 @@ public class NuclearWinterCommand {
             ctx.getSource().sendSuccess(() -> Component.literal("No dimensions tracked."), false);
             return 1;
         }
+        
         for (var entry : stages.entrySet()) {
             StageBase stage = entry.getValue();
             String name = StageFactory.getStageName(stage.getStageIndex());
@@ -102,7 +110,7 @@ public class NuclearWinterCommand {
         String name = StageFactory.getStageName(stage.getStageIndex());
         long elapsed = level.getGameTime() - stage.getInitTick();
         long remaining = stage.getDuration() > 0 ? stage.getDuration() - elapsed : -1;
-        String remainStr = remaining >= 0 ? String.format("%.0fs", remaining / 20.0) : "indefinite";
+        String remainStr = stage.isShouldStageExpire() ? String.format("%.0fs", remaining / 20.0) : "Infinite";
 
         ctx.getSource().sendSuccess(() -> Component.literal(
                 level.dimension().location() + ": " + name +
@@ -146,9 +154,30 @@ public class NuclearWinterCommand {
     private static int executeListStages(CommandContext<CommandSourceStack> ctx) {
         for (StageType type : StageType.values()) {
             ctx.getSource().sendSuccess(() -> Component.literal(
-                    "[" + type.getIndex() + "] " + type.name() + " \u2014 " + type.getDisplayName()
+                    "[" + type.getIndex() + "] " + type.name() + "-" + type.getDisplayName()
             ), false);
         }
+        return 1;
+    }
+
+    private static int executeAdvanceTime(CommandContext<CommandSourceStack> ctx) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerLevel level = DimensionArgument.getDimension(ctx, "dimension");
+        int ticks = IntegerArgumentType.getInteger(ctx, "ticks");
+        StageManager mgr = NuclearWinter.getStageManager();
+        StageBase stage = mgr.getStageForWorld(level.dimension());
+
+        if (stage == null) {
+            ctx.getSource().sendFailure(Component.literal("No stage data for " + level.dimension().location()));
+            return 0;
+        }
+
+        long newInitTick = stage.getInitTick() - ticks;
+        stage.setInitTick(newInitTick);
+        level.setData(NWAttachmentTypes.WORLD_DATA, new WorldDataAttachment(stage.getStageIndex(), newInitTick));
+
+        ctx.getSource().sendSuccess(() -> Component.literal(
+                "Advanced stage timer by " + ticks + " ticks (" + String.format("%.1f", ticks / 20.0) + " seconds)"
+        ), true);
         return 1;
     }
 }

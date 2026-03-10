@@ -42,7 +42,7 @@ public class NuclearWinter {
     public static final String MODID = "nuclearwinter";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    private static StageManager stageManager;
+    private static StageManager stageManager = new StageManager();
 
     public static StageManager getStageManager() {
         return stageManager;
@@ -88,42 +88,31 @@ public class NuclearWinter {
 
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-        stageManager = new StageManager();
-        stageManager.init(event.getServer());
-        LOGGER.info("NuclearWinter StageManager initialized");
+
     }
 
     @SubscribeEvent
     public void onServerStopping(ServerStoppingEvent event) {
-        if (stageManager != null) {
-            stageManager.shutdown();
-            stageManager = null;
-        }
+        stageManager.shutdown();
     }
 
     @SubscribeEvent
     public void onWorldLoad(LevelEvent.Load event) {
         if (event.getLevel() instanceof ServerLevel serverLevel) {
-            if (stageManager != null) {
                 stageManager.onWorldLoad(serverLevel);
             }
-        }
     }
 
     @SubscribeEvent
     public void onWorldUnload(LevelEvent.Unload event) {
         if (event.getLevel() instanceof ServerLevel serverLevel) {
-            if (stageManager != null) {
-                stageManager.onWorldUnload(serverLevel);
-            }
+            stageManager.onWorldUnload(serverLevel);
         }
     }
 
     @SubscribeEvent
     public void onServerTick(ServerTickEvent.Post event) {
-        if (stageManager != null) {
-            stageManager.tickAllStages();
-        }
+        stageManager.tickAllStages();
     }
 
     @SubscribeEvent
