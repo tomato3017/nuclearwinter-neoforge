@@ -191,12 +191,6 @@ import net.tomato3017.nuclearwinter.effects.NWMobEffects;
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 6: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add RadAwayEffect custom MobEffect with pool drain"
-```
 
 ---
 
@@ -280,12 +274,6 @@ Create a 16x16 placeholder PNG at `src/main/resources/assets/nuclearwinter/textu
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 6: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add RadAway consumable item"
-```
 
 ---
 
@@ -371,12 +359,6 @@ Create a 16x16 placeholder PNG at `src/main/resources/assets/nuclearwinter/textu
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 6: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add Geiger Counter item with action bar display"
-```
 
 ---
 
@@ -479,12 +461,6 @@ Create a 16x16 placeholder PNG at `src/main/resources/assets/nuclearwinter/textu
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 6: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add Dosimeter item with color gradient display"
-```
 
 ---
 
@@ -673,12 +649,6 @@ Create 16x16 placeholder PNGs for each at `src/main/resources/assets/nuclearwint
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 7: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add Hazmat Suit armor items (3 tiers)"
-```
 
 ---
 
@@ -727,12 +697,6 @@ import net.minecraft.world.item.ItemStack;
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 4: Commit**
-
-```bash
-git add -A
-git commit -m "feat: integrate hazmat suit radiation reduction into PlayerRadHandler"
-```
 
 ---
 
@@ -747,12 +711,6 @@ git commit -m "feat: integrate hazmat suit radiation reduction into PlayerRadHan
 "effect.nuclearwinter.radaway": "RadAway"
 ```
 
-**Step 2: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add RadAway effect lang entry"
-```
 
 ---
 
@@ -795,12 +753,6 @@ public void hazmatTier3Protection(GameTestHelper helper) {
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 3: Commit**
-
-```bash
-git add -A
-git commit -m "test: add GameTests for RadAway and hazmat suit math"
-```
 
 ---
 

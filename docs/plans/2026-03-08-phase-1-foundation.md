@@ -101,12 +101,6 @@ After removal, `NuclearWinter.java` should contain only: `MODID`, `LOGGER`, the 
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL (with warnings about unused imports at most)
 
-**Step 3: Commit**
-
-```bash
-git add -A
-git commit -m "chore: remove example blocks, items, and creative tab"
-```
 
 ---
 
@@ -312,12 +306,6 @@ private void commonSetup(FMLCommonSetupEvent event) {
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 5: Commit**
-
-```bash
-git add -A
-git commit -m "feat: rewrite Config with all design document values"
-```
 
 ---
 
@@ -457,12 +445,6 @@ import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 7: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add World, Chunk, and Player data attachment types"
-```
 
 ---
 
@@ -553,12 +535,6 @@ import net.tomato3017.nuclearwinter.block.NWBlocks;
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 4: Commit**
-
-```bash
-git add -A
-git commit -m "feat: register 10 custom blocks (degradation + shielding)"
-```
 
 ---
 
@@ -640,12 +616,6 @@ Remove the old unused `BLOCKS`, `ITEMS` DeferredRegister fields from `NuclearWin
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 4: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add block items and Nuclear Winter creative tab"
-```
 
 ---
 
@@ -743,12 +713,6 @@ The old `block.nuclearwinter.example_block`, `item.nuclearwinter.example_item`, 
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 8: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add placeholder textures, blockstates, models, and lang entries"
-```
 
 ---
 
@@ -778,12 +742,6 @@ This means breaking deadwood drops nothing.
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 3: Commit**
-
-```bash
-git add -A
-git commit -m "feat: deadwood drops nothing when broken"
-```
 
 ---
 

@@ -171,12 +171,6 @@ public enum RadiationTier {
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 4: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add RadiationTier enum with threshold resolution"
-```
 
 ---
 
@@ -250,12 +244,6 @@ public class EffectsGenerator {
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 3: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add EffectsGenerator for tier-based mob effects"
-```
 
 ---
 
@@ -286,12 +274,6 @@ The pool variable is already computed earlier in the method. The tier resolution
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 3: Commit**
-
-```bash
-git add -A
-git commit -m "feat: integrate EffectsGenerator into PlayerRadHandler tick"
-```
 
 ---
 
@@ -342,12 +324,6 @@ import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 3: Commit**
-
-```bash
-git add -A
-git commit -m "feat: reduce/block healing based on radiation tier"
-```
 
 ---
 
@@ -417,12 +393,6 @@ Update `src/main/resources/nuclearwinter.mixins.json`:
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 4: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add GrassSpreadMixin to suppress grass spread at Stage 1+"
-```
 
 ---
 
@@ -457,12 +427,6 @@ private static void applyHunger(ServerPlayer player) {
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 3: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add hunger drain at Irradiated tier"
-```
 
 ---
 
@@ -486,12 +450,6 @@ Append to the lang file:
 
 These can be used by the debug commands or future HUD elements to display the player's current tier.
 
-**Step 2: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add radiation tier lang entries"
-```
 
 ---
 

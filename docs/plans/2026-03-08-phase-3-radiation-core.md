@@ -173,12 +173,6 @@ import net.tomato3017.nuclearwinter.radiation.BlockResolver;
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 4: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add BlockResolver with tag-based resistance lookups"
-```
 
 ---
 
@@ -236,12 +230,6 @@ public class RadiationEmitter {
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 3: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add RadiationEmitter with sky-to-player raycast"
-```
 
 ---
 
@@ -363,12 +351,6 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 4: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add PlayerRadHandler with pool accumulation and drain"
-```
 
 ---
 
@@ -464,12 +446,6 @@ Specifically, add `.then(DebugCommand.register())` to the chain before the closi
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 4: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add /nuclearwinter debug resetrad and raycast commands"
-```
 
 ---
 
@@ -530,12 +506,6 @@ public class RadiationGameTest {
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 3: Commit**
-
-```bash
-git add -A
-git commit -m "test: add GameTests for BlockResolver and RadiationEmitter"
-```
 
 ---
 

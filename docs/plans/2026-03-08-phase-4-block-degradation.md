@@ -219,12 +219,6 @@ Call `initDegradationMaps()` at the end of the existing `init()` method.
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 4: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add block degradation mappings to BlockResolver"
-```
 
 ---
 
@@ -321,12 +315,6 @@ public class ChunkProcessor {
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 3: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add ChunkProcessor with degradation and chunk nuking"
-```
 
 ---
 
@@ -483,12 +471,6 @@ public void tick(ServerLevel level, long currentTick) {
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 5: Commit**
-
-```bash
-git add -A
-git commit -m "feat: integrate ChunkProcessor into Stage2, Stage3, Stage4"
-```
 
 ---
 
@@ -534,12 +516,6 @@ import net.minecraft.world.level.chunk.LevelChunk;
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 3: Commit**
-
-```bash
-git add -A
-git commit -m "feat: nuke newly generated chunks when at Stage 4"
-```
 
 ---
 
@@ -597,12 +573,6 @@ This is a performance safety measure — degradation still happens across the wo
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 3: Commit**
-
-```bash
-git add -A
-git commit -m "perf: throttle chunk processing to avoid server lag"
-```
 
 ---
 
@@ -651,12 +621,6 @@ public void waterDoesNotDegrade(GameTestHelper helper) {
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 3: Commit**
-
-```bash
-git add -A
-git commit -m "test: add GameTests for block degradation mappings"
-```
 
 ---
 

@@ -153,12 +153,6 @@ public abstract class StageBase {
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 3: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add StageBase abstract class"
-```
 
 ---
 
@@ -308,12 +302,6 @@ public class StageFactory {
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 9: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add Stage0, GracePeriod, Stage1-4, and StageFactory"
-```
 
 ---
 
@@ -452,12 +440,6 @@ public class StageManager {
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 3: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add StageManager with per-dimension stage tracking"
-```
 
 ---
 
@@ -538,12 +520,6 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 4: Commit**
-
-```bash
-git add -A
-git commit -m "feat: wire StageManager into server lifecycle events"
-```
 
 ---
 
@@ -693,12 +669,6 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 4: Commit**
-
-```bash
-git add -A
-git commit -m "feat: add /nuclearwinter start|stop|status|setstage commands"
-```
 
 ---
 
@@ -773,12 +743,6 @@ public class StagingGameTest {
 Run: `./gradlew build`
 Expected: BUILD SUCCESSFUL
 
-**Step 3: Commit**
-
-```bash
-git add -A
-git commit -m "test: add GameTests for staging system"
-```
 
 ---
 
