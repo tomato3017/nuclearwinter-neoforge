@@ -26,3 +26,4 @@ run-data
 .vscode/
 /src/generated/resources/.cache/
 /.cursor/
+.ai/
