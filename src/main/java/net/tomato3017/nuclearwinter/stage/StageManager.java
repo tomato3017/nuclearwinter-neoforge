@@ -1,12 +1,12 @@
 package net.tomato3017.nuclearwinter.stage;
 
-import net.tomato3017.nuclearwinter.NuclearWinter;
-import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
-import net.tomato3017.nuclearwinter.data.WorldDataAttachment;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.tomato3017.nuclearwinter.NuclearWinter;
+import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
+import net.tomato3017.nuclearwinter.data.WorldDataAttachment;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +17,6 @@ public class StageManager {
 
     public void init(MinecraftServer server) {
         this.server = server;
-        this.activeStages.clear();
     }
 
     public void shutdown() {

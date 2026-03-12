@@ -1,32 +1,23 @@
 package net.tomato3017.nuclearwinter;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import net.neoforged.neoforge.data.event.GatherDataEvent;
-import net.tomato3017.nuclearwinter.datagen.NWBlockTagsProvider;
-import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
-
-import net.tomato3017.nuclearwinter.block.NWBlocks;
-import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
-import net.tomato3017.nuclearwinter.item.NWItems;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.tomato3017.nuclearwinter.command.NuclearWinterCommand;
-import net.tomato3017.nuclearwinter.stage.StageManager;
-import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -34,6 +25,13 @@ import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.tomato3017.nuclearwinter.block.NWBlocks;
+import net.tomato3017.nuclearwinter.command.NuclearWinterCommand;
+import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
+import net.tomato3017.nuclearwinter.datagen.NWBlockTagsProvider;
+import net.tomato3017.nuclearwinter.item.NWItems;
+import net.tomato3017.nuclearwinter.stage.StageManager;
+import org.slf4j.Logger;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -88,7 +86,7 @@ public class NuclearWinter {
 
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-
+        stageManager.init(event.getServer());
     }
 
     @SubscribeEvent
@@ -99,8 +97,8 @@ public class NuclearWinter {
     @SubscribeEvent
     public void onWorldLoad(LevelEvent.Load event) {
         if (event.getLevel() instanceof ServerLevel serverLevel) {
-                stageManager.onWorldLoad(serverLevel);
-            }
+            stageManager.onWorldLoad(serverLevel);
+        }
     }
 
     @SubscribeEvent

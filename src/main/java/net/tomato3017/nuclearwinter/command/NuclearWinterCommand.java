@@ -4,13 +4,6 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import net.tomato3017.nuclearwinter.NuclearWinter;
-import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
-import net.tomato3017.nuclearwinter.data.WorldDataAttachment;
-import net.tomato3017.nuclearwinter.stage.StageBase;
-import net.tomato3017.nuclearwinter.stage.StageFactory;
-import net.tomato3017.nuclearwinter.stage.StageManager;
-import net.tomato3017.nuclearwinter.stage.StageType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.DimensionArgument;
@@ -18,6 +11,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.tomato3017.nuclearwinter.NuclearWinter;
+import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
+import net.tomato3017.nuclearwinter.data.WorldDataAttachment;
+import net.tomato3017.nuclearwinter.stage.StageBase;
+import net.tomato3017.nuclearwinter.stage.StageFactory;
+import net.tomato3017.nuclearwinter.stage.StageManager;
+import net.tomato3017.nuclearwinter.stage.StageType;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -80,6 +80,14 @@ public class NuclearWinterCommand {
         return 1;
     }
 
+    private static String getRemainStr(ServerLevel level, StageBase stage) {
+        long elapsed = level.getGameTime() - stage.getInitTick();
+        long remainTime = stage.getDuration() > 0 ? stage.getDuration() - elapsed : -1;
+        double remainSec = remainTime / 20;
+
+        return stage.isShouldStageExpire() ? String.format("%.0fs", remainSec) : "Infinite";
+    }
+
     private static int executeStatusAll(CommandContext<CommandSourceStack> ctx) {
         StageManager mgr = NuclearWinter.getStageManager();
         Map<ResourceKey<Level>, StageBase> stages = mgr.getAllStages();
@@ -87,13 +95,15 @@ public class NuclearWinterCommand {
             ctx.getSource().sendSuccess(() -> Component.literal("No dimensions tracked."), false);
             return 1;
         }
-        
+
         for (var entry : stages.entrySet()) {
+            ServerLevel level = ctx.getSource().getServer().getLevel(entry.getKey());
             StageBase stage = entry.getValue();
             String name = StageFactory.getStageName(stage.getStageIndex());
             ctx.getSource().sendSuccess(() -> Component.literal(
                     entry.getKey().location() + ": " + name +
-                    " (sky emission: " + stage.getSkyEmission() + " Rads/sec)"
+                            " (sky emission: " + stage.getSkyEmission() + " Rads/sec)" +
+                            " | Time remaining: " + getRemainStr(level, stage)
             ), false);
         }
         return 1;
@@ -108,14 +118,10 @@ public class NuclearWinterCommand {
             return 0;
         }
         String name = StageFactory.getStageName(stage.getStageIndex());
-        long elapsed = level.getGameTime() - stage.getInitTick();
-        long remaining = stage.getDuration() > 0 ? stage.getDuration() - elapsed : -1;
-        String remainStr = stage.isShouldStageExpire() ? String.format("%.0fs", remaining / 20.0) : "Infinite";
-
         ctx.getSource().sendSuccess(() -> Component.literal(
                 level.dimension().location() + ": " + name +
-                " | Sky: " + stage.getSkyEmission() + " Rads/sec" +
-                " | Time remaining: " + remainStr
+                        " | Sky: " + stage.getSkyEmission() + " Rads/sec" +
+                        " | Time remaining: " + getRemainStr(level, stage)
         ), false);
         return 1;
     }
