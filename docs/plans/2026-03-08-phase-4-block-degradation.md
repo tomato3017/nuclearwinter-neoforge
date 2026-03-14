@@ -1,6 +1,8 @@
 # Phase 4: Block Degradation & Chunk Processing — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+>
+> **After each task:** Stop for user verification before proceeding to the next task.
 
 **Goal:** Make the world visually deteriorate as stages advance. Surface blocks degrade based on their category (grass, dirt, stone, log, leaf, plank) at Stage 2 and Stage 4. A chunk nuking routine at Stage 4 processes every column in a chunk and marks it as nuked via `ChunkDataAttachment`.
 

@@ -1,6 +1,8 @@
 # Phase 3: Radiation Core — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+>
+> **After each task:** Stop for user verification before proceeding to the next task.
 
 **Goal:** Implement the radiation raycast (sky to player/block), block resistance resolution, the player radiation pool (accumulation + passive drain), and debug commands for testing radiation math in-game.
 

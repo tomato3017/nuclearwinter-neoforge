@@ -1,6 +1,8 @@
 # Phase 5: Player Effects — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+>
+> **After each task:** Stop for user verification before proceeding to the next task.
 
 **Goal:** Apply gameplay consequences based on radiation pool level — nausea, weakness, blindness, HP damage, healing reduction — and suppress grass spread via a Mixin when the apocalypse is active.
 

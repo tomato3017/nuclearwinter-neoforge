@@ -1,6 +1,8 @@
 # Phase 1: Foundation — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+>
+> **After each task:** Stop for user verification before proceeding to the next task.
 
 **Goal:** Strip the example code and replace it with the real mod infrastructure — configuration, custom blocks, data attachment types, and a creative tab.
 

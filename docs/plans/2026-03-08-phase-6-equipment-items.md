@@ -1,6 +1,8 @@
 # Phase 6: Equipment & Items — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+>
+> **After each task:** Stop for user verification before proceeding to the next task.
 
 **Goal:** Give players tools to measure, treat, and protect against radiation — Geiger Counter, Dosimeter, RadAway (item + MobEffect), and Hazmat Suit (3 tiers of armor).
 

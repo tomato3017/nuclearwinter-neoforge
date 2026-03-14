@@ -1,6 +1,8 @@
 # Phase 2: Staging System — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+>
+> **After each task:** Stop for user verification before proceeding to the next task.
 
 **Goal:** Implement the per-dimension staging backbone (StageManager, StageBase, Stage0-4), world data attachment integration, and admin commands for controlling the apocalypse.
 
