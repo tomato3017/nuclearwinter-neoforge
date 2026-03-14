@@ -156,6 +156,25 @@ Each stone block (BlockResistanceMod = 1.0) halves radiation:
 
 Lead at 16.0 means 2 blocks matches 10 stone -- a massive advantage, expensive to obtain. Deepslate/Obsidian at 2.0 rewards building deep underground naturally. Reinforced Concrete at 2.5 is a craftable mid-tier between stone and iron.
 
+### Sky Light Penalty
+
+Block resistance effectiveness is reduced by the sky light level at the player's position. A sealed shelter (sky light 0 inside) retains full block resistance. Exposed or partially-covered positions (cave entrances, thin or open roofs) degrade the shielding provided by every block in the column above.
+
+**Formula:**
+
+```
+normalizedLight     = skyLight / 15.0
+effectivenessMult   = 1.0 - (skyLightResistancePenalty * normalizedLight^2)
+effectiveResistance = baseResistance * effectivenessMult
+currentRad         *= 0.5 ^ effectiveResistance
+```
+
+- `skyLightResistancePenalty` is a configurable value (default 0.5). At sky light 15, blocks operate at 50% of their normal resistance. At sky light 0 they operate at full resistance.
+- The curve is **quadratic**: mid-range sky light values (cave entrances, partial roofs) are penalized much less than open sky. The endpoints are identical to a linear curve -- only the mid-range behaviour differs.
+- The multiplier is computed once per raycast from the player's position -- not per-block. Cost is a single sky light lookup.
+
+**Gameplay intent:** The mechanic rewards *properly sealing* a shelter. Depth helps indirectly because caves away from entrances have low sky light. On the surface (sky light 15), even thick walls are less effective, pushing players to fully enclose their bunkers.
+
 ### Surface vs Sheltered Exposure
 
 Assumes full surface exposure (no overhead blocks) starting at 0 Rads. Death = pool at 100% + 10 seconds of 2 HP/sec damage.
@@ -378,6 +397,7 @@ All values listed are defaults. All are configurable.
 | Stage 3 sky emission          | ~333 Rads/sec    |                                                     |
 | Stage 4 sky emission          | ~5,000 Rads/sec  |                                                     |
 | Floor constant                | 50 Rads          | Raycast exits and sets radiation to 0 below this    |
+| Sky light resistance penalty  | 0.5              | 0.0 = no effect; 1.0 = full penalty at sky light 15 |
 | Raycast calculation interval  | Every 5-10 ticks | Cached until player moves or column above changes   |
 
 ### Block Resistance

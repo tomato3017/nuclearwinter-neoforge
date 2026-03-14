@@ -21,6 +21,7 @@ public class Config {
 
     // --- Radiation ---
     public static final ModConfigSpec.DoubleValue FLOOR_CONSTANT;
+    public static final ModConfigSpec.DoubleValue SKY_LIGHT_RESISTANCE_PENALTY;
     public static final ModConfigSpec.IntValue RAYCAST_INTERVAL_TICKS;
 
     // --- Player ---
@@ -92,6 +93,9 @@ public class Config {
         FLOOR_CONSTANT = BUILDER.comment("Radiation floor constant (Rads). Raycast exits below this.")
                 .translation("nuclearwinter.configuration.radiation.floorConstant")
                 .defineInRange("floorConstant", 50.0, 0.0, Double.MAX_VALUE);
+        SKY_LIGHT_RESISTANCE_PENALTY = BUILDER.comment("How much sky light reduces block resistance effectiveness (0.0 = no effect, 1.0 = full penalty at sky light 15)")
+                .translation("nuclearwinter.configuration.radiation.skyLightResistancePenalty")
+                .defineInRange("skyLightResistancePenalty", 0.9, 0.0, 1.0);
         RAYCAST_INTERVAL_TICKS = BUILDER.comment("Ticks between radiation raycasts per player")
                 .translation("nuclearwinter.configuration.radiation.raycastIntervalTicks")
                 .defineInRange("raycastIntervalTicks", 10, 1, 100);
