@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -20,6 +21,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
@@ -35,6 +37,7 @@ import net.tomato3017.nuclearwinter.datagen.NWBlockTagsProvider;
 import net.tomato3017.nuclearwinter.item.NWItems;
 import net.tomato3017.nuclearwinter.radiation.BlockResolver;
 import net.tomato3017.nuclearwinter.radiation.PlayerRadHandler;
+import net.tomato3017.nuclearwinter.stage.StageBase;
 import net.tomato3017.nuclearwinter.stage.StageManager;
 import org.slf4j.Logger;
 
@@ -114,6 +117,28 @@ public class NuclearWinter {
         if (event.getLevel() instanceof ServerLevel serverLevel) {
             stageManager.onWorldUnload(serverLevel);
         }
+    }
+
+    @SubscribeEvent
+    public void onChunkUnload(ChunkEvent.Unload event) {
+        if (!(event.getLevel() instanceof ServerLevel serverLevel)) return;
+        if (!(event.getChunk() instanceof LevelChunk chunk)) return;
+
+        StageBase stage = stageManager.getStageForWorld(serverLevel.dimension());
+        if (stage == null) return;
+
+        stage.onChunkUnloaded(serverLevel, chunk);
+    }
+
+    @SubscribeEvent
+    public void onChunkLoad(ChunkEvent.Load event) {
+        if (!(event.getLevel() instanceof ServerLevel serverLevel)) return;
+        if (!(event.getChunk() instanceof LevelChunk chunk)) return;
+
+        StageBase stage = stageManager.getStageForWorld(serverLevel.dimension());
+        if (stage == null) return;
+
+        stage.onChunkLoaded(serverLevel, chunk);
     }
 
     @SubscribeEvent

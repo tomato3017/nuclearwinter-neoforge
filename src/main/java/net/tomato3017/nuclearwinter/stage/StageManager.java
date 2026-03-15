@@ -32,6 +32,7 @@ public class StageManager {
         WorldDataAttachment data = level.getData(NWAttachmentTypes.WORLD_DATA);
         StageBase stage = StageFactory.create(data.stageIndex());
         stage.setInitTick(data.stageStartTick());
+        stage.init(level, data.stageStartTick());
         activeStages.put(dimKey, stage);
         NuclearWinter.LOGGER.info("Loaded stage {} for dimension {}",
                 StageFactory.getStageName(data.stageIndex()), dimKey.location());
@@ -47,7 +48,6 @@ public class StageManager {
     }
 
     public void tickAllStages() {
-        if (server == null) return;
         for (var entry : new HashMap<>(activeStages).entrySet()) {
             ServerLevel level = server.getLevel(entry.getKey());
             if (level == null) continue;

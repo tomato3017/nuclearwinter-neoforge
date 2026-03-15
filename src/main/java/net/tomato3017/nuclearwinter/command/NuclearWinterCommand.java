@@ -55,7 +55,7 @@ public class NuclearWinterCommand {
                         .then(Commands.argument("dimension", DimensionArgument.dimension())
                                 .then(Commands.argument("ticks", IntegerArgumentType.integer(1))
                                         .executes(NuclearWinterCommand::executeAdvanceTime))))
-                .then(DebugCommand.register())
+                                                        .then(DebugCommand.register())
         );
     }
 

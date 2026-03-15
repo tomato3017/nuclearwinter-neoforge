@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.tomato3017.nuclearwinter.Config;
 import net.tomato3017.nuclearwinter.NuclearWinter;
+import net.tomato3017.nuclearwinter.block.NWBlocks;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -20,6 +21,11 @@ public class BlockResolver {
     private static final Map<TagKey<Block>, Double> TAG_RESISTANCE_MAP = new LinkedHashMap<>();
     private static final Map<Block, Double> BLOCK_OVERRIDES = new LinkedHashMap<>();
     private static double defaultResistance = 1.0;
+
+    private static final Map<TagKey<Block>, Block> STAGE2_TAG_DEGRADATION = new LinkedHashMap<>();
+    private static final Map<TagKey<Block>, Block> STAGE4_TAG_DEGRADATION = new LinkedHashMap<>();
+    private static final Map<Block, Block> STAGE2_BLOCK_DEGRADATION = new LinkedHashMap<>();
+    private static final Map<Block, Block> STAGE4_BLOCK_DEGRADATION = new LinkedHashMap<>();
 
     //TODO make this work with custom tagged blocks
     public static void init() {
@@ -46,6 +52,85 @@ public class BlockResolver {
 
         NuclearWinter.LOGGER.info("BlockResolver initialized with {} tag entries and {} block overrides",
                 TAG_RESISTANCE_MAP.size(), BLOCK_OVERRIDES.size());
+
+        initDegradationMaps();
+    }
+
+    private static void initDegradationMaps() {
+        STAGE2_TAG_DEGRADATION.clear();
+        STAGE4_TAG_DEGRADATION.clear();
+        STAGE2_BLOCK_DEGRADATION.clear();
+        STAGE4_BLOCK_DEGRADATION.clear();
+
+        // Grass-type -> Dead Grass (Stage 2) -> Wasteland Dust (Stage 4)
+        STAGE2_BLOCK_DEGRADATION.put(Blocks.GRASS_BLOCK, NWBlocks.DEAD_GRASS.get());
+        STAGE2_BLOCK_DEGRADATION.put(Blocks.MYCELIUM, NWBlocks.DEAD_GRASS.get());
+        STAGE2_BLOCK_DEGRADATION.put(Blocks.PODZOL, NWBlocks.DEAD_GRASS.get());
+        STAGE4_BLOCK_DEGRADATION.put(Blocks.GRASS_BLOCK, NWBlocks.WASTELAND_DUST.get());
+        STAGE4_BLOCK_DEGRADATION.put(Blocks.MYCELIUM, NWBlocks.WASTELAND_DUST.get());
+        STAGE4_BLOCK_DEGRADATION.put(Blocks.PODZOL, NWBlocks.WASTELAND_DUST.get());
+        STAGE4_BLOCK_DEGRADATION.put(NWBlocks.DEAD_GRASS.get(), NWBlocks.WASTELAND_DUST.get());
+
+        // Dirt-type -> Parched Dirt (Stage 2) -> Wasteland Dust (Stage 4)
+        STAGE2_TAG_DEGRADATION.put(BlockTags.DIRT, NWBlocks.PARCHED_DIRT.get());
+        STAGE4_TAG_DEGRADATION.put(BlockTags.DIRT, NWBlocks.WASTELAND_DUST.get());
+        STAGE4_BLOCK_DEGRADATION.put(NWBlocks.PARCHED_DIRT.get(), NWBlocks.WASTELAND_DUST.get());
+
+        // Stone-type -> Cracked Stone (Stage 2) -> Wasteland Rubble (Stage 4)
+        STAGE2_BLOCK_DEGRADATION.put(Blocks.STONE, NWBlocks.CRACKED_STONE.get());
+        STAGE2_BLOCK_DEGRADATION.put(Blocks.COBBLESTONE, NWBlocks.CRACKED_STONE.get());
+        STAGE2_BLOCK_DEGRADATION.put(Blocks.ANDESITE, NWBlocks.CRACKED_STONE.get());
+        STAGE2_BLOCK_DEGRADATION.put(Blocks.GRANITE, NWBlocks.CRACKED_STONE.get());
+        STAGE2_BLOCK_DEGRADATION.put(Blocks.DIORITE, NWBlocks.CRACKED_STONE.get());
+        STAGE4_BLOCK_DEGRADATION.put(Blocks.STONE, NWBlocks.WASTELAND_RUBBLE.get());
+        STAGE4_BLOCK_DEGRADATION.put(Blocks.COBBLESTONE, NWBlocks.WASTELAND_RUBBLE.get());
+        STAGE4_BLOCK_DEGRADATION.put(Blocks.ANDESITE, NWBlocks.WASTELAND_RUBBLE.get());
+        STAGE4_BLOCK_DEGRADATION.put(Blocks.GRANITE, NWBlocks.WASTELAND_RUBBLE.get());
+        STAGE4_BLOCK_DEGRADATION.put(Blocks.DIORITE, NWBlocks.WASTELAND_RUBBLE.get());
+        STAGE4_BLOCK_DEGRADATION.put(NWBlocks.CRACKED_STONE.get(), NWBlocks.WASTELAND_RUBBLE.get());
+
+        // Log-type -> Deadwood (Stage 2), no further degradation
+        STAGE2_TAG_DEGRADATION.put(BlockTags.LOGS, NWBlocks.DEADWOOD.get());
+
+        // Leaf-type -> Dead Leaves (Stage 2) -> Air (Stage 4)
+        STAGE2_TAG_DEGRADATION.put(BlockTags.LEAVES, NWBlocks.DEAD_LEAVES.get());
+        STAGE4_TAG_DEGRADATION.put(BlockTags.LEAVES, Blocks.AIR);
+        STAGE4_BLOCK_DEGRADATION.put(NWBlocks.DEAD_LEAVES.get(), Blocks.AIR);
+
+        // Plank-type -> Ruined Planks (Stage 2), no further degradation
+        STAGE2_TAG_DEGRADATION.put(BlockTags.PLANKS, NWBlocks.RUINED_PLANKS.get());
+    }
+
+    /**
+     * Returns the block that the given state should degrade into at the given stage index,
+     * or null if no degradation applies.
+     * Stage index 3 = Stage 2 (first degradation tier), stage index 5 = Stage 4 (second tier).
+     */
+    public static Block getDegradedBlock(BlockState state, int stageIndex) {
+        Block block = state.getBlock();
+
+        Map<Block, Block> blockMap;
+        Map<TagKey<Block>, Block> tagMap;
+        if (stageIndex >= 5) {
+            blockMap = STAGE4_BLOCK_DEGRADATION;
+            tagMap = STAGE4_TAG_DEGRADATION;
+        } else if (stageIndex >= 3) {
+            blockMap = STAGE2_BLOCK_DEGRADATION;
+            tagMap = STAGE2_TAG_DEGRADATION;
+        } else {
+            return null;
+        }
+
+        Block result = blockMap.get(block);
+        if (result != null) return result;
+
+        for (var entry : tagMap.entrySet()) {
+            if (state.is(entry.getKey())) {
+                return entry.getValue();
+            }
+        }
+
+        return null;
     }
 
     public static void registerBlockOverride(Block block, double resistance) {

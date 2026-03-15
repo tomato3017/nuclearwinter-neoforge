@@ -54,6 +54,10 @@ public class Config {
     public static final ModConfigSpec.DoubleValue RESISTANCE_WATER;
     public static final ModConfigSpec.DoubleValue RESISTANCE_LEAD;
 
+    // --- Chunk Processing ---
+    public static final ModConfigSpec.IntValue CHUNK_PROCESSING_INTERVAL_TICKS;
+    public static final ModConfigSpec.IntValue CHUNK_PROCESSING_MAX_CHUNKS_PER_INTERVAL;
+
     static {
         BUILDER.comment("Controls how long each apocalypse stage lasts.")
                 .translation("nuclearwinter.configuration.staging")
@@ -184,6 +188,17 @@ public class Config {
         RESISTANCE_LEAD = BUILDER.comment("Lead block radiation resistance modifier")
                 .translation("nuclearwinter.configuration.blockResistance.lead")
                 .defineInRange("lead", 16.0, 0.01, 100.0);
+        BUILDER.pop();
+
+        BUILDER.comment("Controls how chunk degradation processing is scheduled.")
+                .translation("nuclearwinter.configuration.chunkProcessing")
+                .push("chunkProcessing");
+        CHUNK_PROCESSING_INTERVAL_TICKS = BUILDER.comment("Ticks between chunk degradation processing cycles")
+                .translation("nuclearwinter.configuration.chunkProcessing.intervalTicks")
+                .defineInRange("intervalTicks", 20, 1, 6000);
+        CHUNK_PROCESSING_MAX_CHUNKS_PER_INTERVAL = BUILDER.comment("Maximum number of chunks to process per interval")
+                .translation("nuclearwinter.configuration.chunkProcessing.maxChunksPerInterval")
+                .defineInRange("maxChunksPerInterval", 32, 1, 256);
         BUILDER.pop();
     }
 
