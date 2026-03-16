@@ -27,3 +27,4 @@ run-data
 /src/generated/resources/.cache/
 /.cursor/
 .ai/
+.opencode
