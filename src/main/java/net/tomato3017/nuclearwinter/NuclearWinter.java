@@ -16,6 +16,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -77,6 +78,7 @@ public class NuclearWinter {
     public NuclearWinter(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(NuclearWinter::onGatherData);
+        modEventBus.addListener(this::onConfigReloading);
 
         CREATIVE_MODE_TABS.register(modEventBus);
         NWAttachmentTypes.ATTACHMENT_TYPES.register(modEventBus);
@@ -95,6 +97,18 @@ public class NuclearWinter {
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
         stageManager.init(event.getServer());
+        refreshBlockResolver();
+    }
+
+    private void onConfigReloading(ModConfigEvent.Reloading event) {
+        if (event.getConfig().getSpec() != Config.SPEC) {
+            return;
+        }
+
+        refreshBlockResolver();
+    }
+
+    private static void refreshBlockResolver() {
         BlockResolver.init();
         BlockResolver.registerBlockOverride(NWBlocks.LEAD_BLOCK.get(), Config.RESISTANCE_LEAD.get());
         BlockResolver.registerBlockOverride(NWBlocks.REINFORCED_CONCRETE.get(), Config.RESISTANCE_REINFORCED_CONCRETE.get());

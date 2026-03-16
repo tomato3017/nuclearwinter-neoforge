@@ -1,6 +1,8 @@
 package net.tomato3017.nuclearwinter.chunk;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
@@ -17,6 +19,7 @@ import java.util.HashSet;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.lang.reflect.Method;
 
 /**
  * Processes loaded chunks to degrade surface blocks based on the current stage index.
@@ -24,6 +27,8 @@ import java.util.concurrent.LinkedBlockingQueue;
  * {@link ChunkDataAttachment} so it is never re-processed on reload.
  */
 public final class ChunkProcessor {
+    private static final Method CHUNK_MAP_GET_CHUNKS_METHOD = resolveChunkMapGetChunksMethod();
+
     private final int stageIndex;
     private final boolean chunkNukingEnabled;
     private static final int COLUMNS_PER_TICK = 16;
@@ -35,12 +40,32 @@ public final class ChunkProcessor {
         this.stageIndex = stageIndex;
         this.chunkNukingEnabled = chunkNukingEnabled;
 
-        for (var chunk : level.getChunkSource().chunkMap.getChunks()) {
-            var tickingChunk = chunk.getTickingChunk();
+        for (ChunkHolder chunkHolder : getLoadedChunkHolders(level)) {
+            LevelChunk tickingChunk = chunkHolder.getTickingChunk();
             if (tickingChunk == null) continue;
 
-            loadedChunks.add(chunk.getPos());
-            chunks.add(chunk.getPos());
+            ChunkPos chunkPos = tickingChunk.getPos();
+            loadedChunks.add(chunkPos);
+            chunks.add(chunkPos);
+        }
+    }
+
+    private static Method resolveChunkMapGetChunksMethod() {
+        try {
+            Method method = ChunkMap.class.getDeclaredMethod("getChunks");
+            method.setAccessible(true);
+            return method;
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException("Failed to access ChunkMap#getChunks", exception);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Iterable<ChunkHolder> getLoadedChunkHolders(ServerLevel level) {
+        try {
+            return (Iterable<ChunkHolder>) CHUNK_MAP_GET_CHUNKS_METHOD.invoke(level.getChunkSource().chunkMap);
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException("Failed to enumerate loaded chunks for chunk processing", exception);
         }
     }
 
@@ -87,9 +112,6 @@ public final class ChunkProcessor {
         degradeRandomColumns(level, chunk);
     }
 
-    //TODO This will hit only the first block and stop for each column.
-    // I think we need to continue until we hit the first SOLID block or fluid.
-    // Meaning grass, leaves, etc just get deleted and moved on.
     public void nukeChunk(ServerLevel level, LevelChunk chunk) {
         int startX = chunk.getPos().getMinBlockX();
         int startZ = chunk.getPos().getMinBlockZ();
@@ -124,13 +146,28 @@ public final class ChunkProcessor {
             pos.setY(y);
             BlockState state = level.getBlockState(pos);
 
-            if (!state.isAir()) {
-                Block degraded = BlockResolver.getDegradedBlock(state, stageIndex);
-                if (degraded != null) {
-                    level.setBlock(pos, degraded.defaultBlockState(), Block.UPDATE_ALL_IMMEDIATE);
-                }
+            if (state.isAir()) {
+                continue;
+            }
+
+            if (Config.CHUNK_PROCESSING_STOP_AT_FLUIDS.get() && !state.getFluidState().isEmpty()) {
                 break;
             }
+
+            BlockResolver.DegradationResult degradation = BlockResolver.getDegradationResult(state, stageIndex);
+            if (degradation != null) {
+                if (state.getBlock() != degradation.replacement()) {
+                    level.setBlock(pos, degradation.replacement().defaultBlockState(), Block.UPDATE_ALL_IMMEDIATE);
+                }
+
+                if (!degradation.passthrough()) {
+                    break;
+                }
+
+                continue;
+            }
+
+            break;
         }
     }
 }
