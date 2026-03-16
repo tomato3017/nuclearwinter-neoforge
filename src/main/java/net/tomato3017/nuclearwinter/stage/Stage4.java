@@ -16,7 +16,7 @@ public class Stage4 extends StageBase {
     @Override
     public void init(ServerLevel level, long currentTick) {
         super.init(level, currentTick);
-        chunkProcessor = new ChunkProcessor(stageIndex, true);
+        chunkProcessor = new ChunkProcessor(stageIndex, level, true);
     }
 
     @Override

@@ -31,9 +31,17 @@ public final class ChunkProcessor {
     private final Set<ChunkPos> loadedChunks = new HashSet<>();
     private final Queue<ChunkPos> chunks = new LinkedBlockingQueue<>();
 
-    public ChunkProcessor(int stageIndex, boolean chunkNukingEnabled) {
+    public ChunkProcessor(int stageIndex, ServerLevel level, boolean chunkNukingEnabled) {
         this.stageIndex = stageIndex;
         this.chunkNukingEnabled = chunkNukingEnabled;
+
+        for (var chunk : level.getChunkSource().chunkMap.getChunks()) {
+            var tickingChunk = chunk.getTickingChunk();
+            if (tickingChunk == null) continue;
+
+            loadedChunks.add(chunk.getPos());
+            chunks.add(chunk.getPos());
+        }
     }
 
     public void loadChunk(ChunkPos chunkPos) {
