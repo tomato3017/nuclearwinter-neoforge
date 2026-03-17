@@ -15,11 +15,11 @@ import net.tomato3017.nuclearwinter.data.ChunkDataAttachment;
 import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
 import net.tomato3017.nuclearwinter.radiation.BlockResolver;
 
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.lang.reflect.Method;
 
 /**
  * Processes loaded chunks to degrade surface blocks based on the current stage index.
@@ -41,10 +41,7 @@ public final class ChunkProcessor {
         this.chunkNukingEnabled = chunkNukingEnabled;
 
         for (ChunkHolder chunkHolder : getLoadedChunkHolders(level)) {
-            LevelChunk tickingChunk = chunkHolder.getTickingChunk();
-            if (tickingChunk == null) continue;
-
-            ChunkPos chunkPos = tickingChunk.getPos();
+            ChunkPos chunkPos = chunkHolder.getPos();
             loadedChunks.add(chunkPos);
             chunks.add(chunkPos);
         }
