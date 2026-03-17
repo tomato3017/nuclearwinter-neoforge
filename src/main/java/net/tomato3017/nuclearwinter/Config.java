@@ -61,8 +61,11 @@ public class Config {
     public static final ModConfigSpec.IntValue CHUNK_PROCESSING_INTERVAL_TICKS;
     public static final ModConfigSpec.IntValue CHUNK_PROCESSING_MAX_CHUNKS_PER_INTERVAL;
     public static final ModConfigSpec.BooleanValue CHUNK_PROCESSING_STOP_AT_FLUIDS;
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> CHUNK_PROCESSING_STAGE2_OPTIONS;
     public static final ModConfigSpec.ConfigValue<String> CHUNK_PROCESSING_STAGE2_RULES;
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> CHUNK_PROCESSING_STAGE3_OPTIONS;
     public static final ModConfigSpec.ConfigValue<String> CHUNK_PROCESSING_STAGE3_RULES;
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> CHUNK_PROCESSING_STAGE4_OPTIONS;
     public static final ModConfigSpec.ConfigValue<String> CHUNK_PROCESSING_STAGE4_RULES;
 
     static {
@@ -209,6 +212,12 @@ public class Config {
         CHUNK_PROCESSING_STOP_AT_FLUIDS = BUILDER.comment("Whether chunk degradation should stop when it hits a fluid block")
                 .translation("nuclearwinter.configuration.chunkProcessing.stopAtFluids")
                 .define("stopAtFluids", true);
+        CHUNK_PROCESSING_STAGE2_OPTIONS = BUILDER.comment(
+                        "Stage 2 chunk degradation options.",
+                        "Use entries like inherit=false.",
+                        "Stage 2 does not inherit from any previous stage, so inherit=true is ignored.")
+                .translation("nuclearwinter.configuration.chunkProcessing.stage2Options")
+                .defineList("stage2Options", Config::defaultStage2Options, Config::defaultStageOption, Config::isStringListValue);
         CHUNK_PROCESSING_STAGE2_RULES = BUILDER.comment(
                         "Ordered Stage 2 degradation rules, one rule per line.",
                         "Format: matcher -> replacement",
@@ -218,6 +227,12 @@ public class Config {
                         "Blank lines are ignored.")
                 .translation("nuclearwinter.configuration.chunkProcessing.stage2Rules")
                 .define("stage2Rules", Config::defaultStage2Rules, value -> value instanceof String);
+        CHUNK_PROCESSING_STAGE3_OPTIONS = BUILDER.comment(
+                        "Stage 3 chunk degradation options.",
+                        "Use entries like inherit=false.",
+                        "Stage 3 inherits the previous stage's effective rules by default.")
+                .translation("nuclearwinter.configuration.chunkProcessing.stage3Options")
+                .defineList("stage3Options", Config::defaultStage3Options, Config::defaultStageOption, Config::isStringListValue);
         CHUNK_PROCESSING_STAGE3_RULES = BUILDER.comment(
                         "Ordered Stage 3 degradation rules, one rule per line.",
                         "Format: matcher -> replacement",
@@ -227,6 +242,12 @@ public class Config {
                         "Blank lines are ignored.")
                 .translation("nuclearwinter.configuration.chunkProcessing.stage3Rules")
                 .define("stage3Rules", Config::defaultStage3Rules, value -> value instanceof String);
+        CHUNK_PROCESSING_STAGE4_OPTIONS = BUILDER.comment(
+                        "Stage 4 chunk degradation options.",
+                        "Use entries like inherit=false.",
+                        "Stage 4 inherits the previous stage's effective rules by default.")
+                .translation("nuclearwinter.configuration.chunkProcessing.stage4Options")
+                .defineList("stage4Options", Config::defaultStage4Options, Config::defaultStageOption, Config::isStringListValue);
         CHUNK_PROCESSING_STAGE4_RULES = BUILDER.comment(
                         "Ordered Stage 4 degradation rules, one rule per line.",
                         "Format: matcher -> replacement",
@@ -240,6 +261,26 @@ public class Config {
     }
 
     static final ModConfigSpec SPEC = BUILDER.build();
+
+    private static List<? extends String> defaultStage2Options() {
+        return List.of();
+    }
+
+    private static List<? extends String> defaultStage3Options() {
+        return List.of();
+    }
+
+    private static List<? extends String> defaultStage4Options() {
+        return List.of();
+    }
+
+    private static String defaultStageOption() {
+        return "inherit=false";
+    }
+
+    private static boolean isStringListValue(Object value) {
+        return value instanceof String;
+    }
 
     private static List<String> defaultPlantRemovalRulesNoPassthrough() {
         return List.of(
@@ -300,7 +341,7 @@ public class Config {
     }
 
     private static String defaultStage3Rules() {
-        return defaultStage2Rules();
+        return "";
     }
 
     private static String defaultStage4Rules() {

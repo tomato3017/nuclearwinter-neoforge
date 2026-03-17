@@ -14,10 +14,12 @@ import net.tomato3017.nuclearwinter.NuclearWinter;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Maps blocks and block tags to radiation resistance values loaded from {@link Config}.
@@ -55,9 +57,27 @@ public class BlockResolver {
         newBlockOverrides.put(Blocks.WATER, Config.RESISTANCE_WATER.get());
         newBlockOverrides.put(Blocks.GRAVEL, Config.RESISTANCE_DIRT.get());
 
-        List<DegradationRule> newStage2Rules = parseDegradationRules(Config.CHUNK_PROCESSING_STAGE2_RULES, "chunkProcessing.stage2Rules");
-        List<DegradationRule> newStage3Rules = parseDegradationRules(Config.CHUNK_PROCESSING_STAGE3_RULES, "chunkProcessing.stage3Rules");
-        List<DegradationRule> newStage4Rules = parseDegradationRules(Config.CHUNK_PROCESSING_STAGE4_RULES, "chunkProcessing.stage4Rules");
+        StageOptions stage2Options = parseStageOptions(Config.CHUNK_PROCESSING_STAGE2_OPTIONS, "chunkProcessing.stage2Options", false);
+        StageOptions stage3Options = parseStageOptions(Config.CHUNK_PROCESSING_STAGE3_OPTIONS, "chunkProcessing.stage3Options", true);
+        StageOptions stage4Options = parseStageOptions(Config.CHUNK_PROCESSING_STAGE4_OPTIONS, "chunkProcessing.stage4Options", true);
+
+        if (stage2Options.inheritPrevious()) {
+            warnInvalidStageOption("chunkProcessing.stage2Options", "inherit=true", "Stage 2 cannot inherit from a previous stage");
+            stage2Options = new StageOptions(false);
+        }
+
+        List<DegradationRule> newStage2Rules = buildEffectiveRules(
+                parseDegradationRules(Config.CHUNK_PROCESSING_STAGE2_RULES, "chunkProcessing.stage2Rules"),
+                List.of(),
+                stage2Options.inheritPrevious());
+        List<DegradationRule> newStage3Rules = buildEffectiveRules(
+                parseDegradationRules(Config.CHUNK_PROCESSING_STAGE3_RULES, "chunkProcessing.stage3Rules"),
+                newStage2Rules,
+                stage3Options.inheritPrevious());
+        List<DegradationRule> newStage4Rules = buildEffectiveRules(
+                parseDegradationRules(Config.CHUNK_PROCESSING_STAGE4_RULES, "chunkProcessing.stage4Rules"),
+                newStage3Rules,
+                stage4Options.inheritPrevious());
 
         defaultResistance = newDefaultResistance;
         tagResistanceMap = Collections.unmodifiableMap(newTagResistanceMap);
@@ -79,6 +99,59 @@ public class BlockResolver {
             parsedRule.ifPresent(rules::add);
         }
         return rules;
+    }
+
+    private static StageOptions parseStageOptions(ModConfigSpec.ConfigValue<List<? extends String>> configValue, String configPath, boolean defaultInheritPrevious) {
+        boolean inheritPrevious = defaultInheritPrevious;
+        for (String rawOption : configValue.get()) {
+            String option = rawOption == null ? "" : rawOption.trim();
+            if (option.isEmpty()) {
+                warnInvalidStageOption(configPath, String.valueOf(rawOption), "option is empty");
+                continue;
+            }
+
+            int equalsIndex = option.indexOf('=');
+            if (equalsIndex < 0) {
+                warnInvalidStageOption(configPath, rawOption, "missing '='");
+                continue;
+            }
+
+            String key = option.substring(0, equalsIndex).trim();
+            String value = option.substring(equalsIndex + 1).trim();
+            if (key.equals("inherit")) {
+                if (!value.equals("true") && !value.equals("false")) {
+                    warnInvalidStageOption(configPath, rawOption, "inherit must be true or false");
+                    continue;
+                }
+
+                inheritPrevious = Boolean.parseBoolean(value);
+            } else {
+                warnInvalidStageOption(configPath, rawOption, "unknown option '" + key + "'");
+            }
+        }
+
+        return new StageOptions(inheritPrevious);
+    }
+
+    private static List<DegradationRule> buildEffectiveRules(List<DegradationRule> currentRules, List<DegradationRule> inheritedRules, boolean inheritPrevious) {
+        if (!inheritPrevious || inheritedRules.isEmpty()) {
+            return currentRules;
+        }
+
+        List<DegradationRule> effectiveRules = new ArrayList<>(currentRules);
+        Set<Matcher> seenMatchers = new LinkedHashSet<>();
+        for (DegradationRule rule : currentRules) {
+            seenMatchers.add(rule.matcher());
+        }
+
+        // First-match-wins means a current-stage matcher completely overrides any inherited matcher-equivalent rule.
+        for (DegradationRule inheritedRule : inheritedRules) {
+            if (seenMatchers.add(inheritedRule.matcher())) {
+                effectiveRules.add(inheritedRule);
+            }
+        }
+
+        return effectiveRules;
     }
 
     private static Optional<DegradationRule> parseDegradationRule(String rawRule, String configPath) {
@@ -208,6 +281,10 @@ public class BlockResolver {
         NuclearWinter.LOGGER.warn("Skipping invalid chunk degradation rule in {}: '{}' ({})", configPath, rawRule, reason);
     }
 
+    private static void warnInvalidStageOption(String configPath, String rawOption, String reason) {
+        NuclearWinter.LOGGER.warn("Skipping invalid chunk degradation option in {}: '{}' ({})", configPath, rawOption, reason);
+    }
+
     public static DegradationResult getDegradationResult(BlockState state, int stageIndex) {
         List<DegradationRule> rules;
         if (stageIndex >= 5) {
@@ -270,6 +347,9 @@ public class BlockResolver {
     }
 
     public record DegradationResult(Block replacement, boolean passthrough) {
+    }
+
+    private record StageOptions(boolean inheritPrevious) {
     }
 
     private interface Matcher {
