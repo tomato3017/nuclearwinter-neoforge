@@ -2,6 +2,7 @@ package net.tomato3017.nuclearwinter.block;
 
 import net.tomato3017.nuclearwinter.NuclearWinter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -35,9 +36,9 @@ public class NWBlocks {
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(1.5f, 6.0f).sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<Block> DEADWOOD = BLOCKS.registerSimpleBlock("deadwood",
-            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GRAY)
-                    .strength(2.0f).sound(SoundType.WOOD));
+    public static final DeferredBlock<RotatedPillarBlock> DEADWOOD = BLOCKS.register("deadwood",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GRAY)
+                    .strength(2.0f).sound(SoundType.WOOD)));
 
     public static final DeferredBlock<Block> RUINED_PLANKS = BLOCKS.registerSimpleBlock("ruined_planks",
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(2.0f, 3.0f)

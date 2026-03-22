@@ -39,3 +39,8 @@ Key versions are in `gradle.properties`: Minecraft 1.21.1, NeoForge 21.1.219, Ja
 **Mixin support:** Configured via `src/main/resources/nuclearwinter.mixins.json`. Add mixin classes under the `mixins` package and register them there.
 
 **Mod metadata:** `src/main/templates/META-INF/neoforge.mods.toml` is a template processed by Gradle using values from `gradle.properties`. Edit metadata (description, dependencies, version range) there, not in the output file.
+
+## Repo Rules
+
+- Don't worry about backwards compatibility. This is an indev mod.
+- Don't touch the gradle files ever unless asked.

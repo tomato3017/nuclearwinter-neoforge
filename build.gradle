@@ -197,6 +197,26 @@ tasks.register('cleanRunServer') {
     finalizedBy tasks.named('runServer')
 }
 
+def exportResourcePackTemplate = tasks.register('exportResourcePackTemplate', Zip) {
+    group = 'build'
+    description = 'Packages the resourcepack-template folder into a distributable zip.'
+
+    def packDir = layout.projectDirectory.dir('resourcepack-template')
+    from(packDir)
+    archiveFileName = 'nuclearwinter-resourcepack-template.zip'
+    destinationDirectory = layout.buildDirectory.dir('resourcepacks')
+
+    doFirst {
+        if (!packDir.asFile.exists()) {
+            throw new GradleException("Missing resource pack template at ${packDir.asFile}")
+        }
+    }
+}
+
+tasks.named('assemble').configure {
+    dependsOn(exportResourcePackTemplate)
+}
+
 // IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
 idea {
     module {

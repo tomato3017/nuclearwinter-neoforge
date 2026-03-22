@@ -1,6 +1,8 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_bottom_top",
   "textures": {
-    "all": "nuclearwinter:block/dead_grass"
+    "bottom": "nuclearwinter:block/dead_grass_bottom",
+    "side": "nuclearwinter:block/dead_grass_side",
+    "top": "nuclearwinter:block/dead_grass_top"
   }
 }

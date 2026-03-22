@@ -9,6 +9,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.tomato3017.nuclearwinter.util.SampleWorldInstaller;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
 @Mod(value = NuclearWinter.MODID, dist = Dist.CLIENT)
@@ -27,5 +28,6 @@ public class NuclearWinterClient {
         // Some client setup code
         NuclearWinter.LOGGER.info("HELLO FROM CLIENT SETUP");
         NuclearWinter.LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+        SampleWorldInstaller.install();
     }
 }

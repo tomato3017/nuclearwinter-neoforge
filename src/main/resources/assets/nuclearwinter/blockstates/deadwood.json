@@ -1,5 +1,7 @@
 {
   "variants": {
-    "": { "model": "nuclearwinter:block/deadwood" }
+    "axis=x": { "model": "nuclearwinter:block/deadwood", "x": 90, "y": 90 },
+    "axis=y": { "model": "nuclearwinter:block/deadwood" },
+    "axis=z": { "model": "nuclearwinter:block/deadwood", "x": 90 }
   }
 }

@@ -1,6 +1,7 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_column",
   "textures": {
-    "all": "nuclearwinter:block/deadwood"
+    "end": "nuclearwinter:block/deadwood_top",
+    "side": "nuclearwinter:block/deadwood_side"
   }
 }

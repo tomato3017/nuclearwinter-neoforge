@@ -29,3 +29,5 @@ run-data
 .ai/
 .opencode
 .worktrees/
+.samples-nw
+.agents
