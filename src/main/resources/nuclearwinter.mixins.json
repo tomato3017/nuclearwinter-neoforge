@@ -2,7 +2,9 @@
   "required": true,
   "package": "net.tomato3017.nuclearwinter.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
+  "mixins": [
+    "GrassSpreadMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   },

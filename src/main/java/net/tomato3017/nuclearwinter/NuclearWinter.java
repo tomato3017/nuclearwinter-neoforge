@@ -22,6 +22,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -34,10 +35,12 @@ import net.tomato3017.nuclearwinter.block.NWBlocks;
 import net.tomato3017.nuclearwinter.command.DebugCommand;
 import net.tomato3017.nuclearwinter.command.NuclearWinterCommand;
 import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
+import net.tomato3017.nuclearwinter.data.PlayerDataAttachment;
 import net.tomato3017.nuclearwinter.datagen.NWBlockTagsProvider;
 import net.tomato3017.nuclearwinter.item.NWItems;
 import net.tomato3017.nuclearwinter.radiation.BlockResolver;
 import net.tomato3017.nuclearwinter.radiation.PlayerRadHandler;
+import net.tomato3017.nuclearwinter.radiation.RadiationTier;
 import net.tomato3017.nuclearwinter.stage.StageBase;
 import net.tomato3017.nuclearwinter.stage.StageManager;
 import org.slf4j.Logger;
@@ -168,6 +171,30 @@ public class NuclearWinter {
         }
 
 
+    }
+
+    @SubscribeEvent
+    public void onPlayerHeal(LivingHealEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+
+        PlayerDataAttachment data = player.getData(NWAttachmentTypes.PLAYER_DATA);
+        RadiationTier tier = RadiationTier.fromPool(data.radiationPool(), Config.PLAYER_POOL_MAX.get());
+
+        switch (tier) {
+            case CONTAMINATED:
+                event.setAmount(event.getAmount() * 0.75f);
+                break;
+            case IRRADIATED:
+                event.setAmount(event.getAmount() * 0.25f);
+                break;
+            case POISONED:
+            case CRITICAL:
+            case FATAL:
+                event.setCanceled(true);
+                break;
+            default:
+                break;
+        }
     }
 
     @SubscribeEvent

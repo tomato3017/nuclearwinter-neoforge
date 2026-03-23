@@ -97,5 +97,12 @@
   "nuclearwinter.configuration.blockResistance.water": "Water Resistance",
   "nuclearwinter.configuration.blockResistance.water.tooltip": "Water radiation resistance modifier.",
   "nuclearwinter.configuration.blockResistance.lead": "Lead Resistance",
-  "nuclearwinter.configuration.blockResistance.lead.tooltip": "Lead block radiation resistance modifier."
+  "nuclearwinter.configuration.blockResistance.lead.tooltip": "Lead block radiation resistance modifier.",
+
+  "nuclearwinter.tier.clean": "Clean",
+  "nuclearwinter.tier.contaminated": "Contaminated",
+  "nuclearwinter.tier.irradiated": "Irradiated",
+  "nuclearwinter.tier.poisoned": "Poisoned",
+  "nuclearwinter.tier.critical": "Critical",
+  "nuclearwinter.tier.fatal": "Fatal"
 }

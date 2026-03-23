@@ -6,6 +6,7 @@ import net.tomato3017.nuclearwinter.Config;
 import net.tomato3017.nuclearwinter.NuclearWinter;
 import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
 import net.tomato3017.nuclearwinter.data.PlayerDataAttachment;
+import net.tomato3017.nuclearwinter.effects.EffectsGenerator;
 import net.tomato3017.nuclearwinter.stage.StageBase;
 
 /**
@@ -45,6 +46,9 @@ public class PlayerRadHandler {
         }
 
         player.setData(NWAttachmentTypes.PLAYER_DATA, data.withRadiationPool(pool));
+
+        RadiationTier tier = RadiationTier.fromPool(pool, poolMax);
+        EffectsGenerator.applyPlayerEffects(player, tier, interval);
     }
 
     private static double getExposure(ServerPlayer player, double skyEmission, long currentTick) {

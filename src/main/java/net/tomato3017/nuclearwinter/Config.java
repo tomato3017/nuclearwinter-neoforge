@@ -31,6 +31,9 @@ public class Config {
     public static final ModConfigSpec.DoubleValue PLAYER_POOL_MAX;
     public static final ModConfigSpec.DoubleValue PASSIVE_DRAIN_RATE;
 
+    // --- Misc ---
+    public static final ModConfigSpec.DoubleValue FATAL_RADIATION_DAMAGE_PER_SEC;
+
     // --- Thresholds (percent of pool max) ---
     public static final ModConfigSpec.DoubleValue THRESHOLD_CONTAMINATED;
     public static final ModConfigSpec.DoubleValue THRESHOLD_IRRADIATED;
@@ -198,6 +201,14 @@ public class Config {
         RESISTANCE_LEAD = BUILDER.comment("Lead block radiation resistance modifier")
                 .translation("nuclearwinter.configuration.blockResistance.lead")
                 .defineInRange("lead", 16.0, 0.01, 100.0);
+        BUILDER.pop();
+
+        BUILDER.comment("Miscellaneous settings.")
+                .translation("nuclearwinter.configuration.misc")
+                .push("misc");
+        FATAL_RADIATION_DAMAGE_PER_SEC = BUILDER.comment("Damage per second for FATAL tier radiation")
+                .translation("nuclearwinter.configuration.misc.fatalDamagePerSec")
+                .defineInRange("fatalDamagePerSec", 4.0, 0.01, 100.0);
         BUILDER.pop();
 
         BUILDER.comment("Controls how chunk degradation processing is scheduled.")
