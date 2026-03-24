@@ -12,6 +12,27 @@
   "block.nuclearwinter.lead_block": "Lead Block",
   "block.nuclearwinter.reinforced_concrete": "Reinforced Concrete",
 
+  "item.nuclearwinter.radaway": "RadAway",
+  "item.nuclearwinter.geiger_counter": "Geiger Counter",
+  "item.nuclearwinter.dosimeter": "Dosimeter",
+
+  "item.nuclearwinter.hazmat.rad_protection": "☢ Rad Protection: %s%%",
+
+  "item.nuclearwinter.hazmat_t1_helmet": "Hazmat Suit Mk.I Helmet",
+  "item.nuclearwinter.hazmat_t1_chestplate": "Hazmat Suit Mk.I Chestplate",
+  "item.nuclearwinter.hazmat_t1_leggings": "Hazmat Suit Mk.I Leggings",
+  "item.nuclearwinter.hazmat_t1_boots": "Hazmat Suit Mk.I Boots",
+  "item.nuclearwinter.hazmat_t2_helmet": "Hazmat Suit Mk.II Helmet",
+  "item.nuclearwinter.hazmat_t2_chestplate": "Hazmat Suit Mk.II Chestplate",
+  "item.nuclearwinter.hazmat_t2_leggings": "Hazmat Suit Mk.II Leggings",
+  "item.nuclearwinter.hazmat_t2_boots": "Hazmat Suit Mk.II Boots",
+  "item.nuclearwinter.hazmat_t3_helmet": "Hazmat Suit Mk.III Helmet",
+  "item.nuclearwinter.hazmat_t3_chestplate": "Hazmat Suit Mk.III Chestplate",
+  "item.nuclearwinter.hazmat_t3_leggings": "Hazmat Suit Mk.III Leggings",
+  "item.nuclearwinter.hazmat_t3_boots": "Hazmat Suit Mk.III Boots",
+
+  "effect.nuclearwinter.radaway": "RadAway",
+
   "nuclearwinter.configuration.title": "NuclearWinter Configs",
   "nuclearwinter.configuration.section.nuclearwinter.common.toml": "NuclearWinter Configs",
   "nuclearwinter.configuration.section.nuclearwinter.common.toml.title": "NuclearWinter Configs",

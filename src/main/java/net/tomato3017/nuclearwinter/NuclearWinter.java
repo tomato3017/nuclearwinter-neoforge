@@ -37,6 +37,7 @@ import net.tomato3017.nuclearwinter.command.NuclearWinterCommand;
 import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
 import net.tomato3017.nuclearwinter.data.PlayerDataAttachment;
 import net.tomato3017.nuclearwinter.datagen.NWBlockTagsProvider;
+import net.tomato3017.nuclearwinter.effects.NWMobEffects;
 import net.tomato3017.nuclearwinter.item.NWItems;
 import net.tomato3017.nuclearwinter.radiation.BlockResolver;
 import net.tomato3017.nuclearwinter.radiation.PlayerRadHandler;
@@ -76,6 +77,21 @@ public class NuclearWinter {
                         output.accept(NWItems.RUINED_PLANKS.get());
                         output.accept(NWItems.LEAD_BLOCK.get());
                         output.accept(NWItems.REINFORCED_CONCRETE.get());
+                        output.accept(NWItems.RADAWAY.get());
+                        output.accept(NWItems.GEIGER_COUNTER.get());
+                        output.accept(NWItems.DOSIMETER.get());
+                        output.accept(NWItems.HAZMAT_T1_HELMET.get());
+                        output.accept(NWItems.HAZMAT_T1_CHESTPLATE.get());
+                        output.accept(NWItems.HAZMAT_T1_LEGGINGS.get());
+                        output.accept(NWItems.HAZMAT_T1_BOOTS.get());
+                        output.accept(NWItems.HAZMAT_T2_HELMET.get());
+                        output.accept(NWItems.HAZMAT_T2_CHESTPLATE.get());
+                        output.accept(NWItems.HAZMAT_T2_LEGGINGS.get());
+                        output.accept(NWItems.HAZMAT_T2_BOOTS.get());
+                        output.accept(NWItems.HAZMAT_T3_HELMET.get());
+                        output.accept(NWItems.HAZMAT_T3_CHESTPLATE.get());
+                        output.accept(NWItems.HAZMAT_T3_LEGGINGS.get());
+                        output.accept(NWItems.HAZMAT_T3_BOOTS.get());
                     }).build());
 
     public NuclearWinter(IEventBus modEventBus, ModContainer modContainer) {
@@ -87,6 +103,7 @@ public class NuclearWinter {
         NWAttachmentTypes.ATTACHMENT_TYPES.register(modEventBus);
         NWBlocks.BLOCKS.register(modEventBus);
         NWItems.ITEMS.register(modEventBus);
+        NWMobEffects.MOB_EFFECTS.register(modEventBus);
 
         NeoForge.EVENT_BUS.register(this);
 
