@@ -1,6 +1,7 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/leaves",
+  "render_type": "minecraft:cutout_mipped",
   "textures": {
-    "all": "nuclearwinter:block/dead_leaves"
+    "all": "minecraft:block/oak_leaves"
   }
 }
