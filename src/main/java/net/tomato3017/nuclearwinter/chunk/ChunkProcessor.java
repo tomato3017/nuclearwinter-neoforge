@@ -1,22 +1,30 @@
 package net.tomato3017.nuclearwinter.chunk;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.LevelChunkSection;
+import net.minecraft.world.level.chunk.PalettedContainer;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.tomato3017.nuclearwinter.Config;
 import net.tomato3017.nuclearwinter.NuclearWinter;
+import net.tomato3017.nuclearwinter.biome.NWBiomes;
 import net.tomato3017.nuclearwinter.data.ChunkDataAttachment;
 import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
 import net.tomato3017.nuclearwinter.radiation.BlockResolver;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -119,9 +127,55 @@ public final class ChunkProcessor {
             }
         }
 
+        setBiomeForChunk(level, chunk);
+        resyncChunkBiomes(level, chunk);
+
         chunk.setData(NWAttachmentTypes.CHUNK_DATA, new ChunkDataAttachment(true));
         chunk.setUnsaved(true);
         NuclearWinter.LOGGER.debug("Nuked chunk at [{}, {}]", chunk.getPos().x, chunk.getPos().z);
+    }
+
+    /**
+     * Overwrites the biome palette to wasteland for all chunk sections at or above the lowest
+     * sky-exposed surface Y in the chunk. Sections below that threshold (caves, deep underground)
+     * keep their original biome.
+     */
+    private void setBiomeForChunk(ServerLevel level, LevelChunk chunk) {
+        Registry<Biome> biomeRegistry = level.registryAccess().registryOrThrow(Registries.BIOME);
+        Holder<Biome> wasteland = biomeRegistry.getHolderOrThrow(NWBiomes.WASTELAND);
+
+        int startX = chunk.getPos().getMinBlockX();
+        int startZ = chunk.getPos().getMinBlockZ();
+
+        // Find the lowest surface Y across all 256 columns so caves beneath stay untouched.
+        int minSurfaceY = Integer.MAX_VALUE;
+        for (int dx = 0; dx < 16; dx++) {
+            for (int dz = 0; dz < 16; dz++) {
+                int surfaceY = level.getHeight(Heightmap.Types.WORLD_SURFACE, startX + dx, startZ + dz);
+                if (surfaceY < minSurfaceY) {
+                    minSurfaceY = surfaceY;
+                }
+            }
+        }
+
+        int minSectionIndex = Math.max(0, (minSurfaceY - chunk.getMinBuildHeight()) / 16);
+        LevelChunkSection[] sections = chunk.getSections();
+        for (int i = minSectionIndex; i < sections.length; i++) {
+            LevelChunkSection section = sections[i];
+            if (section == null) continue;
+            if (!(section.getBiomes() instanceof PalettedContainer<Holder<Biome>> biomes)) continue;
+            for (int bx = 0; bx < 4; bx++) {
+                for (int by = 0; by < 4; by++) {
+                    for (int bz = 0; bz < 4; bz++) {
+                        biomes.set(bx, by, bz, wasteland);
+                    }
+                }
+            }
+        }
+    }
+
+    private void resyncChunkBiomes(ServerLevel level, LevelChunk chunk) {
+        level.getChunkSource().chunkMap.resendBiomesForChunks(List.of(chunk));
     }
 
     private void degradeRandomColumns(ServerLevel level, LevelChunk chunk) {
