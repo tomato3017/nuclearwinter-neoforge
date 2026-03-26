@@ -64,7 +64,7 @@ public class NuclearWinterCommand {
         ServerLevel level = DimensionArgument.getDimension(ctx, "dimension");
         StageManager mgr = NuclearWinter.getStageManager();
         StageBase current = mgr.getStageForWorld(level.dimension());
-        if (current != null && current.getStageIndex() > 0) {
+        if (current != null && current.getStageType() != StageType.INACTIVE) {
             ctx.getSource().sendFailure(Component.literal("Apocalypse already active in " + level.dimension().location()));
             return 0;
         }

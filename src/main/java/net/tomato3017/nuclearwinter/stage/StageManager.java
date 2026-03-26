@@ -99,7 +99,7 @@ public class StageManager {
     public void startApocalypse(ServerLevel level) {
         ResourceKey<Level> dimKey = level.dimension();
         StageBase currentStage = activeStages.get(dimKey);
-        if (currentStage != null && currentStage.getStageIndex() > 0) {
+        if (currentStage != null && currentStage.getStageType() != StageType.INACTIVE) {
             return;
         }
         setStage(level, StageType.GRACE_PERIOD.getIndex());

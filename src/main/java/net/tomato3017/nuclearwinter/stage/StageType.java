@@ -26,6 +26,10 @@ public enum StageType {
     public String getDisplayName() { return displayName; }
     public StageBase create()      { return factory.get(); }
 
+    public boolean isAtLeast(StageType other) {
+        return this.index >= other.index;
+    }
+
     public static StageType fromIndex(int index) {
         for (StageType t : values()) if (t.index == index) return t;
         throw new IllegalArgumentException("Unknown stage index: " + index);

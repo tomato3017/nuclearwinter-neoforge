@@ -14,6 +14,7 @@ public class EffectsGenerator {
     private static final int DARKNESS_DURATION = 200;
 
     public static void applyPlayerEffects(ServerPlayer player, RadiationTier tier, int interval) {
+        if (player.gameMode.isCreative()) return;
         switch (tier) {
             case FATAL -> {
                 applyDamage(player, Config.FATAL_RADIATION_DAMAGE_PER_SEC.get().floatValue(), interval);

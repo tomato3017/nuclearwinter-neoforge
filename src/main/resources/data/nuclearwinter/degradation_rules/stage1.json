@@ -1,0 +1,19 @@
+{
+  "inherit": false,
+  "rules": [
+    {
+      "match": "#minecraft:leaves",
+      "replacement": "nuclearwinter:dead_leaves",
+      "probability": 0.1
+    },
+    {
+      "match": "nuclearwinter:dead_leaves",
+      "passthrough": true
+    },
+    {
+      "match": "minecraft:grass_block",
+      "replacement": "nuclearwinter:dead_grass",
+      "probability": 0.1
+    }
+  ]
+}

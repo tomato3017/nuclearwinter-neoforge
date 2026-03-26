@@ -21,6 +21,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
@@ -34,6 +35,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.tomato3017.nuclearwinter.block.NWBlocks;
 import net.tomato3017.nuclearwinter.command.DebugCommand;
 import net.tomato3017.nuclearwinter.command.NuclearWinterCommand;
+import net.tomato3017.nuclearwinter.data.DegradationRuleLoader;
 import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
 import net.tomato3017.nuclearwinter.data.PlayerDataAttachment;
 import net.tomato3017.nuclearwinter.datagen.NWBlockTagsProvider;
@@ -212,6 +214,11 @@ public class NuclearWinter {
             default:
                 break;
         }
+    }
+
+    @SubscribeEvent
+    public void onAddReloadListeners(AddReloadListenerEvent event) {
+        event.addListener(new DegradationRuleLoader());
     }
 
     @SubscribeEvent

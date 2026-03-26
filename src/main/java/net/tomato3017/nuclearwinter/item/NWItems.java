@@ -36,31 +36,31 @@ public class NWItems {
 
     // --- Hazmat Tier 1 ---
     public static final DeferredItem<ArmorItem> HAZMAT_T1_HELMET = ITEMS.register("hazmat_t1_helmet",
-            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER1, ArmorItem.Type.HELMET, new Item.Properties(), 1));
+            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER1, ArmorItem.Type.HELMET, new Item.Properties(), HazmatTier.TIER_1));
     public static final DeferredItem<ArmorItem> HAZMAT_T1_CHESTPLATE = ITEMS.register("hazmat_t1_chestplate",
-            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER1, ArmorItem.Type.CHESTPLATE, new Item.Properties(), 1));
+            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER1, ArmorItem.Type.CHESTPLATE, new Item.Properties(), HazmatTier.TIER_1));
     public static final DeferredItem<ArmorItem> HAZMAT_T1_LEGGINGS = ITEMS.register("hazmat_t1_leggings",
-            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER1, ArmorItem.Type.LEGGINGS, new Item.Properties(), 1));
+            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER1, ArmorItem.Type.LEGGINGS, new Item.Properties(), HazmatTier.TIER_1));
     public static final DeferredItem<ArmorItem> HAZMAT_T1_BOOTS = ITEMS.register("hazmat_t1_boots",
-            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER1, ArmorItem.Type.BOOTS, new Item.Properties(), 1));
+            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER1, ArmorItem.Type.BOOTS, new Item.Properties(), HazmatTier.TIER_1));
 
     // --- Hazmat Tier 2 ---
     public static final DeferredItem<ArmorItem> HAZMAT_T2_HELMET = ITEMS.register("hazmat_t2_helmet",
-            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER2, ArmorItem.Type.HELMET, new Item.Properties(), 2));
+            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER2, ArmorItem.Type.HELMET, new Item.Properties(), HazmatTier.TIER_2));
     public static final DeferredItem<ArmorItem> HAZMAT_T2_CHESTPLATE = ITEMS.register("hazmat_t2_chestplate",
-            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER2, ArmorItem.Type.CHESTPLATE, new Item.Properties(), 2));
+            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER2, ArmorItem.Type.CHESTPLATE, new Item.Properties(), HazmatTier.TIER_2));
     public static final DeferredItem<ArmorItem> HAZMAT_T2_LEGGINGS = ITEMS.register("hazmat_t2_leggings",
-            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER2, ArmorItem.Type.LEGGINGS, new Item.Properties(), 2));
+            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER2, ArmorItem.Type.LEGGINGS, new Item.Properties(), HazmatTier.TIER_2));
     public static final DeferredItem<ArmorItem> HAZMAT_T2_BOOTS = ITEMS.register("hazmat_t2_boots",
-            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER2, ArmorItem.Type.BOOTS, new Item.Properties(), 2));
+            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER2, ArmorItem.Type.BOOTS, new Item.Properties(), HazmatTier.TIER_2));
 
     // --- Hazmat Tier 3 ---
     public static final DeferredItem<ArmorItem> HAZMAT_T3_HELMET = ITEMS.register("hazmat_t3_helmet",
-            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER3, ArmorItem.Type.HELMET, new Item.Properties(), 3));
+            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER3, ArmorItem.Type.HELMET, new Item.Properties(), HazmatTier.TIER_3));
     public static final DeferredItem<ArmorItem> HAZMAT_T3_CHESTPLATE = ITEMS.register("hazmat_t3_chestplate",
-            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER3, ArmorItem.Type.CHESTPLATE, new Item.Properties(), 3));
+            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER3, ArmorItem.Type.CHESTPLATE, new Item.Properties(), HazmatTier.TIER_3));
     public static final DeferredItem<ArmorItem> HAZMAT_T3_LEGGINGS = ITEMS.register("hazmat_t3_leggings",
-            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER3, ArmorItem.Type.LEGGINGS, new Item.Properties(), 3));
+            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER3, ArmorItem.Type.LEGGINGS, new Item.Properties(), HazmatTier.TIER_3));
     public static final DeferredItem<ArmorItem> HAZMAT_T3_BOOTS = ITEMS.register("hazmat_t3_boots",
-            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER3, ArmorItem.Type.BOOTS, new Item.Properties(), 3));
+            () -> new HazmatSuitItem(NWArmorMaterials.HAZMAT_TIER3, ArmorItem.Type.BOOTS, new Item.Properties(), HazmatTier.TIER_3));
 }

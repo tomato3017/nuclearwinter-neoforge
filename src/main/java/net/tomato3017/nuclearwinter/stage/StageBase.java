@@ -78,6 +78,10 @@ public abstract class StageBase {
         return stageIndex;
     }
 
+    public StageType getStageType() {
+        return StageType.fromIndex(stageIndex);
+    }
+
     public long getDuration() {
         return duration;
     }

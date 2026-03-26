@@ -211,9 +211,11 @@ public final class ChunkProcessor {
                     break;
                 }
 
-                if (state.getBlock() != degradation.replacement()) {
-                    level.setBlock(pos, degradation.replacement().defaultBlockState(), Block.UPDATE_ALL_IMMEDIATE);
-                }
+                degradation.replacement().ifPresent(replacement -> {
+                    if (state.getBlock() != replacement) {
+                        level.setBlock(pos, replacement.defaultBlockState(), Block.UPDATE_ALL_IMMEDIATE);
+                    }
+                });
 
                 if (!degradation.passthrough()) {
                     break;

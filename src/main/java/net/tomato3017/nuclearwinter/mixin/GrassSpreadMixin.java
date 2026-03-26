@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.SpreadingSnowyDirtBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.tomato3017.nuclearwinter.NuclearWinter;
 import net.tomato3017.nuclearwinter.stage.StageBase;
+import net.tomato3017.nuclearwinter.stage.StageType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,7 +25,7 @@ public class GrassSpreadMixin {
         if (NuclearWinter.getStageManager() == null) return;
 
         StageBase stage = NuclearWinter.getStageManager().getStageForWorld(level.dimension());
-        if (stage != null && stage.getStageIndex() >= 2) {
+        if (stage != null && stage.getStageType().isAtLeast(StageType.STAGE_1)) {
             ci.cancel();
         }
     }

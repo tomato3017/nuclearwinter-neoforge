@@ -2,9 +2,6 @@ package net.tomato3017.nuclearwinter;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Config {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
@@ -64,12 +61,6 @@ public class Config {
     public static final ModConfigSpec.IntValue CHUNK_PROCESSING_INTERVAL_TICKS;
     public static final ModConfigSpec.IntValue CHUNK_PROCESSING_MAX_CHUNKS_PER_INTERVAL;
     public static final ModConfigSpec.BooleanValue CHUNK_PROCESSING_STOP_AT_FLUIDS;
-    public static final ModConfigSpec.ConfigValue<List<? extends String>> CHUNK_PROCESSING_STAGE2_OPTIONS;
-    public static final ModConfigSpec.ConfigValue<String> CHUNK_PROCESSING_STAGE2_RULES;
-    public static final ModConfigSpec.ConfigValue<List<? extends String>> CHUNK_PROCESSING_STAGE3_OPTIONS;
-    public static final ModConfigSpec.ConfigValue<String> CHUNK_PROCESSING_STAGE3_RULES;
-    public static final ModConfigSpec.ConfigValue<List<? extends String>> CHUNK_PROCESSING_STAGE4_OPTIONS;
-    public static final ModConfigSpec.ConfigValue<String> CHUNK_PROCESSING_STAGE4_RULES;
 
     static {
         BUILDER.comment("Controls how long each apocalypse stage lasts.")
@@ -223,164 +214,8 @@ public class Config {
         CHUNK_PROCESSING_STOP_AT_FLUIDS = BUILDER.comment("Whether chunk degradation should stop when it hits a fluid block")
                 .translation("nuclearwinter.configuration.chunkProcessing.stopAtFluids")
                 .define("stopAtFluids", true);
-        CHUNK_PROCESSING_STAGE2_OPTIONS = BUILDER.comment(
-                        "Stage 2 chunk degradation options.",
-                        "Use entries like inherit=false.",
-                        "Stage 2 does not inherit from any previous stage, so inherit=true is ignored.")
-                .translation("nuclearwinter.configuration.chunkProcessing.stage2Options")
-                .defineList("stage2Options", Config::defaultStage2Options, Config::defaultStageOption, Config::isStringListValue);
-        CHUNK_PROCESSING_STAGE2_RULES = BUILDER.comment(
-                        "Ordered Stage 2 degradation rules, one rule per line.",
-                        "Format: matcher -> replacement",
-                        "        matcher -> replacement | passthrough=true",
-                        "        matcher -> replacement | probability=0.5",
-                        "        matcher -> replacement | passthrough=true | probability=0.5",
-                        "Matchers support block ids (minecraft:stone) and #tags (#minecraft:logs).",
-                        "passthrough=true means the block is replaced and the scan continues downward.",
-                        "probability is a value from 0.0 to 1.0; defaults to 1.0 (always convert). On a failed roll the scan stops.",
-                        "Blank lines are ignored.")
-                .translation("nuclearwinter.configuration.chunkProcessing.stage2Rules")
-                .define("stage2Rules", Config::defaultStage2Rules, value -> value instanceof String);
-        CHUNK_PROCESSING_STAGE3_OPTIONS = BUILDER.comment(
-                        "Stage 3 chunk degradation options.",
-                        "Use entries like inherit=false.",
-                        "Stage 3 inherits the previous stage's effective rules by default.")
-                .translation("nuclearwinter.configuration.chunkProcessing.stage3Options")
-                .defineList("stage3Options", Config::defaultStage3Options, Config::defaultStageOption, Config::isStringListValue);
-        CHUNK_PROCESSING_STAGE3_RULES = BUILDER.comment(
-                        "Ordered Stage 3 degradation rules, one rule per line.",
-                        "Format: matcher -> replacement",
-                        "        matcher -> replacement | passthrough=true",
-                        "        matcher -> replacement | probability=0.5",
-                        "        matcher -> replacement | passthrough=true | probability=0.5",
-                        "Matchers support block ids (minecraft:stone) and #tags (#minecraft:logs).",
-                        "passthrough=true means the block is replaced and the scan continues downward.",
-                        "probability is a value from 0.0 to 1.0; defaults to 1.0 (always convert). On a failed roll the scan stops.",
-                        "Blank lines are ignored.")
-                .translation("nuclearwinter.configuration.chunkProcessing.stage3Rules")
-                .define("stage3Rules", Config::defaultStage3Rules, value -> value instanceof String);
-        CHUNK_PROCESSING_STAGE4_OPTIONS = BUILDER.comment(
-                        "Stage 4 chunk degradation options.",
-                        "Use entries like inherit=false.",
-                        "Stage 4 inherits the previous stage's effective rules by default.")
-                .translation("nuclearwinter.configuration.chunkProcessing.stage4Options")
-                .defineList("stage4Options", Config::defaultStage4Options, Config::defaultStageOption, Config::isStringListValue);
-        CHUNK_PROCESSING_STAGE4_RULES = BUILDER.comment(
-                        "Ordered Stage 4 degradation rules, one rule per line.",
-                        "Format: matcher -> replacement",
-                        "        matcher -> replacement | passthrough=true",
-                        "        matcher -> replacement | probability=0.5",
-                        "        matcher -> replacement | passthrough=true | probability=0.5",
-                        "Matchers support block ids (minecraft:stone) and #tags (#minecraft:logs).",
-                        "passthrough=true means the block is replaced and the scan continues downward.",
-                        "probability is a value from 0.0 to 1.0; defaults to 1.0 (always convert). On a failed roll the scan stops.",
-                        "Blank lines are ignored.")
-                .translation("nuclearwinter.configuration.chunkProcessing.stage4Rules")
-                .define("stage4Rules", Config::defaultStage4Rules, value -> value instanceof String);
         BUILDER.pop();
     }
 
     static final ModConfigSpec SPEC = BUILDER.build();
-
-    private static List<? extends String> defaultStage2Options() {
-        return List.of();
-    }
-
-    private static List<? extends String> defaultStage3Options() {
-        return List.of();
-    }
-
-    private static List<? extends String> defaultStage4Options() {
-        return List.of();
-    }
-
-    private static String defaultStageOption() {
-        return "inherit=false";
-    }
-
-    private static boolean isStringListValue(Object value) {
-        return value instanceof String;
-    }
-
-    private static List<String> defaultPlantRemovalRulesNoPassthrough() {
-        return List.of(
-                "#minecraft:leaves -> minecraft:air",
-                "minecraft:short_grass -> minecraft:air",
-                "minecraft:tall_grass -> minecraft:air",
-                "minecraft:fern -> minecraft:air",
-                "minecraft:large_fern -> minecraft:air",
-                "minecraft:dead_bush -> minecraft:air",
-                "#minecraft:flowers -> minecraft:air",
-                "#minecraft:saplings -> minecraft:air",
-                "#minecraft:crops -> minecraft:air",
-                "minecraft:vine -> minecraft:air",
-                "minecraft:sweet_berry_bush -> minecraft:air",
-                "minecraft:sugar_cane -> minecraft:air",
-                "minecraft:cactus -> minecraft:air",
-                "minecraft:bamboo -> minecraft:air",
-                "minecraft:bamboo_sapling -> minecraft:air"
-        );
-    }
-
-    private static List<String> defaultPlantRemovalRulesWithPassthrough() {
-        return List.of(
-                "#minecraft:leaves -> minecraft:air | passthrough=true",
-                "minecraft:short_grass -> minecraft:air | passthrough=true",
-                "minecraft:tall_grass -> minecraft:air | passthrough=true",
-                "minecraft:fern -> minecraft:air | passthrough=true",
-                "minecraft:large_fern -> minecraft:air | passthrough=true",
-                "minecraft:dead_bush -> minecraft:air | passthrough=true",
-                "#minecraft:flowers -> minecraft:air | passthrough=true",
-                "#minecraft:saplings -> minecraft:air | passthrough=true",
-                "#minecraft:crops -> minecraft:air | passthrough=true",
-                "minecraft:vine -> minecraft:air | passthrough=true",
-                "minecraft:sweet_berry_bush -> minecraft:air | passthrough=true",
-                "minecraft:sugar_cane -> minecraft:air | passthrough=true",
-                "minecraft:cactus -> minecraft:air | passthrough=true",
-                "minecraft:bamboo -> minecraft:air | passthrough=true",
-                "minecraft:bamboo_sapling -> minecraft:air | passthrough=true"
-        );
-    }
-
-    private static String defaultStage2Rules() {
-        List<String> rules = new ArrayList<>(defaultPlantRemovalRulesNoPassthrough());
-        rules.addAll(List.of(
-                "minecraft:grass_block -> nuclearwinter:dead_grass",
-                "minecraft:mycelium -> nuclearwinter:dead_grass",
-                "minecraft:podzol -> nuclearwinter:dead_grass",
-                "#minecraft:dirt -> nuclearwinter:parched_dirt",
-                "minecraft:stone -> nuclearwinter:cracked_stone",
-                "minecraft:cobblestone -> nuclearwinter:cracked_stone",
-                "minecraft:andesite -> nuclearwinter:cracked_stone",
-                "minecraft:granite -> nuclearwinter:cracked_stone",
-                "minecraft:diorite -> nuclearwinter:cracked_stone",
-                "#minecraft:logs -> nuclearwinter:deadwood",
-                "#minecraft:planks -> nuclearwinter:ruined_planks"
-        ));
-        return String.join("\n", rules) + "\n";
-    }
-
-    private static String defaultStage3Rules() {
-        return "";
-    }
-
-    private static String defaultStage4Rules() {
-        List<String> rules = new ArrayList<>(defaultPlantRemovalRulesWithPassthrough());
-        rules.addAll(List.of(
-                "minecraft:grass_block -> nuclearwinter:wasteland_dust",
-                "minecraft:mycelium -> nuclearwinter:wasteland_dust",
-                "minecraft:podzol -> nuclearwinter:wasteland_dust",
-                "nuclearwinter:dead_grass -> nuclearwinter:wasteland_dust",
-                "#minecraft:dirt -> nuclearwinter:wasteland_dust",
-                "nuclearwinter:parched_dirt -> nuclearwinter:wasteland_dust",
-                "minecraft:stone -> nuclearwinter:wasteland_rubble",
-                "minecraft:cobblestone -> nuclearwinter:wasteland_rubble",
-                "minecraft:andesite -> nuclearwinter:wasteland_rubble",
-                "minecraft:granite -> nuclearwinter:wasteland_rubble",
-                "minecraft:diorite -> nuclearwinter:wasteland_rubble",
-                "nuclearwinter:cracked_stone -> nuclearwinter:wasteland_rubble",
-                "nuclearwinter:dead_leaves -> minecraft:air | passthrough=true"
-        ));
-        return String.join("\n", rules) + "\n";
-    }
 }

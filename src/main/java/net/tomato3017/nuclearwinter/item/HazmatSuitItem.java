@@ -1,6 +1,5 @@
 package net.tomato3017.nuclearwinter.item;
 
-import net.tomato3017.nuclearwinter.Config;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -24,14 +23,14 @@ public class HazmatSuitItem extends ArmorItem {
 
     private static final DecimalFormat PERCENT_FMT = new DecimalFormat("0.0");
 
-    private final int tier;
+    private final HazmatTier tier;
 
-    public HazmatSuitItem(Holder<ArmorMaterial> material, Type type, Properties properties, int tier) {
+    public HazmatSuitItem(Holder<ArmorMaterial> material, Type type, Properties properties, HazmatTier tier) {
         super(material, type, properties);
         this.tier = tier;
     }
 
-    public int getTier() {
+    public HazmatTier getTier() {
         return tier;
     }
 
@@ -45,18 +44,9 @@ public class HazmatSuitItem extends ArmorItem {
         };
     }
 
-    public static double getConfigProtection(int tier) {
-        return switch (tier) {
-            case 1 -> Config.SUIT_TIER1_PROTECTION.get();
-            case 2 -> Config.SUIT_TIER2_PROTECTION.get();
-            case 3 -> Config.SUIT_TIER3_PROTECTION.get();
-            default -> 0.0;
-        };
-    }
-
     /** Contribution of this piece to total radiation reduction (0..1). */
     public double getPieceRadiationProtection() {
-        return getConfigProtection(tier) * getSlotWeight();
+        return tier.getConfigProtection() * getSlotWeight();
     }
 
     @Override
