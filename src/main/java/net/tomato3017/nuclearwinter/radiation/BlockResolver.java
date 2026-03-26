@@ -197,6 +197,8 @@ public class BlockResolver {
 
         boolean passthrough = false;
         boolean sawPassthrough = false;
+        double probability = 1.0;
+        boolean sawProbability = false;
         for (int i = 1; i < rightSideParts.length; i++) {
             String option = rightSideParts[i].trim();
             if (option.isEmpty()) {
@@ -223,13 +225,29 @@ public class BlockResolver {
                 }
                 passthrough = Boolean.parseBoolean(value);
                 sawPassthrough = true;
+            } else if (key.equals("probability")) {
+                if (sawProbability) {
+                    warnInvalidRule(configPath, rawRule, "duplicate probability option");
+                    return Optional.empty();
+                }
+                try {
+                    probability = Double.parseDouble(value);
+                } catch (NumberFormatException e) {
+                    warnInvalidRule(configPath, rawRule, "probability '" + value + "' is not a valid number");
+                    return Optional.empty();
+                }
+                if (probability < 0.0 || probability > 1.0) {
+                    warnInvalidRule(configPath, rawRule, "probability must be between 0.0 and 1.0, got " + probability);
+                    return Optional.empty();
+                }
+                sawProbability = true;
             } else {
                 warnInvalidRule(configPath, rawRule, "unknown option '" + key + "'");
                 return Optional.empty();
             }
         }
 
-        return Optional.of(new DegradationRule(matcher, replacement, passthrough));
+        return Optional.of(new DegradationRule(matcher, replacement, passthrough, probability));
     }
 
     private static Matcher parseMatcher(String matcherToken, String configPath, String rawRule) {
@@ -299,7 +317,7 @@ public class BlockResolver {
 
         for (DegradationRule rule : rules) {
             if (rule.matches(state)) {
-                return new DegradationResult(rule.replacement(), rule.passthrough());
+                return new DegradationResult(rule.replacement(), rule.passthrough(), rule.probability());
             }
         }
 
@@ -346,7 +364,7 @@ public class BlockResolver {
         return defaultResistance;
     }
 
-    public record DegradationResult(Block replacement, boolean passthrough) {
+    public record DegradationResult(Block replacement, boolean passthrough, double probability) {
     }
 
     private record StageOptions(boolean inheritPrevious) {
@@ -356,7 +374,7 @@ public class BlockResolver {
         boolean matches(BlockState state);
     }
 
-    private record DegradationRule(Matcher matcher, Block replacement, boolean passthrough) {
+    private record DegradationRule(Matcher matcher, Block replacement, boolean passthrough, double probability) {
         private boolean matches(BlockState state) {
             return matcher.matches(state);
         }

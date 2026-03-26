@@ -207,6 +207,10 @@ public final class ChunkProcessor {
 
             BlockResolver.DegradationResult degradation = BlockResolver.getDegradationResult(state, stageIndex);
             if (degradation != null) {
+                if (degradation.probability() < 1.0 && level.random.nextDouble() >= degradation.probability()) {
+                    break;
+                }
+
                 if (state.getBlock() != degradation.replacement()) {
                     level.setBlock(pos, degradation.replacement().defaultBlockState(), Block.UPDATE_ALL_IMMEDIATE);
                 }

@@ -1,6 +1,5 @@
 package net.tomato3017.nuclearwinter;
 
-import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -28,8 +27,6 @@ public class NuclearWinterClient {
 
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event) {
-        NuclearWinter.LOGGER.info("HELLO FROM CLIENT SETUP");
-        NuclearWinter.LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
         SampleWorldInstaller.install();
     }
 

@@ -233,8 +233,11 @@ public class Config {
                         "Ordered Stage 2 degradation rules, one rule per line.",
                         "Format: matcher -> replacement",
                         "        matcher -> replacement | passthrough=true",
+                        "        matcher -> replacement | probability=0.5",
+                        "        matcher -> replacement | passthrough=true | probability=0.5",
                         "Matchers support block ids (minecraft:stone) and #tags (#minecraft:logs).",
                         "passthrough=true means the block is replaced and the scan continues downward.",
+                        "probability is a value from 0.0 to 1.0; defaults to 1.0 (always convert). On a failed roll the scan stops.",
                         "Blank lines are ignored.")
                 .translation("nuclearwinter.configuration.chunkProcessing.stage2Rules")
                 .define("stage2Rules", Config::defaultStage2Rules, value -> value instanceof String);
@@ -248,8 +251,11 @@ public class Config {
                         "Ordered Stage 3 degradation rules, one rule per line.",
                         "Format: matcher -> replacement",
                         "        matcher -> replacement | passthrough=true",
+                        "        matcher -> replacement | probability=0.5",
+                        "        matcher -> replacement | passthrough=true | probability=0.5",
                         "Matchers support block ids (minecraft:stone) and #tags (#minecraft:logs).",
                         "passthrough=true means the block is replaced and the scan continues downward.",
+                        "probability is a value from 0.0 to 1.0; defaults to 1.0 (always convert). On a failed roll the scan stops.",
                         "Blank lines are ignored.")
                 .translation("nuclearwinter.configuration.chunkProcessing.stage3Rules")
                 .define("stage3Rules", Config::defaultStage3Rules, value -> value instanceof String);
@@ -263,8 +269,11 @@ public class Config {
                         "Ordered Stage 4 degradation rules, one rule per line.",
                         "Format: matcher -> replacement",
                         "        matcher -> replacement | passthrough=true",
+                        "        matcher -> replacement | probability=0.5",
+                        "        matcher -> replacement | passthrough=true | probability=0.5",
                         "Matchers support block ids (minecraft:stone) and #tags (#minecraft:logs).",
                         "passthrough=true means the block is replaced and the scan continues downward.",
+                        "probability is a value from 0.0 to 1.0; defaults to 1.0 (always convert). On a failed roll the scan stops.",
                         "Blank lines are ignored.")
                 .translation("nuclearwinter.configuration.chunkProcessing.stage4Rules")
                 .define("stage4Rules", Config::defaultStage4Rules, value -> value instanceof String);
