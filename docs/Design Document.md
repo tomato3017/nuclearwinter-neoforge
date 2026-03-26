@@ -50,23 +50,23 @@ Inspired by the [Solar Apocalypse](https://modrinth.com/mod/solar-apocalypse) mo
 | Stage | Radiation | Rad Storms | World                              | Mobs                       | Sky/Weather              |
 |-------|-----------|------------|------------------------------------|-----------------------------|--------------------------|
 | 0     | 0%        | No         | Normal                             | Normal                      | Normal                   |
-| 1     | 1%        | No         | Grass/plants stop spreading        | --                          | --                       |
-| 2     | 10%       | No         | Plants/grass begin dying           | Surface animals dying off   | --                       |
-| 3     | 50%       | No         | Surface blocks convert to wasteland| All surface mobs gone       | Visibly toxic/hazy       |
+| 1     | 1%        | No         | Leaves and grass begin dying in scattered patches | --                          | --                       |
+| 2     | 10%       | No         | Canopies strip, deadwood spreads, world mostly dead | Surface animals dying off   | --                       |
+| 3     | 50%       | No         | Surface vegetation finishes dying before chunk nuking | All surface mobs gone       | Visibly toxic/hazy       |
 | 4     | 100%      | Yes        | Chunk nuking routine begins        | --                          | Rad storms begin         |
 
 **TBD:** Mob behavior specifics (what "animals behave oddly" and "dying off" look like mechanically). Sky/weather visual implementation details for Grace, Stage 3, and Stage 4.
 
 ### Stage Durations
 
-Total default arc: **~12 hours** of server uptime. Front-loaded so players have time to prepare during early stages, with the endgame accelerating to feel relentless. All durations are configurable.
+Total default arc: **~11.5 hours** of server uptime. Front-loaded so players have time to prepare during early stages, with the endgame accelerating to feel relentless. All durations are configurable.
 
 | Period  | Default Duration | Rationale                                             |
 |---------|-----------------|-------------------------------------------------------|
 | Grace   | 3 hours          | Longest window -- pure preparation, no real threat    |
-| Stage 1 | 3 hours          | Radiation negligible, but clock is visibly ticking    |
-| Stage 2 | 2.5 hours        | World changing, pressure building                     |
-| Stage 3 | 2 hours          | Deadly outside, players scrambling to reinforce       |
+| Stage 1 | 3 hours          | Radiation negligible, but the first visible die-off begins |
+| Stage 2 | 2.5 hours        | World mostly dead, pressure building                  |
+| Stage 3 | 1.5 hours        | Rapid visual finale before Stage 4 chunk nuking       |
 | Stage 4 | 1.5 hours        | Endgame -- just surviving                             |
 
 ### Stage Trigger
@@ -319,48 +319,123 @@ One tier in MVP. Additional tiers (faster drain, larger reduction) are post-MVP.
 
 ### Overview
 
-The chunk processor starts in Stage 2, casting rays downward per column until hitting the first solid block. That block is checked against the degradation config and converted if a mapping exists. All degradation is permanent -- no reversal in current scope.
+Visible block degradation begins in **Stage 1**, not Stage 2. The chunk processor casts rays downward per column and applies stage-configured conversions to the first matching block it reaches. Early stages are intentionally patchy and probabilistic; Stage 3 becomes a rapid deterministic cleanup pass so the world looks fully dead before Stage 4's chunk nuking routine begins. All degradation is permanent -- no reversal in current scope.
 
-### Degradation Tiers
+### Raycast Passthrough Notation
 
-Each material has two degradation tiers, triggered at Stage 2 and Stage 4 respectively. Stage 2 is the first moment the world visibly changes -- Grace Period and Stage 1 leave the world intact.
+- **(P) -- Passthrough:** after the degradation raycast converts this block, it continues downward to process blocks beneath it. Maps to `passthrough=true` / `continue` in `degradeColumn()`.
+- **(NP) -- Not Passthrough:** after conversion, the raycast stops. Maps to `passthrough=false` / `break`. This is the default -- if not marked, assume NP.
+
+Because leaves are NP on their first conversion, a column's leaves must die before the raycast can ever reach the grass below. This naturally staggers canopy death ahead of ground cover without needing separate timing logic.
+
+### Probability Approach
+
+Each time a degradation raycast reaches a block, it rolls a **per-stage conversion probability** rather than converting deterministically. On a failed roll, the raycast halts at that block (`fail = stop`) and does not reach anything deeper on that pass.
+
+This produces organic, patchy die-off: some columns convert quickly by luck, others lag behind, creating a natural spread across the world. It is also performant because failed rolls are cheap no-ops compared with a successful `setBlock` call.
+
+### Expected Visits Per Column (Coverage Math)
+
+Assumes 16 columns sampled per chunk (256 total) per interval fire.
+
+| Stage | Duration | Interval | Interval Fires | Visits/Column | Probability | Expected Coverage |
+|-------|----------|----------|----------------|---------------|-------------|-------------------|
+| 1     | 3 hours  | 3 min    | 60             | ~3.75         | 10%         | ~33%              |
+| 2     | 2.5 hours| 75 sec   | 120            | ~7.5          | 20%         | ~79%              |
+| 3     | 1.5 hours| 15 sec   | 360            | ~22.5 (x2)    | 100%        | ~100%             |
+
+*Formula: `P(converted) = 1 - (1 - p)^visits`*
+
+Stage 3 uses no probability roll. The goal is full visual cleanup before Stage 4, so deterministic conversion avoids a long statistical tail of untouched columns.
+
+### Stage-by-Stage Behavior
+
+#### Stage 1
+
+**Time in stage:** 3 hours
+
+**Block conversions**
+
+- Leaves (NP) -> Dead Leaves (P)
+- Dead Leaves (P) -> Dead Leaves (P) *(already converted, no further change in Stage 1)*
+- Grass (NP) -> Dead Grass (NP)
+
+**Mechanics**
+
+- **Interval:** Every 3 minutes (3,600 ticks)
+- **Conversion probability:** 10% per visit
+
+Leaves are the first sky-exposed block in treed columns, so they die first. Once converted to passthrough Dead Leaves, later raycasts can descend through the dead canopy and begin reaching grass below. By the end of Stage 1, the world should look like it is only just beginning to die -- scattered brown and grey patches, not total collapse.
+
+**Target:** ~25% of surface vegetation visibly dead by the end of Stage 1.
+
+#### Stage 2
+
+**Time in stage:** 2.5 hours
+
+**Block conversions**
+
+*Inherits all Stage 1 conversions, plus:*
+
+- Dead Leaves (NP) -> Air
+- Log (NP) -> Deadwood (P)
+
+**Mechanics**
+
+- **Interval:** Every 75 seconds (1,500 ticks)
+- **Conversion probability:** 20% per visit
+
+Stage 2 escalates by stripping Dead Leaves to air and exposing logs, which then bleach into passthrough Deadwood. Trees become skeletal and transparent, and most columns that started degrading in Stage 1 continue progressing toward bare trunks and dead ground.
+
+**Target:** ~75% of surface visibly dead by the end of Stage 2.
+
+#### Stage 3
+
+**Time in stage:** 1.5 hours
+
+**Block conversions**
+
+*Inherits all Stage 2 conversions.*
+
+**Mechanics**
+
+- **Interval:** Every 15 seconds (300 ticks)
+- **Conversion probability:** 100% (deterministic -- no roll)
+- **Raycast passes per column:** 2x
+
+Each sampled column receives two downward passes per interval. The first converts the topmost matching block; the second immediately descends through any newly passthrough blocks created by that first pass. Stage 3 is the rapid visual finale -- the surface finishes dying before Stage 4's larger-scale chunk nuking routine begins.
+
+**Target:** ~100% of surface vegetation dead by the end of Stage 3.
 
 ### Block Type Categories
 
-Degradation is defined by **block type category** rather than individual blocks, leveraging existing Minecraft/Forge block tags where possible. All blocks in a category share the same degradation path.
+Degradation is defined by **block type category** rather than individual blocks, leveraging existing Minecraft/Forge block tags where possible.
 
-| Block Type  | Examples                                        | Stage 2 (Tier 1)  | Stage 4 (Tier 2)   |
-|-------------|------------------------------------------------|--------------------|---------------------|
-| Grass-type  | Grass, mycelium, podzol                        | Dead Grass         | Wasteland Dust      |
-| Dirt-type   | Dirt, coarse dirt, rooted dirt                  | Parched Dirt       | Wasteland Dust      |
-| Stone-type  | Stone, cobblestone, andesite, granite, diorite | Cracked Stone      | Wasteland Rubble    |
-| Log-type    | Any wood log                                   | Deadwood           | *(no change)*       |
-| Leaf-type   | Any leaves                                     | Dead Leaves        | Air                 |
-| Plank-type  | Any wood planks                                | Ruined Planks      | *(no change)*       |
+| Block Type  | Examples                                        | Stage Behavior                               |
+|-------------|------------------------------------------------|----------------------------------------------|
+| Grass-type  | Grass, mycelium, podzol                        | Stage 1 -> Dead Grass; Stage 4 -> Wasteland Dust |
+| Dirt-type   | Dirt, coarse dirt, rooted dirt                 | No early-stage conversion; Stage 4 -> Wasteland Dust |
+| Stone-type  | Stone, cobblestone, andesite, granite, diorite | No early-stage conversion; Stage 4 -> Wasteland Rubble |
+| Log-type    | Any wood log                                   | Stage 2 -> Deadwood                          |
+| Leaf-type   | Any leaves                                     | Stage 1 -> Dead Leaves; Stage 2 -> Air       |
 
-**Fixed output** -- all blocks in a category collapse to the same wasteland variant regardless of input variant (e.g. granite and andesite both become Cracked Stone).
+**Fixed output** -- all blocks in a category collapse to the same wasteland variant regardless of input variant (e.g. granite and andesite both become Wasteland Rubble at Stage 4).
 
 ### Custom Blocks Required
 
-Dead Grass, Wasteland Dust, Parched Dirt, Cracked Stone, Wasteland Rubble, Deadwood, Dead Leaves, Ruined Planks.
+Dead Grass, Wasteland Dust, Wasteland Rubble, Deadwood, Dead Leaves.
 
 ### Custom Block Descriptions
 
-**Dead Grass** -- Dried, dying grass in a grey-brown coloration. The first visible sign that the world is succumbing to radiation. Behaves identically to vanilla grass. Appears at Stage 2.
+**Dead Grass** -- Dried, dying grass in a grey-brown coloration. The first visible sign that the world is succumbing to radiation. Behaves identically to vanilla grass. Appears at Stage 1.
 
-**Dead Leaves** -- Browning, grey-tinged leaves clinging to irradiated trees. A transitional state before full leaf death. Behaves like vanilla leaves. Appears at Stage 2, converts to Air at Stage 4.
-
-**Parched Dirt** -- Greyed-out dirt leeched of all moisture and organic content by radiation. A visual step between normal dirt and full ash conversion. Visual direction not yet finalised. Appears at Stage 2.
+**Dead Leaves** -- Browning, grey-tinged leaves clinging to irradiated trees. A transitional state before full leaf death. Behaves like vanilla leaves. Appears at Stage 1, converts to Air at Stage 2.
 
 **Wasteland Dust** -- Fine grey ash replacing all grass and dirt-type blocks at Stage 4. Behaves like sand -- affected by gravity, falls when unsupported. No movement penalty currently.
 
-**Cracked Stone** -- Stone stressed by radiation and environmental decay. Visually fractured with surface cracks. No change to physical properties. Appears at Stage 2.
-
 **Wasteland Rubble** -- Final state of stone-type degradation at Stage 4. Broken, collapsed stone debris. Visual direction undecided -- cobble-like with ash colour palette, or sandstone-like texture. No change to physical properties.
 
-**Deadwood** -- Bleached grey dead tree logs. Drops nothing when broken -- too irradiated and brittle to yield usable material. Appears at Stage 2, no further degradation.
-
-**Ruined Planks** -- Grey, deteriorating planks degraded in place. Visually rotten and falling apart. Retains plank shape and collision. Appears at Stage 2, no further degradation.
+**Deadwood** -- Bleached grey dead tree logs. Drops nothing when broken -- too irradiated and brittle to yield usable material. Appears at Stage 2 and acts as a passthrough state so later raycasts can continue through dead trunks.
 
 ### Water
 
@@ -368,8 +443,8 @@ Water does not degrade. It remains a valid shielding and building material at al
 
 ### Modded Block Fallback
 
-1. **Tag-based inheritance** -- if a modded block carries a recognized vanilla or Forge tag (e.g. `forge:stone`, `c:logs`), it inherits that category's resistance and degradation path automatically.
-2. **Final fallback** -- if no tag match exists, treat as stone-type: reasonable resistance, degrades to Cracked Stone / Wasteland Rubble.
+1. **Tag-based inheritance** -- if a modded block carries a recognized vanilla or Forge tag (e.g. `forge:stone`, `c:logs`, leaf/grass tags), it inherits that category's degradation path automatically.
+2. **Final fallback** -- if no tag match exists, treat as stone-type for Stage 4 chunk nuking output.
 
 ---
 
@@ -385,7 +460,7 @@ All values listed are defaults. All are configurable.
 | Grace Period duration      | 3 hours                       | Server uptime                            |
 | Stage 1 duration           | 3 hours                       | Server uptime                            |
 | Stage 2 duration           | 2.5 hours                     | Server uptime                            |
-| Stage 3 duration           | 2 hours                       | Server uptime                            |
+| Stage 3 duration           | 1.5 hours                     | Server uptime                            |
 | Stage 4 duration           | 1.5 hours                     | Server uptime                            |
 
 ### Radiation
@@ -445,16 +520,27 @@ All values listed are defaults. All are configurable.
 
 ### Block Degradation
 
-All block category to degradation output mappings are configurable.
+All degradation timings, probabilities, and category-to-output mappings are configurable.
 
-| Block Type  | Stage 2 Output    | Stage 4 Output     |
-|-------------|--------------------|--------------------|
-| Grass-type  | Dead Grass         | Wasteland Dust     |
-| Dirt-type   | Parched Dirt       | Wasteland Dust     |
-| Stone-type  | Cracked Stone      | Wasteland Rubble   |
-| Log-type    | Deadwood           | *(no change)*      |
-| Leaf-type   | Dead Leaves        | Air                |
-| Plank-type  | Ruined Planks      | *(no change)*      |
+| Config                         | Default     | Notes                                             |
+|--------------------------------|-------------|---------------------------------------------------|
+| Stage 1 interval               | 3 minutes   | 3,600 ticks                                       |
+| Stage 1 conversion probability | 10%         | Patchy first-pass vegetation death                |
+| Stage 2 interval               | 75 seconds  | 1,500 ticks                                       |
+| Stage 2 conversion probability | 20%         | Mostly-dead world by end of stage                 |
+| Stage 3 interval               | 15 seconds  | 300 ticks                                         |
+| Stage 3 conversion probability | 100%        | Deterministic cleanup                             |
+| Stage 3 passes per column      | 2x          | Lets one interval consume canopy plus ground path |
+| Failed-roll behavior           | Stop raycast| `fail = stop`, matching NP behavior               |
+
+| Block Type / Target | Output           | First Active Stage | Notes                                  |
+|---------------------|------------------|--------------------|----------------------------------------|
+| Leaf-type           | Dead Leaves      | Stage 1            | NP target -> P result                  |
+| Dead Leaves         | Air              | Stage 2            | Canopy removal                         |
+| Grass-type          | Dead Grass       | Stage 1            | NP target                              |
+| Log-type            | Deadwood         | Stage 2            | NP target -> P result                  |
+| Dirt-type           | Wasteland Dust   | Stage 4            | Via chunk nuking / wasteland routine   |
+| Stone-type          | Wasteland Rubble | Stage 4            | Via chunk nuking / wasteland routine   |
 
 ---
 
