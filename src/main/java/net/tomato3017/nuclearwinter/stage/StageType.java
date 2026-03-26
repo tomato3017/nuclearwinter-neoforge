@@ -1,14 +1,39 @@
 package net.tomato3017.nuclearwinter.stage;
 
+import net.tomato3017.nuclearwinter.Config;
+
 import java.util.function.Supplier;
 
 public enum StageType {
-    INACTIVE    (0, "Inactive",     Stage0::new),
-    GRACE_PERIOD(1, "Grace Period", GracePeriod::new),
-    STAGE_1     (2, "Stage 1",      Stage1::new),
-    STAGE_2     (3, "Stage 2",      Stage2::new),
-    STAGE_3     (4, "Stage 3",      Stage3::new),
-    STAGE_4     (5, "Stage 4",      Stage4::new);
+    INACTIVE    (0, "Inactive",
+            () -> StageBase.builder(0).build()),
+    GRACE_PERIOD(1, "Grace Period",
+            () -> StageBase.builder(1)
+                    .duration(Config.GRACE_DURATION.get())
+                    .build()),
+    STAGE_1     (2, "Stage 1",
+            () -> StageBase.builder(2)
+                    .duration(Config.STAGE1_DURATION.get())
+                    .skyEmission(Config.STAGE1_SKY_EMISSION.get())
+                    .withChunkProcessing()
+                    .build()),
+    STAGE_2     (3, "Stage 2",
+            () -> StageBase.builder(3)
+                    .duration(Config.STAGE2_DURATION.get())
+                    .skyEmission(Config.STAGE2_SKY_EMISSION.get())
+                    .withChunkProcessing()
+                    .build()),
+    STAGE_3     (4, "Stage 3",
+            () -> StageBase.builder(4)
+                    .duration(Config.STAGE3_DURATION.get())
+                    .skyEmission(Config.STAGE3_SKY_EMISSION.get())
+                    .withChunkProcessing()
+                    .build()),
+    STAGE_4     (5, "Stage 4",
+            () -> StageBase.builder(5)
+                    .skyEmission(Config.STAGE4_SKY_EMISSION.get())
+                    .withNukeMode()
+                    .build());
 
     public static final int MAX_INDEX = STAGE_4.index;
 

@@ -2,43 +2,45 @@ package net.tomato3017.nuclearwinter.stage;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.tomato3017.nuclearwinter.chunk.ChunkProcessor;
 
-import java.util.ArrayList;
-import java.util.List;
+/**
+ * Concrete base for all apocalypse stages. Configured via {@link Builder}; stages that need
+ * block degradation opt in with {@link Builder#withChunkProcessing()}, and Stage 4 additionally
+ * enables full-column nuking via {@link Builder#withNukeMode()}.
+ */
+public final class StageBase {
+    private final int stageIndex;
+    private long initTick;
+    private final long duration;
+    private final double skyEmission;
+    private final boolean chunkProcessingEnabled;
+    private final boolean nukeMode;
 
-public abstract class StageBase {
-    /**
-     * Zero-based index identifying this stage in the apocalypse progression
-     */
-    protected final int stageIndex;
-    /**
-     * Game tick at which this stage was initialized, set by init()
-     */
-    protected long initTick;
-    /**
-     * Duration of this stage in game ticks (20 ticks = 1 second), or 0 for infinite duration
-     */
-    protected final long duration;
-    /**
-     * Light emission level from the sky during this stage, affects radiation intensity
-     */
-    protected final double skyEmission;
+    private ChunkProcessor chunkProcessor;
 
-
-    protected StageBase(int stageIndex, long duration, double skyEmission) {
-        this.stageIndex = stageIndex;
-        this.duration = duration;
-        this.skyEmission = skyEmission;
+    private StageBase(Builder builder) {
+        this.stageIndex = builder.stageIndex;
+        this.duration = builder.duration;
+        this.skyEmission = builder.skyEmission;
+        this.chunkProcessingEnabled = builder.chunkProcessingEnabled;
+        this.nukeMode = builder.nukeMode;
     }
 
     public void init(ServerLevel level, long currentTick) {
         this.initTick = currentTick;
+        if (chunkProcessingEnabled) {
+            chunkProcessor = new ChunkProcessor(stageIndex, level, nukeMode);
+        }
     }
 
-    public abstract void tick(ServerLevel level, long currentTick);
+    public void tick(ServerLevel level, long currentTick) {
+        if (chunkProcessor == null) return;
+        chunkProcessor.tick(level);
+    }
 
     public void unload() {
-        // Subclasses override for cleanup
+        chunkProcessor = null;
     }
 
     public boolean isExpired(long currentTick) {
@@ -50,29 +52,17 @@ public abstract class StageBase {
         return duration > 0;
     }
 
-    /**
-     * Collects all unique loaded chunks within the view distance of all players on the level.
-     */
-    protected List<LevelChunk> gatherNearbyChunks(ServerLevel level) {
-        List<LevelChunk> chunks = new ArrayList<>();
-        int viewDist = level.getServer().getPlayerList().getViewDistance();
-        for (var player : level.players()) {
-            var chunkPos = player.chunkPosition();
-            for (int dx = -viewDist; dx <= viewDist; dx++) {
-                for (int dz = -viewDist; dz <= viewDist; dz++) {
-                    var chunk = level.getChunkSource().getChunkNow(chunkPos.x + dx, chunkPos.z + dz);
-                    if (chunk != null && !chunks.contains(chunk)) {
-                        chunks.add(chunk);
-                    }
-                }
-            }
+    public void onChunkLoaded(ServerLevel level, LevelChunk chunk) {
+        if (chunkProcessor != null) {
+            chunkProcessor.loadChunk(chunk.getPos());
         }
-        return chunks;
     }
 
-    public abstract void onChunkLoaded(ServerLevel level, LevelChunk chunk);
-
-    public abstract void onChunkUnloaded(ServerLevel level, LevelChunk chunk);
+    public void onChunkUnloaded(ServerLevel level, LevelChunk chunk) {
+        if (chunkProcessor != null) {
+            chunkProcessor.unloadChunk(chunk.getPos());
+        }
+    }
 
     public int getStageIndex() {
         return stageIndex;
@@ -96,5 +86,55 @@ public abstract class StageBase {
 
     public void setInitTick(long initTick) {
         this.initTick = initTick;
+    }
+
+    /**
+     * Fluent builder for {@link StageBase}. Only {@code stageIndex} is required; all other
+     * settings default to "inactive" values (zero duration, zero emission, no chunk processing).
+     */
+    public static final class Builder {
+
+        private final int stageIndex;
+        private long duration = 0;
+        private double skyEmission = 0.0;
+        private boolean chunkProcessingEnabled = false;
+        private boolean nukeMode = false;
+
+        private Builder(int stageIndex) {
+            this.stageIndex = stageIndex;
+        }
+
+        public Builder duration(long duration) {
+            this.duration = duration;
+            return this;
+        }
+
+        public Builder skyEmission(double skyEmission) {
+            this.skyEmission = skyEmission;
+            return this;
+        }
+
+        public Builder withChunkProcessing() {
+            this.chunkProcessingEnabled = true;
+            return this;
+        }
+
+        /**
+         * Enables full-column nuke processing; implies {@link #withChunkProcessing()}.
+         */
+        public Builder withNukeMode() {
+            this.chunkProcessingEnabled = true;
+            this.nukeMode = true;
+            return this;
+        }
+
+        public StageBase build() {
+            return new StageBase(this);
+        }
+
+    }
+
+    public static Builder builder(int stageIndex) {
+        return new Builder(stageIndex);
     }
 }
