@@ -21,16 +21,8 @@ public class NWBlocks {
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BROWN).strength(0.2f).sound(SoundType.GRASS)
                     .noOcclusion());
 
-    public static final DeferredBlock<Block> PARCHED_DIRT = BLOCKS.registerSimpleBlock("parched_dirt",
-            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(0.5f).sound(SoundType.GRAVEL));
-
-    public static final DeferredBlock<WastelandDustBlock> WASTELAND_DUST = BLOCKS.register("wasteland_dust",
-            () -> new WastelandDustBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GRAY)
-                    .strength(0.5f).sound(SoundType.SAND)));
-
-    public static final DeferredBlock<Block> CRACKED_STONE = BLOCKS.registerSimpleBlock("cracked_stone",
-            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(1.5f, 6.0f).sound(SoundType.STONE)
-                    .requiresCorrectToolForDrops());
+    public static final DeferredBlock<Block> WASTELAND_DIRT = BLOCKS.registerSimpleBlock("wasteland_dirt",
+            BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).strength(0.5f).sound(SoundType.GRAVEL));
 
     public static final DeferredBlock<Block> WASTELAND_RUBBLE = BLOCKS.registerSimpleBlock("wasteland_rubble",
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(1.5f, 6.0f).sound(SoundType.STONE)

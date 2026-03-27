@@ -1,31 +1,105 @@
 {
   "inherit": true,
   "rules": [
-    { "match": "#minecraft:leaves", "replacement": "minecraft:air" },
-    { "match": "minecraft:short_grass", "replacement": "minecraft:air" },
-    { "match": "minecraft:tall_grass", "replacement": "minecraft:air" },
-    { "match": "minecraft:fern", "replacement": "minecraft:air" },
-    { "match": "minecraft:large_fern", "replacement": "minecraft:air" },
-    { "match": "minecraft:dead_bush", "replacement": "minecraft:air" },
-    { "match": "#minecraft:flowers", "replacement": "minecraft:air" },
-    { "match": "#minecraft:saplings", "replacement": "minecraft:air" },
-    { "match": "#minecraft:crops", "replacement": "minecraft:air" },
-    { "match": "minecraft:vine", "replacement": "minecraft:air" },
-    { "match": "minecraft:sweet_berry_bush", "replacement": "minecraft:air" },
-    { "match": "minecraft:sugar_cane", "replacement": "minecraft:air" },
-    { "match": "minecraft:cactus", "replacement": "minecraft:air" },
-    { "match": "minecraft:bamboo", "replacement": "minecraft:air" },
-    { "match": "minecraft:bamboo_sapling", "replacement": "minecraft:air" },
-    { "match": "minecraft:grass_block", "replacement": "nuclearwinter:dead_grass" },
-    { "match": "minecraft:mycelium", "replacement": "nuclearwinter:dead_grass" },
-    { "match": "minecraft:podzol", "replacement": "nuclearwinter:dead_grass" },
-    { "match": "#minecraft:dirt", "replacement": "nuclearwinter:parched_dirt" },
-    { "match": "minecraft:stone", "replacement": "nuclearwinter:cracked_stone" },
-    { "match": "minecraft:cobblestone", "replacement": "nuclearwinter:cracked_stone" },
-    { "match": "minecraft:andesite", "replacement": "nuclearwinter:cracked_stone" },
-    { "match": "minecraft:granite", "replacement": "nuclearwinter:cracked_stone" },
-    { "match": "minecraft:diorite", "replacement": "nuclearwinter:cracked_stone" },
-    { "match": "#minecraft:logs", "replacement": "nuclearwinter:deadwood" },
-    { "match": "#minecraft:planks", "replacement": "nuclearwinter:ruined_planks" }
+    {
+      "match": "#minecraft:leaves",
+      "replacement": "nuclearwinter:dead_leaves"
+    },
+    {
+      "match": "nuclearwinter:dead_leaves",
+      "replacement": "minecraft:air"
+    },
+    {
+      "match": "minecraft:short_grass",
+      "replacement": "minecraft:air"
+    },
+    {
+      "match": "minecraft:tall_grass",
+      "replacement": "minecraft:air"
+    },
+    {
+      "match": "minecraft:fern",
+      "replacement": "minecraft:air"
+    },
+    {
+      "match": "minecraft:large_fern",
+      "replacement": "minecraft:air"
+    },
+    {
+      "match": "minecraft:dead_bush",
+      "replacement": "minecraft:air"
+    },
+    {
+      "match": "#minecraft:flowers",
+      "replacement": "minecraft:air"
+    },
+    {
+      "match": "#minecraft:saplings",
+      "replacement": "minecraft:air"
+    },
+    {
+      "match": "#minecraft:crops",
+      "replacement": "minecraft:air"
+    },
+    {
+      "match": "minecraft:vine",
+      "replacement": "minecraft:air"
+    },
+    {
+      "match": "minecraft:sweet_berry_bush",
+      "replacement": "minecraft:air"
+    },
+    {
+      "match": "minecraft:sugar_cane",
+      "replacement": "minecraft:air"
+    },
+    {
+      "match": "minecraft:cactus",
+      "replacement": "minecraft:air"
+    },
+    {
+      "match": "minecraft:bamboo",
+      "replacement": "minecraft:air"
+    },
+    {
+      "match": "minecraft:bamboo_sapling",
+      "replacement": "minecraft:air"
+    },
+    {
+      "match": "minecraft:grass_block",
+      "replacement": "nuclearwinter:dead_grass"
+    },
+    {
+      "match": "minecraft:mycelium",
+      "replacement": "nuclearwinter:dead_grass"
+    },
+    {
+      "match": "minecraft:podzol",
+      "replacement": "nuclearwinter:dead_grass"
+    },
+    {
+      "match": "minecraft:stone",
+      "replacement": "nuclearwinter:wasteland_rubble"
+    },
+    {
+      "match": "minecraft:cobblestone",
+      "replacement": "nuclearwinter:wasteland_rubble"
+    },
+    {
+      "match": "minecraft:andesite",
+      "replacement": "nuclearwinter:wasteland_rubble"
+    },
+    {
+      "match": "minecraft:granite",
+      "replacement": "nuclearwinter:wasteland_rubble"
+    },
+    {
+      "match": "minecraft:diorite",
+      "replacement": "nuclearwinter:wasteland_rubble"
+    },
+    {
+      "match": "#minecraft:logs",
+      "replacement": "nuclearwinter:deadwood"
+    }
   ]
 }

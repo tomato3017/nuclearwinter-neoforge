@@ -16,18 +16,11 @@
     { "match": "minecraft:cactus", "replacement": "minecraft:air", "passthrough": true },
     { "match": "minecraft:bamboo", "replacement": "minecraft:air", "passthrough": true },
     { "match": "minecraft:bamboo_sapling", "replacement": "minecraft:air", "passthrough": true },
-    { "match": "minecraft:grass_block", "replacement": "nuclearwinter:wasteland_dust" },
-    { "match": "minecraft:mycelium", "replacement": "nuclearwinter:wasteland_dust" },
-    { "match": "minecraft:podzol", "replacement": "nuclearwinter:wasteland_dust" },
-    { "match": "nuclearwinter:dead_grass", "replacement": "nuclearwinter:wasteland_dust" },
-    { "match": "#minecraft:dirt", "replacement": "nuclearwinter:wasteland_dust" },
-    { "match": "nuclearwinter:parched_dirt", "replacement": "nuclearwinter:wasteland_dust" },
-    { "match": "minecraft:stone", "replacement": "nuclearwinter:wasteland_rubble" },
-    { "match": "minecraft:cobblestone", "replacement": "nuclearwinter:wasteland_rubble" },
-    { "match": "minecraft:andesite", "replacement": "nuclearwinter:wasteland_rubble" },
-    { "match": "minecraft:granite", "replacement": "nuclearwinter:wasteland_rubble" },
-    { "match": "minecraft:diorite", "replacement": "nuclearwinter:wasteland_rubble" },
-    { "match": "nuclearwinter:cracked_stone", "replacement": "nuclearwinter:wasteland_rubble" },
+    { "match": "minecraft:grass_block", "replacement": "nuclearwinter:wasteland_dirt" },
+    { "match": "minecraft:mycelium", "replacement": "nuclearwinter:wasteland_dirt" },
+    { "match": "minecraft:podzol", "replacement": "nuclearwinter:wasteland_dirt" },
+    { "match": "nuclearwinter:dead_grass", "replacement": "nuclearwinter:wasteland_dirt" },
+    { "match": "#minecraft:dirt", "replacement": "nuclearwinter:wasteland_dirt" },
     { "match": "nuclearwinter:dead_leaves", "replacement": "minecraft:air", "passthrough": true }
   ]
 }

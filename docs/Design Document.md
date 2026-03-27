@@ -413,17 +413,18 @@ Degradation is defined by **block type category** rather than individual blocks,
 
 | Block Type  | Examples                                        | Stage Behavior                               |
 |-------------|------------------------------------------------|----------------------------------------------|
-| Grass-type  | Grass, mycelium, podzol                        | Stage 1 -> Dead Grass; Stage 4 -> Wasteland Dust |
-| Dirt-type   | Dirt, coarse dirt, rooted dirt                 | No early-stage conversion; Stage 4 -> Wasteland Dust |
-| Stone-type  | Stone, cobblestone, andesite, granite, diorite | No early-stage conversion; Stage 4 -> Wasteland Rubble |
+| Grass-type  | Grass, mycelium, podzol                        | Stage 1 -> Dead Grass; Stage 3 -> Wasteland Dirt |
+| Dirt-type   | Dirt, coarse dirt, rooted dirt                 | Stage 3 -> Wasteland Dirt                    |
+| Stone-type  | Stone, cobblestone, andesite, granite, diorite | Stage 2 -> Wasteland Rubble                  |
 | Log-type    | Any wood log                                   | Stage 2 -> Deadwood                          |
+| Planks-type | Any wood planks                                | Stage 3 -> Ruined Planks                     |
 | Leaf-type   | Any leaves                                     | Stage 1 -> Dead Leaves; Stage 2 -> Air       |
 
 **Fixed output** -- all blocks in a category collapse to the same wasteland variant regardless of input variant (e.g. granite and andesite both become Wasteland Rubble at Stage 4).
 
 ### Custom Blocks Required
 
-Dead Grass, Wasteland Dust, Wasteland Rubble, Deadwood, Dead Leaves.
+Dead Grass, Wasteland Dirt, Wasteland Rubble, Deadwood, Dead Leaves, Ruined Planks.
 
 ### Custom Block Descriptions
 
@@ -431,9 +432,9 @@ Dead Grass, Wasteland Dust, Wasteland Rubble, Deadwood, Dead Leaves.
 
 **Dead Leaves** -- Browning, grey-tinged leaves clinging to irradiated trees. A transitional state before full leaf death. Behaves like vanilla leaves. Appears at Stage 1, converts to Air at Stage 2.
 
-**Wasteland Dust** -- Fine grey ash replacing all grass and dirt-type blocks at Stage 4. Behaves like sand -- affected by gravity, falls when unsupported. No movement penalty currently.
+**Wasteland Dirt** -- Ashen grey dirt replacing all grass and dirt-type blocks at Stage 3. Behaves like coarse dirt -- solid, not affected by gravity. Persists into Stage 4.
 
-**Wasteland Rubble** -- Final state of stone-type degradation at Stage 4. Broken, collapsed stone debris. Visual direction undecided -- cobble-like with ash colour palette, or sandstone-like texture. No change to physical properties.
+**Wasteland Rubble** -- Final state of stone-type degradation at Stage 2. Broken, collapsed stone debris. Cobble-like with ash colour palette. No change to physical properties.
 
 **Deadwood** -- Bleached grey dead tree logs. Drops nothing when broken -- too irradiated and brittle to yield usable material. Appears at Stage 2 and acts as a passthrough state so later raycasts can continue through dead trunks.
 
@@ -539,8 +540,10 @@ All degradation timings, probabilities, and category-to-output mappings are conf
 | Dead Leaves         | Air              | Stage 2            | Canopy removal                         |
 | Grass-type          | Dead Grass       | Stage 1            | NP target                              |
 | Log-type            | Deadwood         | Stage 2            | NP target -> P result                  |
-| Dirt-type           | Wasteland Dust   | Stage 4            | Via chunk nuking / wasteland routine   |
-| Stone-type          | Wasteland Rubble | Stage 4            | Via chunk nuking / wasteland routine   |
+| Stone-type          | Wasteland Rubble | Stage 2            | Direct conversion, no intermediate     |
+| Grass-type (late)   | Wasteland Dirt   | Stage 3            | Dead Grass -> Wasteland Dirt           |
+| Dirt-type           | Wasteland Dirt   | Stage 3            | All #minecraft:dirt variants           |
+| Planks-type         | Ruined Planks    | Stage 3            | All #minecraft:planks variants         |
 
 ---
 

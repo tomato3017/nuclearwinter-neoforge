@@ -24,7 +24,6 @@ public class NWBlockTagsProvider extends BlockTagsProvider {
                 .add(NWBlocks.DEADWOOD.get())
                 .add(NWBlocks.RUINED_PLANKS.get());
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                .add(NWBlocks.CRACKED_STONE.get())
                 .add(NWBlocks.WASTELAND_RUBBLE.get())
                 .add(NWBlocks.LEAD_BLOCK.get())
                 .add(NWBlocks.REINFORCED_CONCRETE.get());

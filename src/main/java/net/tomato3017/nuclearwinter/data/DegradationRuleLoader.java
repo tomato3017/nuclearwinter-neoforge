@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.DataResult;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -97,10 +98,38 @@ public class DegradationRuleLoader extends SimpleJsonResourceReloadListener {
         List<BlockResolver.DegradationRule> stage3Rules = effectiveRulesMap.getOrDefault(3, List.of());
         List<BlockResolver.DegradationRule> stage4Rules = effectiveRulesMap.getOrDefault(4, List.of());
 
+        dumpEffectiveRules(effectiveRulesMap);
         BlockResolver.setDegradationRules(stage1Rules, stage2Rules, stage3Rules, stage4Rules);
 
         LOGGER.info("Loaded degradation rules: {} stage1, {} stage2, {} stage3, {} stage4",
                 stage1Rules.size(), stage2Rules.size(), stage3Rules.size(), stage4Rules.size());
+    }
+
+    private void dumpEffectiveRules(TreeMap<Integer, List<BlockResolver.DegradationRule>> effectiveRulesMap) {
+        if (!LOGGER.isDebugEnabled()) return;
+
+        for (Map.Entry<Integer, List<BlockResolver.DegradationRule>> entry : effectiveRulesMap.entrySet()) {
+            int stage = entry.getKey();
+            List<BlockResolver.DegradationRule> rules = entry.getValue();
+            LOGGER.debug("Stage {} effective degradation rules ({}):", stage, rules.size());
+            for (BlockResolver.DegradationRule rule : rules) {
+                String matcherStr;
+                if (rule.matcher() instanceof BlockResolver.TagMatcher tm) {
+                    matcherStr = "#" + tm.tag().location();
+                } else if (rule.matcher() instanceof BlockResolver.BlockMatcher bm) {
+                    matcherStr = BuiltInRegistries.BLOCK.getKey(bm.block()).toString();
+                } else {
+                    matcherStr = rule.matcher().toString();
+                }
+
+                String replacementStr = rule.replacement()
+                        .map(b -> BuiltInRegistries.BLOCK.getKey(b).toString())
+                        .orElse("(none)");
+
+                LOGGER.debug("  {} -> {} (passthrough={}, p={})",
+                        matcherStr, replacementStr, rule.passthrough(), rule.probability());
+            }
+        }
     }
 
     private List<BlockResolver.DegradationRule> parseAndValidateRules(List<DegradationRuleEntry> entries, String sourceName) {

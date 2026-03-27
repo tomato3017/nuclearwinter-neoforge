@@ -20,13 +20,11 @@ Run `./export-resourcepack-template.sh` from the repo root to create `build/reso
 
 ## Included texture slots
 
-- `cracked_stone.png`
 - `dead_grass_top.png`
 - `dead_grass_side.png`
 - `dead_grass_bottom.png`
 - `dead_leaves.png`
-- `parched_dirt.png`
-- `wasteland_dust.png`
+- `wasteland_dirt.png`
 - `wasteland_rubble.png`
 - `deadwood_side.png`
 - `deadwood_top.png`

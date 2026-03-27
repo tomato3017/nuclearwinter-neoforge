@@ -71,9 +71,7 @@ public class NuclearWinter {
                     .displayItems((parameters, output) -> {
                         output.accept(NWItems.DEAD_GRASS.get());
                         output.accept(NWItems.DEAD_LEAVES.get());
-                        output.accept(NWItems.PARCHED_DIRT.get());
-                        output.accept(NWItems.WASTELAND_DUST.get());
-                        output.accept(NWItems.CRACKED_STONE.get());
+                        output.accept(NWItems.WASTELAND_DIRT.get());
                         output.accept(NWItems.WASTELAND_RUBBLE.get());
                         output.accept(NWItems.DEADWOOD.get());
                         output.accept(NWItems.RUINED_PLANKS.get());
