@@ -1,8 +1,18 @@
 {
   "inherit": true,
   "rules": [
-    { "match": "nuclearwinter:dead_grass", "replacement": "nuclearwinter:wasteland_dirt" },
-    { "match": "#minecraft:dirt", "replacement": "nuclearwinter:wasteland_dirt" },
-    { "match": "#minecraft:planks", "replacement": "nuclearwinter:ruined_planks" }
+    {
+      "match": "nuclearwinter:dead_grass",
+      "replacement": "nuclearwinter:wasteland_dirt"
+    },
+    {
+      "match": "#minecraft:dirt",
+      "replacement": "nuclearwinter:wasteland_dirt"
+    },
+    {
+      "match": "#minecraft:planks",
+      "replacement": "nuclearwinter:ruined_planks",
+      "passthrough": true
+    }
   ]
 }

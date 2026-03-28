@@ -1,26 +1,110 @@
 {
   "inherit": true,
   "rules": [
-    { "match": "#minecraft:leaves", "replacement": "minecraft:air", "passthrough": true },
-    { "match": "minecraft:short_grass", "replacement": "minecraft:air", "passthrough": true },
-    { "match": "minecraft:tall_grass", "replacement": "minecraft:air", "passthrough": true },
-    { "match": "minecraft:fern", "replacement": "minecraft:air", "passthrough": true },
-    { "match": "minecraft:large_fern", "replacement": "minecraft:air", "passthrough": true },
-    { "match": "minecraft:dead_bush", "replacement": "minecraft:air", "passthrough": true },
-    { "match": "#minecraft:flowers", "replacement": "minecraft:air", "passthrough": true },
-    { "match": "#minecraft:saplings", "replacement": "minecraft:air", "passthrough": true },
-    { "match": "#minecraft:crops", "replacement": "minecraft:air", "passthrough": true },
-    { "match": "minecraft:vine", "replacement": "minecraft:air", "passthrough": true },
-    { "match": "minecraft:sweet_berry_bush", "replacement": "minecraft:air", "passthrough": true },
-    { "match": "minecraft:sugar_cane", "replacement": "minecraft:air", "passthrough": true },
-    { "match": "minecraft:cactus", "replacement": "minecraft:air", "passthrough": true },
-    { "match": "minecraft:bamboo", "replacement": "minecraft:air", "passthrough": true },
-    { "match": "minecraft:bamboo_sapling", "replacement": "minecraft:air", "passthrough": true },
-    { "match": "minecraft:grass_block", "replacement": "nuclearwinter:wasteland_dirt" },
-    { "match": "minecraft:mycelium", "replacement": "nuclearwinter:wasteland_dirt" },
-    { "match": "minecraft:podzol", "replacement": "nuclearwinter:wasteland_dirt" },
-    { "match": "nuclearwinter:dead_grass", "replacement": "nuclearwinter:wasteland_dirt" },
-    { "match": "#minecraft:dirt", "replacement": "nuclearwinter:wasteland_dirt" },
-    { "match": "nuclearwinter:dead_leaves", "replacement": "minecraft:air", "passthrough": true }
+    {
+      "match": "#minecraft:leaves",
+      "replacement": "minecraft:air",
+      "passthrough": true
+    },
+    {
+      "match": "minecraft:short_grass",
+      "replacement": "minecraft:air",
+      "passthrough": true
+    },
+    {
+      "match": "minecraft:tall_grass",
+      "replacement": "minecraft:air",
+      "passthrough": true
+    },
+    {
+      "match": "minecraft:fern",
+      "replacement": "minecraft:air",
+      "passthrough": true
+    },
+    {
+      "match": "minecraft:large_fern",
+      "replacement": "minecraft:air",
+      "passthrough": true
+    },
+    {
+      "match": "minecraft:dead_bush",
+      "replacement": "minecraft:air",
+      "passthrough": true
+    },
+    {
+      "match": "#minecraft:flowers",
+      "replacement": "minecraft:air",
+      "passthrough": true
+    },
+    {
+      "match": "#minecraft:saplings",
+      "replacement": "minecraft:air",
+      "passthrough": true
+    },
+    {
+      "match": "#minecraft:crops",
+      "replacement": "minecraft:air",
+      "passthrough": true
+    },
+    {
+      "match": "minecraft:vine",
+      "replacement": "minecraft:air",
+      "passthrough": true
+    },
+    {
+      "match": "minecraft:sweet_berry_bush",
+      "replacement": "minecraft:air",
+      "passthrough": true
+    },
+    {
+      "match": "minecraft:sugar_cane",
+      "replacement": "minecraft:air",
+      "passthrough": true
+    },
+    {
+      "match": "minecraft:cactus",
+      "replacement": "minecraft:air",
+      "passthrough": true
+    },
+    {
+      "match": "minecraft:bamboo",
+      "replacement": "minecraft:air",
+      "passthrough": true
+    },
+    {
+      "match": "minecraft:bamboo_sapling",
+      "replacement": "minecraft:air",
+      "passthrough": true
+    },
+    {
+      "match": "minecraft:grass_block",
+      "replacement": "nuclearwinter:wasteland_dirt"
+    },
+    {
+      "match": "minecraft:mycelium",
+      "replacement": "nuclearwinter:wasteland_dirt"
+    },
+    {
+      "match": "minecraft:podzol",
+      "replacement": "nuclearwinter:wasteland_dirt"
+    },
+    {
+      "match": "nuclearwinter:dead_grass",
+      "replacement": "nuclearwinter:wasteland_dirt"
+    },
+    {
+      "match": "#minecraft:dirt",
+      "replacement": "nuclearwinter:wasteland_dirt"
+    },
+    {
+      "match": "nuclearwinter:dead_leaves",
+      "replacement": "minecraft:air",
+      "passthrough": true
+    },
+    {
+      "match": "#minecraft:logs",
+      "replacement": "nuclearwinter:deadwood",
+      "passthrough": true
+    }
   ]
 }
