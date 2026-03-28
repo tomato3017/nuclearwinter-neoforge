@@ -144,6 +144,17 @@ public record DegradationRuleEntry(
 
 Use **classes** when mutable state or complex behavior is needed (`StageBase`, `ChunkProcessor`).
 
+## Function Size
+
+Keep functions focused on a single responsibility. When a function grows beyond ~30–40 lines or does more than one logical thing, extract the sub-tasks into private helper methods.
+
+Good signals that a function needs splitting:
+- It has multiple sections with blank lines and implicit "phases" (parse, validate, apply)
+- A comment is needed to describe what a block of lines does — that block is a function
+- The same 3–5 lines appear in more than one place
+
+Avoid going overboard: don't split trivially short code just for the sake of it. The goal is clarity, not a call stack maze. Helpers should have names descriptive enough that the caller reads like a summary.
+
 ## Error Handling
 
 - Early return on null/invalid: `if (stage == null) return;`

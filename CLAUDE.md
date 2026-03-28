@@ -97,7 +97,8 @@ in `DebugCommand`.
 ## Coding Standards
 
 See [CODING_STANDARDS.md](CODING_STANDARDS.md) for naming conventions, formatting, registration patterns, event
-handling, data classes, and other conventions used in this codebase.
+handling, data classes, and other conventions used in this codebase. Treat `CODING_STANDARDS.md` as mandatory
+context for any code-related task.
 
 ## Repo Rules
 

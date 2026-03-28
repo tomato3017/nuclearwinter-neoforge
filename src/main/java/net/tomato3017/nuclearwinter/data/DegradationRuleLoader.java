@@ -2,16 +2,16 @@ package net.tomato3017.nuclearwinter.data;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.mojang.logging.LogUtils;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.Block;
+import net.tomato3017.nuclearwinter.NuclearWinter;
 import net.tomato3017.nuclearwinter.radiation.BlockResolver;
-import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +29,6 @@ import java.util.regex.Pattern;
  * to {@link BlockResolver#setDegradationRules}.
  */
 public class DegradationRuleLoader extends SimpleJsonResourceReloadListener {
-    private static final Logger LOGGER = LogUtils.getLogger();
     private static final Gson GSON = new Gson();
     private static final Pattern STAGE_PATTERN = Pattern.compile("^stage([1-4])$");
 
@@ -39,95 +38,85 @@ public class DegradationRuleLoader extends SimpleJsonResourceReloadListener {
 
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler) {
-        TreeMap<Integer, DegradationStageData> stageDataMap = new TreeMap<>();
-        Map<Integer, ResourceLocation> stageOwners = new HashMap<>();
-        boolean conflict = false;
-
-        for (Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet()) {
-            String path = entry.getKey().getPath();
-            Matcher pathMatcher = STAGE_PATTERN.matcher(path);
-            if (!pathMatcher.matches()) {
-                LOGGER.warn("Ignoring degradation rules file with unexpected name: {}", entry.getKey());
-                continue;
-            }
-
-            int stageNum = Integer.parseInt(pathMatcher.group(1));
-
-            ResourceLocation previousOwner = stageOwners.get(stageNum);
-            if (previousOwner != null) {
-                LOGGER.error("Conflicting degradation rules for stage {}: both {} and {} define it. " +
-                        "Aborting reload; keeping previously loaded rules.", stageNum, previousOwner, entry.getKey());
-                conflict = true;
-                continue;
-            }
-            stageOwners.put(stageNum, entry.getKey());
-
-            DataResult<DegradationStageData> result = DegradationStageData.CODEC.parse(
-                    com.mojang.serialization.JsonOps.INSTANCE, entry.getValue());
-            if (result.error().isPresent()) {
-                LOGGER.error("Failed to parse degradation rules for {}: {}",
-                        entry.getKey(), result.error().get().message());
-                continue;
-            }
-
-            result.result().ifPresent(data -> stageDataMap.put(stageNum, data));
-        }
-
-        if (conflict) {
+        TreeMap<Integer, DegradationStageData> stageDataMap = loadStageData(object);
+        if (stageDataMap == null) {
             return;
         }
 
-        // Resolve inheritance in stage order so each stage can inherit from the previous effective list
+        TreeMap<Integer, List<BlockResolver.DegradationRule>> effectiveRulesMap = resolveEffectiveRules(stageDataMap);
+        applyResolvedRules(effectiveRulesMap);
+    }
+
+    private TreeMap<Integer, DegradationStageData> loadStageData(Map<ResourceLocation, JsonElement> object) {
+        TreeMap<Integer, DegradationStageData> stageDataMap = new TreeMap<>();
+        Map<Integer, ResourceLocation> stageOwners = new HashMap<>();
+
+        for (Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet()) {
+            Integer stageNum = getStageNumber(entry.getKey());
+            if (stageNum == null) {
+                continue;
+            }
+
+            if (!claimStageOwner(stageOwners, stageNum, entry.getKey())) {
+                return null;
+            }
+
+            DegradationStageData stageData = parseStageData(entry.getKey(), entry.getValue());
+            if (stageData != null) {
+                stageDataMap.put(stageNum, stageData);
+            }
+        }
+
+        return stageDataMap;
+    }
+
+    private TreeMap<Integer, List<BlockResolver.DegradationRule>> resolveEffectiveRules(
+            TreeMap<Integer, DegradationStageData> stageDataMap) {
         TreeMap<Integer, List<BlockResolver.DegradationRule>> effectiveRulesMap = new TreeMap<>();
 
         for (Map.Entry<Integer, DegradationStageData> entry : stageDataMap.entrySet()) {
             int stageNum = entry.getKey();
-            DegradationStageData data = entry.getValue();
-            String sourceName = "degradation_rules/stage" + stageNum + ".json";
-
-            List<BlockResolver.DegradationRule> parsedRules = parseAndValidateRules(data.rules(), sourceName);
+            DegradationStageData stageData = entry.getValue();
+            List<BlockResolver.DegradationRule> parsedRules =
+                    parseAndValidateRules(stageData.rules(), getStageSourceName(stageNum));
             List<BlockResolver.DegradationRule> previousEffective = effectiveRulesMap.getOrDefault(stageNum - 1, List.of());
+            List<BlockResolver.DegradationRule> effectiveRules = BlockResolver.buildEffectiveRules(
+                    parsedRules, previousEffective, stageData.inherit());
 
-            List<BlockResolver.DegradationRule> effective = BlockResolver.buildEffectiveRules(
-                    parsedRules, previousEffective, data.inherit());
-            effectiveRulesMap.put(stageNum, effective);
+            effectiveRulesMap.put(stageNum, effectiveRules);
         }
 
-        List<BlockResolver.DegradationRule> stage1Rules = effectiveRulesMap.getOrDefault(1, List.of());
-        List<BlockResolver.DegradationRule> stage2Rules = effectiveRulesMap.getOrDefault(2, List.of());
-        List<BlockResolver.DegradationRule> stage3Rules = effectiveRulesMap.getOrDefault(3, List.of());
-        List<BlockResolver.DegradationRule> stage4Rules = effectiveRulesMap.getOrDefault(4, List.of());
+        return effectiveRulesMap;
+    }
+
+    private void applyResolvedRules(TreeMap<Integer, List<BlockResolver.DegradationRule>> effectiveRulesMap) {
+        List<BlockResolver.DegradationRule> stage1Rules = getStageRules(effectiveRulesMap, 1);
+        List<BlockResolver.DegradationRule> stage2Rules = getStageRules(effectiveRulesMap, 2);
+        List<BlockResolver.DegradationRule> stage3Rules = getStageRules(effectiveRulesMap, 3);
+        List<BlockResolver.DegradationRule> stage4Rules = getStageRules(effectiveRulesMap, 4);
 
         dumpEffectiveRules(effectiveRulesMap);
         BlockResolver.setDegradationRules(stage1Rules, stage2Rules, stage3Rules, stage4Rules);
 
-        LOGGER.info("Loaded degradation rules: {} stage1, {} stage2, {} stage3, {} stage4",
+        NuclearWinter.LOGGER.info("Loaded degradation rules: {} stage1, {} stage2, {} stage3, {} stage4",
                 stage1Rules.size(), stage2Rules.size(), stage3Rules.size(), stage4Rules.size());
     }
 
     private void dumpEffectiveRules(TreeMap<Integer, List<BlockResolver.DegradationRule>> effectiveRulesMap) {
-        if (!LOGGER.isDebugEnabled()) return;
+        if (!NuclearWinter.LOGGER.isDebugEnabled()) {
+            return;
+        }
 
         for (Map.Entry<Integer, List<BlockResolver.DegradationRule>> entry : effectiveRulesMap.entrySet()) {
             int stage = entry.getKey();
             List<BlockResolver.DegradationRule> rules = entry.getValue();
-            LOGGER.debug("Stage {} effective degradation rules ({}):", stage, rules.size());
+            NuclearWinter.LOGGER.debug("Stage {} effective degradation rules ({}):", stage, rules.size());
             for (BlockResolver.DegradationRule rule : rules) {
-                String matcherStr;
-                if (rule.matcher() instanceof BlockResolver.TagMatcher tm) {
-                    matcherStr = "#" + tm.tag().location();
-                } else if (rule.matcher() instanceof BlockResolver.BlockMatcher bm) {
-                    matcherStr = BuiltInRegistries.BLOCK.getKey(bm.block()).toString();
-                } else {
-                    matcherStr = rule.matcher().toString();
-                }
-
-                String replacementStr = rule.replacement()
-                        .map(b -> BuiltInRegistries.BLOCK.getKey(b).toString())
-                        .orElse("(none)");
-
-                LOGGER.debug("  {} -> {} (passthrough={}, p={})",
-                        matcherStr, replacementStr, rule.passthrough(), rule.probability());
+                NuclearWinter.LOGGER.debug("  {} -> {} (passthrough={}, p={})",
+                        formatMatcher(rule.matcher()),
+                        formatReplacement(rule.replacement()),
+                        rule.passthrough(),
+                        rule.probability());
             }
         }
     }
@@ -142,7 +131,7 @@ public class DegradationRuleLoader extends SimpleJsonResourceReloadListener {
             Optional<Block> replacement;
             if (entry.replacement().isEmpty()) {
                 if (!entry.passthrough()) {
-                    LOGGER.warn("Skipping rule in {}: no replacement specified and passthrough is false (match={}). " +
+                    NuclearWinter.LOGGER.warn("Skipping rule in {}: no replacement specified and passthrough is false (match={}). " +
                             "This rule would have no effect; add passthrough: true to skip the block silently.",
                             sourceName, entry.match());
                     continue;
@@ -156,7 +145,7 @@ public class DegradationRuleLoader extends SimpleJsonResourceReloadListener {
 
             double probability = entry.probability();
             if (probability < 0.0 || probability > 1.0) {
-                LOGGER.warn("Skipping rule in {}: probability {} is not between 0.0 and 1.0 (match={})",
+                NuclearWinter.LOGGER.warn("Skipping rule in {}: probability {} is not between 0.0 and 1.0 (match={})",
                         sourceName, probability, entry.match());
                 continue;
             }
@@ -165,5 +154,67 @@ public class DegradationRuleLoader extends SimpleJsonResourceReloadListener {
         }
 
         return rules;
+    }
+
+    private Integer getStageNumber(ResourceLocation resourceLocation) {
+        Matcher pathMatcher = STAGE_PATTERN.matcher(resourceLocation.getPath());
+        if (!pathMatcher.matches()) {
+            NuclearWinter.LOGGER.warn("Ignoring degradation rules file with unexpected name: {}", resourceLocation);
+            return null;
+        }
+
+        return Integer.parseInt(pathMatcher.group(1));
+    }
+
+    private boolean claimStageOwner(Map<Integer, ResourceLocation> stageOwners, int stageNum, ResourceLocation resourceLocation) {
+        ResourceLocation previousOwner = stageOwners.putIfAbsent(stageNum, resourceLocation);
+        if (previousOwner == null) {
+            return true;
+        }
+
+        NuclearWinter.LOGGER.error(
+                "Conflicting degradation rules for stage {}: both {} and {} define it. Aborting reload; keeping previously loaded rules.",
+                stageNum,
+                previousOwner,
+                resourceLocation);
+        return false;
+    }
+
+    private DegradationStageData parseStageData(ResourceLocation resourceLocation, JsonElement jsonElement) {
+        DataResult<DegradationStageData> result = DegradationStageData.CODEC.parse(JsonOps.INSTANCE, jsonElement);
+        if (result.error().isPresent()) {
+            NuclearWinter.LOGGER.error("Failed to parse degradation rules for {}: {}",
+                    resourceLocation, result.error().get().message());
+            return null;
+        }
+
+        return result.result().orElse(null);
+    }
+
+    private String getStageSourceName(int stageNum) {
+        return "degradation_rules/stage" + stageNum + ".json";
+    }
+
+    private List<BlockResolver.DegradationRule> getStageRules(
+            TreeMap<Integer, List<BlockResolver.DegradationRule>> effectiveRulesMap,
+            int stageNum) {
+        return effectiveRulesMap.getOrDefault(stageNum, List.of());
+    }
+
+    private String formatMatcher(BlockResolver.Matcher matcher) {
+        if (matcher instanceof BlockResolver.TagMatcher tagMatcher) {
+            return "#" + tagMatcher.tag().location();
+        }
+        if (matcher instanceof BlockResolver.BlockMatcher blockMatcher) {
+            return BuiltInRegistries.BLOCK.getKey(blockMatcher.block()).toString();
+        }
+
+        return matcher.toString();
+    }
+
+    private String formatReplacement(Optional<Block> replacement) {
+        return replacement
+                .map(block -> BuiltInRegistries.BLOCK.getKey(block).toString())
+                .orElse("(none)");
     }
 }
