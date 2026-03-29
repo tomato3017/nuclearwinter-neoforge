@@ -26,6 +26,11 @@ public class NWBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(NWBlocks.WASTELAND_RUBBLE.get())
                 .add(NWBlocks.LEAD_BLOCK.get())
-                .add(NWBlocks.REINFORCED_CONCRETE.get());
+                .add(NWBlocks.REINFORCED_CONCRETE.get())
+                .add(NWBlocks.LEAD_ORE.get())
+                .add(NWBlocks.DEEPSLATE_LEAD_ORE.get());
+        tag(BlockTags.NEEDS_STONE_TOOL)
+                .add(NWBlocks.LEAD_ORE.get())
+                .add(NWBlocks.DEEPSLATE_LEAD_ORE.get());
     }
 }

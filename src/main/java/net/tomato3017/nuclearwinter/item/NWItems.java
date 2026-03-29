@@ -23,6 +23,14 @@ public class NWItems {
     public static final DeferredItem<BlockItem> LEAD_BLOCK = ITEMS.registerSimpleBlockItem("lead_block", NWBlocks.LEAD_BLOCK);
     public static final DeferredItem<BlockItem> REINFORCED_CONCRETE = ITEMS.registerSimpleBlockItem("reinforced_concrete", NWBlocks.REINFORCED_CONCRETE);
 
+    // --- Block items for ore blocks ---
+    public static final DeferredItem<BlockItem> LEAD_ORE = ITEMS.registerSimpleBlockItem("lead_ore", NWBlocks.LEAD_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_LEAD_ORE = ITEMS.registerSimpleBlockItem("deepslate_lead_ore", NWBlocks.DEEPSLATE_LEAD_ORE);
+
+    // --- Lead material items ---
+    public static final DeferredItem<Item> RAW_LEAD = ITEMS.registerSimpleItem("raw_lead");
+    public static final DeferredItem<Item> LEAD_INGOT = ITEMS.registerSimpleItem("lead_ingot");
+
     public static final DeferredItem<Item> RADAWAY = ITEMS.register("radaway",
             () -> new RadAwayItem(new Item.Properties().stacksTo(16)));
 

@@ -2,6 +2,8 @@
   "values": [
     "nuclearwinter:wasteland_rubble",
     "nuclearwinter:lead_block",
-    "nuclearwinter:reinforced_concrete"
+    "nuclearwinter:reinforced_concrete",
+    "nuclearwinter:lead_ore",
+    "nuclearwinter:deepslate_lead_ore"
   ]
 }

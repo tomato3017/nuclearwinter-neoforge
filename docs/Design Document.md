@@ -426,6 +426,8 @@ Degradation is defined by **block type category** rather than individual blocks,
 
 Dead Grass, Wasteland Dirt, Wasteland Rubble, Deadwood, Dead Leaves, Ruined Planks.
 
+**Lead:** Lead Ore and Deepslate Lead Ore generate in the Overworld with placement similar to iron ore. Mining drops Raw Lead (Fortune applies); smelting or blasting yields Lead Ingot. Lead Block is crafted from nine Lead Ingots (and can be unpacked back to ingots).
+
 ### Custom Block Descriptions
 
 **Dead Grass** -- Dried, dying grass in a grey-brown coloration. The first visible sign that the world is succumbing to radiation. Behaves identically to vanilla grass. Appears at Stage 1.

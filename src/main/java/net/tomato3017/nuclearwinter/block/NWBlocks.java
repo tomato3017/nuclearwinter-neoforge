@@ -45,4 +45,14 @@ public class NWBlocks {
     public static final DeferredBlock<Block> REINFORCED_CONCRETE = BLOCKS.registerSimpleBlock("reinforced_concrete",
             BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(4.0f, 12.0f)
                     .sound(SoundType.STONE).requiresCorrectToolForDrops());
+
+    // --- Ore blocks ---
+
+    public static final DeferredBlock<Block> LEAD_ORE = BLOCKS.registerSimpleBlock("lead_ore",
+            BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(3.0f, 3.0f)
+                    .sound(SoundType.STONE).requiresCorrectToolForDrops());
+
+    public static final DeferredBlock<Block> DEEPSLATE_LEAD_ORE = BLOCKS.registerSimpleBlock("deepslate_lead_ore",
+            BlockBehaviour.Properties.of().mapColor(MapColor.DEEPSLATE).strength(4.5f, 3.0f)
+                    .sound(SoundType.DEEPSLATE).requiresCorrectToolForDrops());
 }

@@ -7,9 +7,13 @@
   "block.nuclearwinter.wasteland_rubble": "Wasteland Rubble",
   "block.nuclearwinter.deadwood": "Deadwood",
   "block.nuclearwinter.ruined_planks": "Ruined Planks",
+  "block.nuclearwinter.lead_ore": "Lead Ore",
+  "block.nuclearwinter.deepslate_lead_ore": "Deepslate Lead Ore",
   "block.nuclearwinter.lead_block": "Lead Block",
   "block.nuclearwinter.reinforced_concrete": "Reinforced Concrete",
 
+  "item.nuclearwinter.raw_lead": "Raw Lead",
+  "item.nuclearwinter.lead_ingot": "Lead Ingot",
   "item.nuclearwinter.radaway": "RadAway",
   "item.nuclearwinter.geiger_counter": "Geiger Counter",
   "item.nuclearwinter.dosimeter": "Dosimeter",
