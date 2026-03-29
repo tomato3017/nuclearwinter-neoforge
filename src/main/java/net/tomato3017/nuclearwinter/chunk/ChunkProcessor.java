@@ -76,12 +76,17 @@ public final class ChunkProcessor {
 
     public void loadChunk(ChunkPos chunkPos) {
         loadedChunks.add(chunkPos);
-        chunks.add(chunkPos);
+        queueChunk(chunkPos);
     }
 
     public void unloadChunk(ChunkPos chunkPos) {
         loadedChunks.remove(chunkPos);
         chunks.remove(chunkPos);
+    }
+
+    public void requeueChunk(ChunkPos chunkPos) {
+        loadedChunks.add(chunkPos);
+        queueChunk(chunkPos);
     }
 
     public void tick(ServerLevel level) {
@@ -176,6 +181,12 @@ public final class ChunkProcessor {
 
     private void resyncChunkBiomes(ServerLevel level, LevelChunk chunk) {
         level.getChunkSource().chunkMap.resendBiomesForChunks(List.of(chunk));
+    }
+
+    private void queueChunk(ChunkPos chunkPos) {
+        if (!chunks.contains(chunkPos)) {
+            chunks.add(chunkPos);
+        }
     }
 
     private void degradeRandomColumns(ServerLevel level, LevelChunk chunk) {

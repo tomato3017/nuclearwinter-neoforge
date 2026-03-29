@@ -64,6 +64,23 @@ public final class StageBase {
         }
     }
 
+    public boolean hasChunkProcessor() {
+        return chunkProcessor != null;
+    }
+
+    public boolean isNukeMode() {
+        return nukeMode;
+    }
+
+    public boolean requeueChunk(LevelChunk chunk) {
+        if (chunkProcessor == null) {
+            return false;
+        }
+
+        chunkProcessor.requeueChunk(chunk.getPos());
+        return true;
+    }
+
     public int getStageIndex() {
         return stageIndex;
     }
