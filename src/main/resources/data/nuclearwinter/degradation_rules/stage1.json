@@ -11,6 +11,10 @@
       "passthrough": true
     },
     {
+      "match": "#minecraft:snow",
+      "passthrough": true
+    },
+    {
       "match": "minecraft:grass_block",
       "replacement": "nuclearwinter:dead_grass",
       "probability": 0.1

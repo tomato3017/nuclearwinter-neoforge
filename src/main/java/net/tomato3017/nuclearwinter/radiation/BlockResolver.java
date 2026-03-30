@@ -206,6 +206,7 @@ public class BlockResolver {
     public static boolean canRadiationPassThrough(BlockState state) {
         return state.isAir() ||
                 state.is(BlockTags.LEAVES) ||
+                state.is(BlockTags.SNOW) ||
                 !state.canOcclude();
     }
 

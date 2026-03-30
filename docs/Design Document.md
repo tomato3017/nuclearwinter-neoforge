@@ -133,6 +133,7 @@ The canonical radiation values. All exposure times and shelter math derive from 
 | Material             | BlockResistanceMod | Notes                                           |
 |----------------------|-------------------|-------------------------------------------------|
 | Air                  | --                | Skipped in raycast                              |
+| Snow (layers, block, powder snow) | -- | Passthrough -- no attenuation; uses `#minecraft:snow` |
 | Dirt / Gravel        | 0.5               | Worst shelter, desperation only                 |
 | Wood                 | 0.6               | Slightly better than dirt, still poor           |
 | Stone                | 1.0               | Baseline, abundant early game                   |
@@ -327,6 +328,8 @@ Visible block degradation begins in **Stage 1**, not Stage 2. The chunk processo
 - **(NP) -- Not Passthrough:** after conversion, the raycast stops. Maps to `passthrough=false` / `break`. This is the default -- if not marked, assume NP.
 
 Because leaves are NP on their first conversion, a column's leaves must die before the raycast can ever reach the grass below. This naturally staggers canopy death ahead of ground cover without needing separate timing logic.
+
+Blocks in `#minecraft:snow` (snow layers, snow block, powder snow) are **passthrough** in the degradation column: they do not convert and the raycast continues downward so surface degradation can reach blocks under snow cover. Radiation uses the same tag for zero shielding.
 
 ### Probability Approach
 
