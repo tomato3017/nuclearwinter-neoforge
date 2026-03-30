@@ -18,6 +18,7 @@ public class RadiationEmitter {
 
         double floorConstant = Config.FLOOR_CONSTANT.get();
         double currentRad = skyEmission;
+        // TODO Apply the floor check before the block loop so open-sky exposure below the floor constant returns 0.0.
 
         int skyLight = level.getBrightness(LightLayer.SKY, playerPos);
         double penalty = Config.SKY_LIGHT_RESISTANCE_PENALTY.get();
