@@ -57,10 +57,17 @@ public class Config {
     public static final ModConfigSpec.DoubleValue RESISTANCE_WATER;
     public static final ModConfigSpec.DoubleValue RESISTANCE_LEAD;
 
+    // --- Worldgen ---
+    public static final ModConfigSpec.BooleanValue GENERATE_LEAD_ORE;
+
     // --- Chunk Processing ---
     public static final ModConfigSpec.IntValue CHUNK_PROCESSING_INTERVAL_TICKS;
     public static final ModConfigSpec.IntValue CHUNK_PROCESSING_MAX_CHUNKS_PER_INTERVAL;
     public static final ModConfigSpec.BooleanValue CHUNK_PROCESSING_STOP_AT_FLUIDS;
+
+    // --- Mob ---
+    public static final ModConfigSpec.IntValue ANIMAL_SPAWN_BLOCK_MIN_STAGE;
+    public static final ModConfigSpec.DoubleValue ENTITY_RADIATION_DAMAGE_SCALE;
 
     static {
         BUILDER.comment("Controls how long each apocalypse stage lasts.")
@@ -202,6 +209,14 @@ public class Config {
                 .defineInRange("fatalDamagePerSec", 4.0, 0.01, 100.0);
         BUILDER.pop();
 
+        BUILDER.comment("World generation toggles.")
+                .translation("nuclearwinter.configuration.worldgen")
+                .push("worldgen");
+        GENERATE_LEAD_ORE = BUILDER.comment("When false, lead ore is not placed during world generation (blocks and recipes remain).")
+                .translation("nuclearwinter.configuration.worldgen.generateLeadOre")
+                .define("generateLeadOre", true);
+        BUILDER.pop();
+
         BUILDER.comment("Controls how chunk degradation processing is scheduled.")
                 .translation("nuclearwinter.configuration.chunkProcessing")
                 .push("chunkProcessing");
@@ -214,6 +229,19 @@ public class Config {
         CHUNK_PROCESSING_STOP_AT_FLUIDS = BUILDER.comment("Whether chunk degradation should stop when it hits a fluid block")
                 .translation("nuclearwinter.configuration.chunkProcessing.stopAtFluids")
                 .define("stopAtFluids", true);
+        BUILDER.pop();
+
+        BUILDER.comment("Mob spawn suppression and non-player radiation damage.")
+                .translation("nuclearwinter.configuration.mob")
+                .push("mob");
+        ANIMAL_SPAWN_BLOCK_MIN_STAGE = BUILDER.comment(
+                        "Minimum stage index at which surface animal spawns are blocked (0=Inactive ... 5=Stage 4). Sky light > 0 counts as surface.")
+                .translation("nuclearwinter.configuration.mob.animalSpawnBlockMinStage")
+                .defineInRange("animalSpawnBlockMinStage", 4, 0, 5);
+        ENTITY_RADIATION_DAMAGE_SCALE = BUILDER.comment(
+                        "Multiplier on radiation exposure (rads/sec) for non-player living entities; damage applied once per second (magic damage).")
+                .translation("nuclearwinter.configuration.mob.entityRadiationDamageScale")
+                .defineInRange("entityRadiationDamageScale", 0.0001, 0.0, Double.MAX_VALUE);
         BUILDER.pop();
     }
 

@@ -8,6 +8,11 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -24,10 +29,12 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
+import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -42,10 +49,12 @@ import net.tomato3017.nuclearwinter.datagen.NWBlockTagsProvider;
 import net.tomato3017.nuclearwinter.effects.NWMobEffects;
 import net.tomato3017.nuclearwinter.item.NWItems;
 import net.tomato3017.nuclearwinter.radiation.BlockResolver;
+import net.tomato3017.nuclearwinter.radiation.EntityRadHandler;
 import net.tomato3017.nuclearwinter.radiation.PlayerRadHandler;
 import net.tomato3017.nuclearwinter.radiation.RadiationTier;
 import net.tomato3017.nuclearwinter.stage.StageBase;
 import net.tomato3017.nuclearwinter.stage.StageManager;
+import net.tomato3017.nuclearwinter.world.NWBiomeModifiers;
 import org.slf4j.Logger;
 
 import java.util.concurrent.CompletableFuture;
@@ -108,6 +117,7 @@ public class NuclearWinter {
         NWBlocks.BLOCKS.register(modEventBus);
         NWItems.ITEMS.register(modEventBus);
         NWMobEffects.MOB_EFFECTS.register(modEventBus);
+        NWBiomeModifiers.SERIALIZERS.register(modEventBus);
 
         NeoForge.EVENT_BUS.register(this);
 
@@ -192,6 +202,50 @@ public class NuclearWinter {
         }
 
 
+    }
+
+    /**
+     * Blocks surface (sky-lit) passive animal spawns when the dimension stage is at or above
+     * {@link Config#ANIMAL_SPAWN_BLOCK_MIN_STAGE}. NeoForge 21.1 uses
+     * {@link MobSpawnEvent.SpawnPlacementCheck} for runtime spawn-rule changes instead of the
+     * legacy CheckSpawn event.
+     */
+    @SubscribeEvent
+    public void onMobSpawnPlacementCheck(MobSpawnEvent.SpawnPlacementCheck event) {
+        if (!Animal.class.isAssignableFrom(event.getEntityType().getBaseClass())) {
+            return;
+        }
+        if (!isSuppressedAnimalSpawnType(event.getSpawnType())) {
+            return;
+        }
+        ServerLevelAccessor level = event.getLevel();
+        if (level.getBrightness(LightLayer.SKY, event.getPos()) <= 0) {
+            return;
+        }
+        ServerLevel serverLevel = level.getLevel();
+
+        StageBase stage = stageManager.getStageForWorld(serverLevel.dimension());
+        if (stage == null) {
+            return;
+        }
+        if (stage.getStageIndex() >= Config.ANIMAL_SPAWN_BLOCK_MIN_STAGE.get()) {
+            event.setResult(MobSpawnEvent.SpawnPlacementCheck.Result.FAIL);
+        }
+    }
+
+    private static boolean isSuppressedAnimalSpawnType(MobSpawnType spawnType) {
+        return spawnType == MobSpawnType.NATURAL || spawnType == MobSpawnType.CHUNK_GENERATION;
+    }
+
+    @SubscribeEvent
+    public void onEntityTickPost(EntityTickEvent.Post event) {
+        if (event.getEntity().level().isClientSide()) {
+            return;
+        }
+        if (!(event.getEntity() instanceof LivingEntity living)) {
+            return;
+        }
+        EntityRadHandler.onLivingEntityTick(living);
     }
 
     @SubscribeEvent

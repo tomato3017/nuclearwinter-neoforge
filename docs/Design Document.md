@@ -52,10 +52,10 @@ Inspired by the [Solar Apocalypse](https://modrinth.com/mod/solar-apocalypse) mo
 | 0     | 0%        | No         | Normal                             | Normal                      | Normal                   |
 | 1     | 1%        | No         | Leaves and grass begin dying in scattered patches | --                          | --                       |
 | 2     | 10%       | No         | Canopies strip, deadwood spreads, world mostly dead | Surface animals dying off   | --                       |
-| 3     | 50%       | No         | Surface vegetation finishes dying before chunk nuking | All surface mobs gone       | Visibly toxic/hazy       |
+| 3     | 50%       | No         | Surface vegetation finishes dying before chunk nuking | Surface **animal** spawns blocked (configurable min stage; default Stage 3) | Visibly toxic/hazy       |
 | 4     | 100%      | Yes        | Chunk nuking routine begins        | --                          | Rad storms begin         |
 
-**TBD:** Mob behavior specifics (what "animals behave oddly" and "dying off" look like mechanically). Sky/weather visual implementation details for Grace, Stage 3, and Stage 4.
+**Mobs (implemented):** Non-player living entities take **magic damage** once per second from the same sky raycast as players (no pool, no hazmat). `Animal` surface spawns fail when the dimension stage index is at or above `mob.animalSpawnBlockMinStage` (default 4 = Stage 3) and sky light at the spawn position is &gt; 0; underground spawns still succeed. **TBD:** Sky/weather visual implementation details for Grace, Stage 3, and Stage 4.
 
 ### Stage Durations
 
@@ -102,7 +102,7 @@ Applied per block in a downward raycast from the sky to the player. The sky is t
 
 ### Raycast Behavior
 
-- A full raycast is always performed from sky to player, regardless of sky light level. Sky light was considered as a proxy but rejected because it does not account for block material type.
+- A full raycast is always performed from sky to the subject (player or non-player living entity), regardless of sky light level. Sky light was considered as a proxy but rejected because it does not account for block material type.
 - Air blocks are skipped (not counted in the attenuation formula).
 - The raycast exits early once `RadiationLeft` drops below the floor value. With the sky-to-player direction, this means radiation was fully attenuated before reaching the player -- the common case for well-sheltered players and the primary performance optimization.
 - Calculated on an interval (every 5-10 ticks) and cached until the player moves blocks or the column above changes.
@@ -480,6 +480,19 @@ All values listed are defaults. All are configurable.
 | Floor constant                | 50 Rads          | Raycast exits and sets radiation to 0 below this    |
 | Sky light resistance penalty  | 0.5              | 0.0 = no effect; 1.0 = full penalty at sky light 15 |
 | Raycast calculation interval  | Every 5-10 ticks | Cached until player moves or column above changes   |
+
+### Mobs
+
+| Config                         | Default   | Notes                                                                 |
+|--------------------------------|-----------|-----------------------------------------------------------------------|
+| `mob.animalSpawnBlockMinStage` | 4         | Stage index (0–5) at which surface animal spawns are denied           |
+| `mob.entityRadiationDamageScale` | 0.0001  | Multiplier on rads/sec for non-player living entity damage per second |
+
+### Worldgen
+
+| Config                    | Default | Notes                                                                 |
+|---------------------------|---------|-----------------------------------------------------------------------|
+| `worldgen.generateLeadOre` | `true`  | When `false`, overworld lead ore features are not added (items/recipes unchanged). |
 
 ### Block Resistance
 

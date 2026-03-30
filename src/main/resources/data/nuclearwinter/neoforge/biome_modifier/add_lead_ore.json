@@ -1,0 +1,9 @@
+{
+  "type": "nuclearwinter:lead_ore",
+  "biomes": "#minecraft:is_overworld",
+  "features": [
+    "nuclearwinter:lead_ore_small",
+    "nuclearwinter:lead_ore_middle"
+  ],
+  "step": "underground_ores"
+}

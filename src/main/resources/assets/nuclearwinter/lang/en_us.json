@@ -122,6 +122,18 @@
   "nuclearwinter.configuration.blockResistance.lead": "Lead Resistance",
   "nuclearwinter.configuration.blockResistance.lead.tooltip": "Lead block radiation resistance modifier.",
 
+  "nuclearwinter.configuration.worldgen": "Worldgen",
+  "nuclearwinter.configuration.worldgen.tooltip": "World generation toggles.",
+  "nuclearwinter.configuration.worldgen.generateLeadOre": "Generate Lead Ore",
+  "nuclearwinter.configuration.worldgen.generateLeadOre.tooltip": "When false, lead ore is not placed during world generation (blocks and recipes remain).",
+
+  "nuclearwinter.configuration.mob": "Mobs",
+  "nuclearwinter.configuration.mob.tooltip": "Controls animal spawn suppression and non-player radiation damage.",
+  "nuclearwinter.configuration.mob.animalSpawnBlockMinStage": "Animal Spawn Block Min Stage",
+  "nuclearwinter.configuration.mob.animalSpawnBlockMinStage.tooltip": "Minimum stage index at which sky-lit animal spawns are blocked (0 = Inactive ... 5 = Stage 4).",
+  "nuclearwinter.configuration.mob.entityRadiationDamageScale": "Entity Radiation Damage Scale",
+  "nuclearwinter.configuration.mob.entityRadiationDamageScale.tooltip": "Multiplier applied to non-player living entity radiation exposure before once-per-second damage.",
+
   "nuclearwinter.tier.clean": "Clean",
   "nuclearwinter.tier.contaminated": "Contaminated",
   "nuclearwinter.tier.irradiated": "Irradiated",
