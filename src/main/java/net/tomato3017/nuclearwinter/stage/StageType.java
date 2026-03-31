@@ -16,23 +16,27 @@ public enum StageType {
                     .duration(Config.STAGE1_DURATION.get())
                     .skyEmission(Config.STAGE1_SKY_EMISSION.get())
                     .withChunkProcessing()
+                    .chunkProcessingIntervalMultiplier(1)
                     .build()),
     STAGE_2     (3, "Stage 2",
             () -> StageBase.builder(3)
                     .duration(Config.STAGE2_DURATION.get())
                     .skyEmission(Config.STAGE2_SKY_EMISSION.get())
                     .withChunkProcessing()
+                    .chunkProcessingIntervalMultiplier(1)
                     .build()),
     STAGE_3     (4, "Stage 3",
             () -> StageBase.builder(4)
                     .duration(Config.STAGE3_DURATION.get())
                     .skyEmission(Config.STAGE3_SKY_EMISSION.get())
                     .withChunkProcessing()
+                    .chunkProcessingIntervalMultiplier(1)
                     .build()),
     STAGE_4     (5, "Stage 4",
             () -> StageBase.builder(5)
                     .skyEmission(Config.STAGE4_SKY_EMISSION.get())
                     .withNukeMode()
+                    .chunkProcessingIntervalMultiplier(3)
                     .build());
 
     public static final int MAX_INDEX = STAGE_4.index;

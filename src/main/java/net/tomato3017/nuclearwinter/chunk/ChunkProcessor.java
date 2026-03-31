@@ -36,17 +36,19 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public final class ChunkProcessor {
     private static final Method CHUNK_MAP_GET_CHUNKS_METHOD = resolveChunkMapGetChunksMethod();
+    private static final int COLUMNS_PER_TICK = 16;
 
     private final int stageIndex;
     private final boolean chunkNukingEnabled;
-    private static final int COLUMNS_PER_TICK = 16;
+    private final int intervalMultiplier;
 
     private final Set<ChunkPos> loadedChunks = new HashSet<>();
     private final Queue<ChunkPos> chunks = new LinkedBlockingQueue<>();
 
-    public ChunkProcessor(int stageIndex, ServerLevel level, boolean chunkNukingEnabled) {
+    public ChunkProcessor(int stageIndex, ServerLevel level, boolean chunkNukingEnabled, int intervalMultiplier) {
         this.stageIndex = stageIndex;
         this.chunkNukingEnabled = chunkNukingEnabled;
+        this.intervalMultiplier = Math.max(1, intervalMultiplier);
 
         for (ChunkHolder chunkHolder : getLoadedChunkHolders(level)) {
             ChunkPos chunkPos = chunkHolder.getPos();
@@ -90,7 +92,8 @@ public final class ChunkProcessor {
     }
 
     public void tick(ServerLevel level) {
-        if (level.getGameTime() % Config.CHUNK_PROCESSING_INTERVAL_TICKS.get() != 0) return;
+        long intervalTicks = (long) Config.CHUNK_PROCESSING_INTERVAL_TICKS.get() * intervalMultiplier;
+        if (level.getGameTime() % intervalTicks != 0) return;
 
         if (chunks.isEmpty()) {
             chunks.addAll(loadedChunks);

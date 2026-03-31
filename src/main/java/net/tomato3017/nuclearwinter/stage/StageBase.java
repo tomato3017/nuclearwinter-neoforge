@@ -15,6 +15,7 @@ public final class StageBase {
     private final long duration;
     private final double skyEmission;
     private final boolean chunkProcessingEnabled;
+    private final int chunkProcessingIntervalMultiplier;
     private final boolean nukeMode;
 
     private ChunkProcessor chunkProcessor;
@@ -24,13 +25,14 @@ public final class StageBase {
         this.duration = builder.duration;
         this.skyEmission = builder.skyEmission;
         this.chunkProcessingEnabled = builder.chunkProcessingEnabled;
+        this.chunkProcessingIntervalMultiplier = builder.chunkProcessingIntervalMultiplier;
         this.nukeMode = builder.nukeMode;
     }
 
     public void init(ServerLevel level, long currentTick) {
         this.initTick = currentTick;
         if (chunkProcessingEnabled) {
-            chunkProcessor = new ChunkProcessor(stageIndex, level, nukeMode);
+            chunkProcessor = new ChunkProcessor(stageIndex, level, nukeMode, chunkProcessingIntervalMultiplier);
         }
     }
 
@@ -115,6 +117,7 @@ public final class StageBase {
         private long duration = 0;
         private double skyEmission = 0.0;
         private boolean chunkProcessingEnabled = false;
+        private int chunkProcessingIntervalMultiplier = 1;
         private boolean nukeMode = false;
 
         private Builder(int stageIndex) {
@@ -133,6 +136,15 @@ public final class StageBase {
 
         public Builder withChunkProcessing() {
             this.chunkProcessingEnabled = true;
+            return this;
+        }
+
+        /**
+         * Multiplies the base interval between chunk-processing passes; values below {@code 1}
+         * are clamped so processing still runs every scheduled pass.
+         */
+        public Builder chunkProcessingIntervalMultiplier(int chunkProcessingIntervalMultiplier) {
+            this.chunkProcessingIntervalMultiplier = Math.max(1, chunkProcessingIntervalMultiplier);
             return this;
         }
 

@@ -78,6 +78,7 @@ Total default arc: **~11.5 hours** of server uptime. Front-loaded so players hav
 
 Applies to both already-visited and newly generated chunks.
 
+- Stage 4 chunk processing runs at 3x the normal interval so the same per-cycle chunk budget is spread across a slower cadence.
 - Newly generated chunks generate naturally first, then immediately have wasteland corruption applied.
 - Preserves underlying biome geography -- dead forests, dried riverbeds, cracked plains rather than a uniform grey wasteland.
 - The natural biome underneath gives the wasteland character and a sense of history.
