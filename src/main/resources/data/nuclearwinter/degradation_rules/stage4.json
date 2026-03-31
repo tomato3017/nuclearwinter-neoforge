@@ -107,23 +107,33 @@
     },
     {
       "match": "nuclearwinter:ruined_planks",
-      "passthrough": true
+      "replacement": "minecraft:air",
+      "passthrough": true,
+      "probability": 0.1
     },
     {
       "match": "nuclearwinter:ruined_planks_stairs",
-      "passthrough": true
+      "replacement": "minecraft:air",
+      "passthrough": true,
+      "probability": 0.1
     },
     {
       "match": "nuclearwinter:ruined_planks_slab",
-      "passthrough": true
+      "replacement": "minecraft:air",
+      "passthrough": true,
+      "probability": 0.1
     },
     {
       "match": "nuclearwinter:ruined_planks_fence",
-      "passthrough": true
+      "replacement": "minecraft:air",
+      "passthrough": true,
+      "probability": 0.1
     },
     {
       "match": "nuclearwinter:ruined_planks_fence_gate",
-      "passthrough": true
+      "replacement": "minecraft:air",
+      "passthrough": true,
+      "probability": 0.1
     },
     {
       "match": "#minecraft:logs",
