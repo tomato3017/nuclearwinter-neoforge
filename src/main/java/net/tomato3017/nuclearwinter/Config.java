@@ -47,16 +47,6 @@ public class Config {
     public static final ModConfigSpec.DoubleValue SUIT_TIER2_PROTECTION;
     public static final ModConfigSpec.DoubleValue SUIT_TIER3_PROTECTION;
 
-    // --- Block Resistance ---
-    public static final ModConfigSpec.DoubleValue RESISTANCE_DIRT;
-    public static final ModConfigSpec.DoubleValue RESISTANCE_WOOD;
-    public static final ModConfigSpec.DoubleValue RESISTANCE_STONE;
-    public static final ModConfigSpec.DoubleValue RESISTANCE_DEEPSLATE;
-    public static final ModConfigSpec.DoubleValue RESISTANCE_REINFORCED_CONCRETE;
-    public static final ModConfigSpec.DoubleValue RESISTANCE_IRON;
-    public static final ModConfigSpec.DoubleValue RESISTANCE_WATER;
-    public static final ModConfigSpec.DoubleValue RESISTANCE_LEAD;
-
     // --- Worldgen ---
     public static final ModConfigSpec.BooleanValue GENERATE_LEAD_ORE;
 
@@ -170,35 +160,6 @@ public class Config {
         SUIT_TIER3_PROTECTION = BUILDER.comment("Hazmat Suit Tier 3 radiation reduction (0.0 to 1.0)")
                 .translation("nuclearwinter.configuration.equipment.suitTier3Protection")
                 .defineInRange("suitTier3Protection", 0.99, 0.0, 1.0);
-        BUILDER.pop();
-
-        BUILDER.comment("Radiation resistance multipliers for different block materials.")
-                .translation("nuclearwinter.configuration.blockResistance")
-                .push("blockResistance");
-        RESISTANCE_DIRT = BUILDER.comment("Dirt/gravel radiation resistance modifier")
-                .translation("nuclearwinter.configuration.blockResistance.dirt")
-                .defineInRange("dirt", 0.5, 0.01, 100.0);
-        RESISTANCE_WOOD = BUILDER.comment("Wood radiation resistance modifier")
-                .translation("nuclearwinter.configuration.blockResistance.wood")
-                .defineInRange("wood", 0.6, 0.01, 100.0);
-        RESISTANCE_STONE = BUILDER.comment("Stone radiation resistance modifier (baseline)")
-                .translation("nuclearwinter.configuration.blockResistance.stone")
-                .defineInRange("stone", 1.0, 0.01, 100.0);
-        RESISTANCE_DEEPSLATE = BUILDER.comment("Deepslate/obsidian radiation resistance modifier")
-                .translation("nuclearwinter.configuration.blockResistance.deepslate")
-                .defineInRange("deepslate", 2.0, 0.01, 100.0);
-        RESISTANCE_REINFORCED_CONCRETE = BUILDER.comment("Reinforced concrete radiation resistance modifier")
-                .translation("nuclearwinter.configuration.blockResistance.reinforcedConcrete")
-                .defineInRange("reinforcedConcrete", 2.5, 0.01, 100.0);
-        RESISTANCE_IRON = BUILDER.comment("Iron block radiation resistance modifier")
-                .translation("nuclearwinter.configuration.blockResistance.iron")
-                .defineInRange("iron", 4.0, 0.01, 100.0);
-        RESISTANCE_WATER = BUILDER.comment("Water radiation resistance modifier")
-                .translation("nuclearwinter.configuration.blockResistance.water")
-                .defineInRange("water", 8.0, 0.01, 100.0);
-        RESISTANCE_LEAD = BUILDER.comment("Lead block radiation resistance modifier")
-                .translation("nuclearwinter.configuration.blockResistance.lead")
-                .defineInRange("lead", 16.0, 0.01, 100.0);
         BUILDER.pop();
 
         BUILDER.comment("Miscellaneous settings.")

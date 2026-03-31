@@ -3,22 +3,19 @@ package net.tomato3017.nuclearwinter.radiation;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.tomato3017.nuclearwinter.Config;
 import net.tomato3017.nuclearwinter.NuclearWinter;
 import net.tomato3017.nuclearwinter.stage.StageType;
 
 import java.util.*;
 
 /**
- * Maps blocks and block tags to radiation resistance values loaded from {@link Config}.
- * A higher resistance value means the block attenuates more radiation per layer in the raycast.
- * Call {@link #init()} on server start; use {@link #registerBlockOverride(Block, double)} to add mod-specific entries afterward.
- * Degradation rules are supplied externally via {@link #setDegradationRules} by the datapack loader.
+ * Maps blocks and block tags to radiation resistance values and chunk degradation rules.
+ * Resistance values are supplied by {@link net.tomato3017.nuclearwinter.data.RadiationResistanceLoader} via
+ * {@link #setRadiationResistance} on datapack reload. Degradation rules are supplied by
+ * {@link net.tomato3017.nuclearwinter.data.DegradationRuleLoader} via {@link #setDegradationRules}.
  */
 public class BlockResolver {
     private static volatile Map<TagKey<Block>, Double> tagResistanceMap = Map.of();
@@ -30,37 +27,25 @@ public class BlockResolver {
     private static volatile List<DegradationRule> stage3DegradationRules = List.of();
     private static volatile List<DegradationRule> stage4DegradationRules = List.of();
 
-    public static synchronized void init() {
-        LinkedHashMap<TagKey<Block>, Double> newTagResistanceMap = new LinkedHashMap<>();
-        LinkedHashMap<Block, Double> newBlockOverrides = new LinkedHashMap<>();
-
-        double newDefaultResistance = Config.RESISTANCE_STONE.get();
-
-        // TODO: Make this datadriven
-        newTagResistanceMap.put(BlockTags.DIRT, Config.RESISTANCE_DIRT.get());
-        newTagResistanceMap.put(BlockTags.LOGS, Config.RESISTANCE_WOOD.get());
-        newTagResistanceMap.put(BlockTags.PLANKS, Config.RESISTANCE_WOOD.get());
-        newTagResistanceMap.put(BlockTags.WOODEN_FENCES, Config.RESISTANCE_WOOD.get());
-        newTagResistanceMap.put(BlockTags.WOODEN_DOORS, Config.RESISTANCE_WOOD.get());
-        newTagResistanceMap.put(BlockTags.WOODEN_SLABS, Config.RESISTANCE_WOOD.get());
-        newTagResistanceMap.put(BlockTags.WOODEN_STAIRS, Config.RESISTANCE_WOOD.get());
-        newTagResistanceMap.put(BlockTags.STONE_ORE_REPLACEABLES, Config.RESISTANCE_STONE.get());
-        newTagResistanceMap.put(BlockTags.DEEPSLATE_ORE_REPLACEABLES, Config.RESISTANCE_DEEPSLATE.get());
-
-        newBlockOverrides.put(Blocks.OBSIDIAN, Config.RESISTANCE_DEEPSLATE.get());
-        newBlockOverrides.put(Blocks.CRYING_OBSIDIAN, Config.RESISTANCE_DEEPSLATE.get());
-        newBlockOverrides.put(Blocks.IRON_BLOCK, Config.RESISTANCE_IRON.get());
-        newBlockOverrides.put(Blocks.WATER, Config.RESISTANCE_WATER.get());
-        newBlockOverrides.put(Blocks.GRAVEL, Config.RESISTANCE_DIRT.get());
-        //END OF TODO
-
+    /**
+     * Replaces the radiation resistance maps with values parsed from datapack JSON.
+     * Called by {@link net.tomato3017.nuclearwinter.data.RadiationResistanceLoader} on each resource reload.
+     *
+     * @param blockResistances  block-specific resistance overrides
+     * @param tagResistances    tag-based resistance values (first matching tag wins in {@link #getResistance})
+     * @param newDefaultResistance fallback resistance for blocks not matched by any entry
+     */
+    public static synchronized void setRadiationResistance(
+            Map<Block, Double> blockResistances,
+            Map<TagKey<Block>, Double> tagResistances,
+            double newDefaultResistance) {
+        blockOverrides = Collections.unmodifiableMap(new LinkedHashMap<>(blockResistances));
+        tagResistanceMap = Collections.unmodifiableMap(new LinkedHashMap<>(tagResistances));
         defaultResistance = newDefaultResistance;
-        tagResistanceMap = Collections.unmodifiableMap(newTagResistanceMap);
-        blockOverrides = Collections.unmodifiableMap(newBlockOverrides);
 
         NuclearWinter.LOGGER.info(
-                "BlockResolver initialized with {} tag resistances, {} block overrides",
-                tagResistanceMap.size(), blockOverrides.size());
+                "BlockResolver updated with {} tag resistances, {} block overrides, default={}",
+                tagResistanceMap.size(), blockOverrides.size(), defaultResistance);
     }
 
     /**
@@ -172,7 +157,7 @@ public class BlockResolver {
     }
 
     private static void warnInvalidRule(String sourceName, String rawRule, String reason) {
-        NuclearWinter.LOGGER.warn("Skipping invalid chunk degradation rule in {}: '{}' ({})", sourceName, rawRule, reason);
+        NuclearWinter.LOGGER.warn("Skipping invalid entry in {}: '{}' ({})", sourceName, rawRule, reason);
     }
 
     public static DegradationResult getDegradationResult(BlockState state, int stageIndex) {
@@ -196,20 +181,6 @@ public class BlockResolver {
         return null;
     }
 
-    public static synchronized void registerBlockOverride(Block block, double resistance) {
-        LinkedHashMap<Block, Double> overrides = new LinkedHashMap<>(blockOverrides);
-        overrides.put(block, resistance);
-        blockOverrides = Collections.unmodifiableMap(overrides);
-    }
-
-    //TODO make this all data driven instead of this or mess
-    public static boolean canRadiationPassThrough(BlockState state) {
-        return state.isAir() ||
-                state.is(BlockTags.LEAVES) ||
-                state.is(BlockTags.SNOW) ||
-                !state.canOcclude();
-    }
-
     public static double getResistance(BlockState state) {
         Map<Block, Double> overrides = blockOverrides;
         Map<TagKey<Block>, Double> tagResistances = tagResistanceMap;
@@ -226,7 +197,7 @@ public class BlockResolver {
             }
         }
 
-        if (canRadiationPassThrough(state)) {
+        if (!state.canOcclude()) {
             return 0.0;
         }
 

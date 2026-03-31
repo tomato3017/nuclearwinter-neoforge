@@ -21,7 +21,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -43,12 +42,12 @@ import net.tomato3017.nuclearwinter.block.NWBlocks;
 import net.tomato3017.nuclearwinter.command.DebugCommand;
 import net.tomato3017.nuclearwinter.command.NuclearWinterCommand;
 import net.tomato3017.nuclearwinter.data.DegradationRuleLoader;
+import net.tomato3017.nuclearwinter.data.RadiationResistanceLoader;
 import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
 import net.tomato3017.nuclearwinter.data.PlayerDataAttachment;
 import net.tomato3017.nuclearwinter.datagen.NWBlockTagsProvider;
 import net.tomato3017.nuclearwinter.effects.NWMobEffects;
 import net.tomato3017.nuclearwinter.item.NWItems;
-import net.tomato3017.nuclearwinter.radiation.BlockResolver;
 import net.tomato3017.nuclearwinter.radiation.EntityRadHandler;
 import net.tomato3017.nuclearwinter.radiation.PlayerRadHandler;
 import net.tomato3017.nuclearwinter.radiation.RadiationTier;
@@ -110,7 +109,6 @@ public class NuclearWinter {
     public NuclearWinter(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(NuclearWinter::onGatherData);
-        modEventBus.addListener(this::onConfigReloading);
 
         CREATIVE_MODE_TABS.register(modEventBus);
         NWAttachmentTypes.ATTACHMENT_TYPES.register(modEventBus);
@@ -131,21 +129,6 @@ public class NuclearWinter {
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
         stageManager.init(event.getServer());
-        refreshBlockResolver();
-    }
-
-    private void onConfigReloading(ModConfigEvent.Reloading event) {
-        if (event.getConfig().getSpec() != Config.SPEC) {
-            return;
-        }
-
-        refreshBlockResolver();
-    }
-
-    private static void refreshBlockResolver() {
-        BlockResolver.init();
-        BlockResolver.registerBlockOverride(NWBlocks.LEAD_BLOCK.get(), Config.RESISTANCE_LEAD.get());
-        BlockResolver.registerBlockOverride(NWBlocks.REINFORCED_CONCRETE.get(), Config.RESISTANCE_REINFORCED_CONCRETE.get());
     }
 
     @SubscribeEvent
@@ -275,6 +258,7 @@ public class NuclearWinter {
     @SubscribeEvent
     public void onAddReloadListeners(AddReloadListenerEvent event) {
         event.addListener(new DegradationRuleLoader());
+        event.addListener(new RadiationResistanceLoader());
     }
 
     @SubscribeEvent
