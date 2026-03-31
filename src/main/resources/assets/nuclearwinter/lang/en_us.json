@@ -38,6 +38,7 @@
   "item.nuclearwinter.hazmat_t3_boots": "Hazmat Suit Mk.III Boots",
 
   "effect.nuclearwinter.radaway": "RadAway",
+  "effect.nuclearwinter.radiation_immunity": "Radiation Immunity",
 
   "nuclearwinter.configuration.title": "NuclearWinter Configs",
   "nuclearwinter.configuration.section.nuclearwinter.common.toml": "NuclearWinter Configs",
@@ -77,6 +78,8 @@
   "nuclearwinter.configuration.player.poolMax.tooltip": "Maximum radiation pool capacity in Rads.",
   "nuclearwinter.configuration.player.passiveDrainRate": "Passive Drain Rate",
   "nuclearwinter.configuration.player.passiveDrainRate.tooltip": "Passive radiation drain rate when unexposed in Rads/sec.",
+  "nuclearwinter.configuration.player.respawnImmunityTicks": "Respawn Immunity Duration",
+  "nuclearwinter.configuration.player.respawnImmunityTicks.tooltip": "Radiation immunity duration after respawn in ticks (default 5 min = 6000). Set to 0 to disable.",
 
   "nuclearwinter.configuration.thresholds": "Thresholds",
   "nuclearwinter.configuration.thresholds.tooltip": "Radiation exposure thresholds as a fraction of the player's pool maximum.",

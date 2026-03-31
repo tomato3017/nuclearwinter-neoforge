@@ -27,6 +27,7 @@ public class Config {
     // --- Player ---
     public static final ModConfigSpec.DoubleValue PLAYER_POOL_MAX;
     public static final ModConfigSpec.DoubleValue PASSIVE_DRAIN_RATE;
+    public static final ModConfigSpec.IntValue RESPAWN_IMMUNITY_TICKS;
 
     // --- Misc ---
     public static final ModConfigSpec.DoubleValue FATAL_RADIATION_DAMAGE_PER_SEC;
@@ -117,6 +118,9 @@ public class Config {
         PASSIVE_DRAIN_RATE = BUILDER.comment("Passive radiation drain rate when unexposed (Rads/sec)")
                 .translation("nuclearwinter.configuration.player.passiveDrainRate")
                 .defineInRange("passiveDrainRate", 100.0, 0.0, Double.MAX_VALUE);
+        RESPAWN_IMMUNITY_TICKS = BUILDER.comment("Radiation immunity duration after respawn in ticks (default 5 min = 6000). Set to 0 to disable.")
+                .translation("nuclearwinter.configuration.player.respawnImmunityTicks")
+                .defineInRange("respawnImmunityTicks", 6000, 0, Integer.MAX_VALUE);
         BUILDER.pop();
 
         BUILDER.comment("Radiation exposure thresholds as a fraction of the player's pool maximum.")

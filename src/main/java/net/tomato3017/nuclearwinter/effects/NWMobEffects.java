@@ -15,4 +15,7 @@ public class NWMobEffects {
 
     public static final DeferredHolder<MobEffect, RadAwayEffect> RADAWAY =
             MOB_EFFECTS.register("radaway", RadAwayEffect::new);
+
+    public static final DeferredHolder<MobEffect, RadiationImmunityEffect> RADIATION_IMMUNITY =
+            MOB_EFFECTS.register("radiation_immunity", RadiationImmunityEffect::new);
 }

@@ -8,6 +8,7 @@ import net.tomato3017.nuclearwinter.NuclearWinter;
 import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
 import net.tomato3017.nuclearwinter.data.PlayerDataAttachment;
 import net.tomato3017.nuclearwinter.effects.EffectsGenerator;
+import net.tomato3017.nuclearwinter.effects.NWMobEffects;
 import net.tomato3017.nuclearwinter.item.HazmatSuitItem;
 import net.tomato3017.nuclearwinter.stage.StageBase;
 
@@ -19,11 +20,16 @@ import net.tomato3017.nuclearwinter.stage.StageBase;
 public class PlayerRadHandler {
     // TODO: Consider optimization pass for radiation calculations if performance becomes an issue
 
+    public static boolean isImmune(ServerPlayer player) {
+        return player.hasEffect(NWMobEffects.RADIATION_IMMUNITY);
+    }
+
     public static void onPlayerTick(ServerPlayer player) {
         int interval = Config.RAYCAST_INTERVAL_TICKS.get();
         long currentTick = player.level().getGameTime();
 
         if (currentTick % interval != 0) return;
+        if (isImmune(player)) return;
 
         StageBase stage = NuclearWinter.getStageManager()
                 .getStageForWorld(player.level().dimension());

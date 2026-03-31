@@ -28,6 +28,8 @@ import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -238,8 +240,23 @@ public class NuclearWinter {
     }
 
     @SubscribeEvent
+    public void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if (event.isEndConquered()) return;
+        int immunityTicks = Config.RESPAWN_IMMUNITY_TICKS.get();
+        if (immunityTicks <= 0) return;
+
+        player.addEffect(new MobEffectInstance(
+                NWMobEffects.RADIATION_IMMUNITY, immunityTicks, 0, false, true, true));
+
+        PlayerDataAttachment data = player.getData(NWAttachmentTypes.PLAYER_DATA);
+        player.setData(NWAttachmentTypes.PLAYER_DATA, data.withRadiationPool(0.0));
+    }
+
+    @SubscribeEvent
     public void onPlayerHeal(LivingHealEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if (PlayerRadHandler.isImmune(player)) return;
 
         PlayerDataAttachment data = player.getData(NWAttachmentTypes.PLAYER_DATA);
         RadiationTier tier = RadiationTier.fromPool(data.radiationPool(), Config.PLAYER_POOL_MAX.get());
