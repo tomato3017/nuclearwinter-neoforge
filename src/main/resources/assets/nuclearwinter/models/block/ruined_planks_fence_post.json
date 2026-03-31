@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/fence_post",
+  "textures": {
+    "texture": "nuclearwinter:block/ruined_planks"
+  }
+}

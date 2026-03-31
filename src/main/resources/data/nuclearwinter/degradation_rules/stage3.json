@@ -10,6 +10,26 @@
       "replacement": "nuclearwinter:wasteland_dirt"
     },
     {
+      "match": "#minecraft:wooden_stairs",
+      "replacement": "nuclearwinter:ruined_planks_stairs",
+      "passthrough": true
+    },
+    {
+      "match": "#minecraft:wooden_slabs",
+      "replacement": "nuclearwinter:ruined_planks_slab",
+      "passthrough": true
+    },
+    {
+      "match": "#minecraft:wooden_fences",
+      "replacement": "nuclearwinter:ruined_planks_fence",
+      "passthrough": true
+    },
+    {
+      "match": "#minecraft:fence_gates",
+      "replacement": "nuclearwinter:ruined_planks_fence_gate",
+      "passthrough": true
+    },
+    {
       "match": "#minecraft:planks",
       "replacement": "nuclearwinter:ruined_planks",
       "passthrough": true

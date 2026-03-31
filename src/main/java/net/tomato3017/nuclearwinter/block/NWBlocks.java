@@ -2,8 +2,13 @@ package net.tomato3017.nuclearwinter.block;
 
 import net.tomato3017.nuclearwinter.NuclearWinter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -35,6 +40,19 @@ public class NWBlocks {
     public static final DeferredBlock<Block> RUINED_PLANKS = BLOCKS.registerSimpleBlock("ruined_planks",
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(2.0f, 3.0f)
                     .sound(SoundType.WOOD));
+
+    public static final DeferredBlock<FenceBlock> RUINED_PLANKS_FENCE = BLOCKS.register("ruined_planks_fence",
+            () -> new FenceBlock(BlockBehaviour.Properties.ofFullCopy(RUINED_PLANKS.get()).noOcclusion()));
+
+    public static final DeferredBlock<FenceGateBlock> RUINED_PLANKS_FENCE_GATE = BLOCKS.register("ruined_planks_fence_gate",
+            () -> new FenceGateBlock(WoodType.OAK, BlockBehaviour.Properties.ofFullCopy(RUINED_PLANKS.get()).noOcclusion()));
+
+    public static final DeferredBlock<SlabBlock> RUINED_PLANKS_SLAB = BLOCKS.register("ruined_planks_slab",
+            () -> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(RUINED_PLANKS.get()).noOcclusion()));
+
+    public static final DeferredBlock<StairBlock> RUINED_PLANKS_STAIRS = BLOCKS.register("ruined_planks_stairs",
+            () -> new StairBlock(RUINED_PLANKS.get().defaultBlockState(),
+                    BlockBehaviour.Properties.ofFullCopy(RUINED_PLANKS.get()).noOcclusion()));
 
     // --- Shielding blocks ---
 

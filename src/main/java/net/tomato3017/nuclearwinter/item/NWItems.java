@@ -18,6 +18,10 @@ public class NWItems {
     public static final DeferredItem<BlockItem> WASTELAND_RUBBLE = ITEMS.registerSimpleBlockItem("wasteland_rubble", NWBlocks.WASTELAND_RUBBLE);
     public static final DeferredItem<BlockItem> DEADWOOD = ITEMS.registerSimpleBlockItem("deadwood", NWBlocks.DEADWOOD);
     public static final DeferredItem<BlockItem> RUINED_PLANKS = ITEMS.registerSimpleBlockItem("ruined_planks", NWBlocks.RUINED_PLANKS);
+    public static final DeferredItem<BlockItem> RUINED_PLANKS_FENCE = ITEMS.registerSimpleBlockItem("ruined_planks_fence", NWBlocks.RUINED_PLANKS_FENCE);
+    public static final DeferredItem<BlockItem> RUINED_PLANKS_FENCE_GATE = ITEMS.registerSimpleBlockItem("ruined_planks_fence_gate", NWBlocks.RUINED_PLANKS_FENCE_GATE);
+    public static final DeferredItem<BlockItem> RUINED_PLANKS_SLAB = ITEMS.registerSimpleBlockItem("ruined_planks_slab", NWBlocks.RUINED_PLANKS_SLAB);
+    public static final DeferredItem<BlockItem> RUINED_PLANKS_STAIRS = ITEMS.registerSimpleBlockItem("ruined_planks_stairs", NWBlocks.RUINED_PLANKS_STAIRS);
 
     // --- Block items for shielding blocks ---
     public static final DeferredItem<BlockItem> LEAD_BLOCK = ITEMS.registerSimpleBlockItem("lead_block", NWBlocks.LEAD_BLOCK);

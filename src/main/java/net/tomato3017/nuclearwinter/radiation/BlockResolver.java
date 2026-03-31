@@ -7,6 +7,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.tomato3017.nuclearwinter.NuclearWinter;
+import net.tomato3017.nuclearwinter.debug.BlockCaptureManager;
 import net.tomato3017.nuclearwinter.stage.StageType;
 
 import java.util.*;
@@ -178,6 +179,7 @@ public class BlockResolver {
             }
         }
 
+        BlockCaptureManager.recordDegradationMiss(state.getBlock());
         return null;
     }
 
@@ -201,6 +203,7 @@ public class BlockResolver {
             return 0.0;
         }
 
+        BlockCaptureManager.recordRaycastMiss(block);
         return defaultResistance;
     }
 

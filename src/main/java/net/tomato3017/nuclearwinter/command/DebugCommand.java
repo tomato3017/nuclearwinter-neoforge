@@ -8,6 +8,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -17,11 +18,18 @@ import net.tomato3017.nuclearwinter.NuclearWinter;
 import net.tomato3017.nuclearwinter.data.ChunkDataAttachment;
 import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
 import net.tomato3017.nuclearwinter.data.PlayerDataAttachment;
+import net.tomato3017.nuclearwinter.debug.BlockCaptureManager;
 import net.tomato3017.nuclearwinter.radiation.RadiationEmitter;
 import net.tomato3017.nuclearwinter.stage.StageBase;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Debug subcommands registered under {@code /nuclearwinter debug}.
@@ -45,7 +53,14 @@ public class DebugCommand {
                         .then(Commands.literal("status")
                                 .executes(DebugCommand::executeChunkStatus))
                         .then(Commands.literal("requeue")
-                                .executes(DebugCommand::executeChunkRequeue)));
+                                .executes(DebugCommand::executeChunkRequeue)))
+                .then(Commands.literal("capture")
+                        .then(Commands.literal("start")
+                                .executes(DebugCommand::executeCaptureStart))
+                        .then(Commands.literal("stop")
+                                .executes(DebugCommand::executeCaptureStop))
+                        .then(Commands.literal("status")
+                                .executes(DebugCommand::executeCaptureStatus)));
     }
 
     private static int executeRaycastReset(CommandContext<CommandSourceStack> ctx) {
@@ -189,6 +204,87 @@ public class DebugCommand {
                 .unwrapKey()
                 .map(key -> key.location().toString())
                 .orElse("unknown");
+    }
+
+    private static int executeCaptureStart(CommandContext<CommandSourceStack> ctx) {
+        if (BlockCaptureManager.isActive()) {
+            ctx.getSource().sendFailure(Component.literal("Block capture is already running"));
+            return 0;
+        }
+        BlockCaptureManager.start();
+        ctx.getSource().sendSuccess(() -> Component.literal(
+                "Block capture started. Run '/nuclearwinter debug capture stop' when done."
+        ), true);
+        return 1;
+    }
+
+    private static int executeCaptureStop(CommandContext<CommandSourceStack> ctx) {
+        if (!BlockCaptureManager.isActive()) {
+            ctx.getSource().sendFailure(Component.literal("Block capture is not running"));
+            return 0;
+        }
+        BlockCaptureManager.CaptureSnapshot snapshot = BlockCaptureManager.stop();
+        Path outputPath = writeCaptureFile(ctx.getSource().getServer().getServerDirectory(), snapshot);
+
+        if (outputPath != null) {
+            ctx.getSource().sendSuccess(() -> Component.literal(String.format(
+                    "Block capture stopped. %d raycast miss(es), %d degradation miss(es). Written to: %s",
+                    snapshot.raycastMisses().size(),
+                    snapshot.degradationMisses().size(),
+                    outputPath.toString()
+            )), true);
+        } else {
+            ctx.getSource().sendFailure(Component.literal(String.format(
+                    "Block capture stopped but file write failed. %d raycast miss(es), %d degradation miss(es). Check server log.",
+                    snapshot.raycastMisses().size(),
+                    snapshot.degradationMisses().size()
+            )));
+        }
+        return 1;
+    }
+
+    private static int executeCaptureStatus(CommandContext<CommandSourceStack> ctx) {
+        if (BlockCaptureManager.isActive()) {
+            ctx.getSource().sendSuccess(() -> Component.literal(String.format(
+                    "Block capture is ACTIVE: %d raycast miss(es), %d degradation miss(es) so far",
+                    BlockCaptureManager.raycastMissCount(),
+                    BlockCaptureManager.degradationMissCount()
+            )), false);
+        } else {
+            ctx.getSource().sendSuccess(() -> Component.literal("Block capture is INACTIVE"), false);
+        }
+        return 1;
+    }
+
+    private static Path writeCaptureFile(Path serverDir, BlockCaptureManager.CaptureSnapshot snapshot) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"));
+        Path outputDir = serverDir.resolve("nuclearwinter");
+        Path outputPath = outputDir.resolve("capture_" + timestamp + ".txt");
+
+        try {
+            Files.createDirectories(outputDir);
+            String content = buildCaptureFileContent(snapshot);
+            Files.writeString(outputPath, content);
+            return outputPath;
+        } catch (IOException e) {
+            NuclearWinter.LOGGER.error("Failed to write block capture file to {}: {}", outputPath, e.getMessage());
+            return null;
+        }
+    }
+
+    private static String buildCaptureFileContent(BlockCaptureManager.CaptureSnapshot snapshot) {
+        String raycastSection = snapshot.raycastMisses().stream()
+                .map(ResourceLocation::toString)
+                .collect(Collectors.joining("\n"));
+
+        String degradationSection = snapshot.degradationMisses().stream()
+                .map(ResourceLocation::toString)
+                .collect(Collectors.joining("\n"));
+
+        return "=== Raycast Resistance Misses (occluding blocks with no explicit value) ===\n"
+                + raycastSection + "\n"
+                + "\n=== Degradation Rule Misses (blocks with no matching rule) ===\n"
+                + degradationSection + "\n";
     }
 
     private record RaycastResult(double radsPerSec, double radiationPool, double skyEmission) {

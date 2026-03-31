@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "group": "wooden_fence_gate",
+  "key": {
+    "#": {
+      "item": "nuclearwinter:ruined_planks"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "S#S",
+    "S#S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "nuclearwinter:ruined_planks_fence_gate"
+  }
+}

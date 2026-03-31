@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "nuclearwinter:block/ruined_planks_slab"
+    },
+    "type=double": {
+      "model": "nuclearwinter:block/ruined_planks"
+    },
+    "type=top": {
+      "model": "nuclearwinter:block/ruined_planks_slab_top"
+    }
+  }
+}

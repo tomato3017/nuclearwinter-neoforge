@@ -83,6 +83,10 @@ public class NuclearWinter {
                         output.accept(NWItems.WASTELAND_RUBBLE.get());
                         output.accept(NWItems.DEADWOOD.get());
                         output.accept(NWItems.RUINED_PLANKS.get());
+                        output.accept(NWItems.RUINED_PLANKS_FENCE.get());
+                        output.accept(NWItems.RUINED_PLANKS_FENCE_GATE.get());
+                        output.accept(NWItems.RUINED_PLANKS_SLAB.get());
+                        output.accept(NWItems.RUINED_PLANKS_STAIRS.get());
                         output.accept(NWItems.LEAD_ORE.get());
                         output.accept(NWItems.DEEPSLATE_LEAD_ORE.get());
                         output.accept(NWItems.RAW_LEAD.get());

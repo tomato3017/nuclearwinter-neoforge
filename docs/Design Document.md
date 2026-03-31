@@ -433,7 +433,7 @@ Dead Grass, Wasteland Dirt, Wasteland Rubble, Deadwood, Dead Leaves, Ruined Plan
 
 ### Custom Block Descriptions
 
-**Dead Grass** -- Dried, dying grass in a grey-brown coloration. The first visible sign that the world is succumbing to radiation. Behaves identically to vanilla grass. Appears at Stage 1.
+**Dead Grass** -- Dried, dying grass in a grey-brown coloration. The first visible sign that the world is succumbing to radiation. Behaves identically to vanilla grass. Appears at Stage 1, and at Stage 4 it remains as a passthrough state instead of being replaced again.
 
 **Dead Leaves** -- Browning, grey-tinged leaves clinging to irradiated trees. A transitional state before full leaf death. Behaves like vanilla leaves. Appears at Stage 1, converts to Air at Stage 2.
 
@@ -441,7 +441,7 @@ Dead Grass, Wasteland Dirt, Wasteland Rubble, Deadwood, Dead Leaves, Ruined Plan
 
 **Wasteland Rubble** -- Final state of stone-type degradation at Stage 2. Broken, collapsed stone debris. Cobble-like with ash colour palette. No change to physical properties.
 
-**Deadwood** -- Bleached grey dead tree logs. Drops nothing when broken -- too irradiated and brittle to yield usable material. Appears at Stage 2 and acts as a passthrough state so later raycasts can continue through dead trunks.
+**Deadwood** -- Bleached grey dead tree logs. Drops nothing when broken -- too irradiated and brittle to yield usable material. Appears at Stage 2 and acts as a passthrough state so later raycasts can continue through dead trunks, including during Stage 4 chunk nuking.
 
 ### Water
 

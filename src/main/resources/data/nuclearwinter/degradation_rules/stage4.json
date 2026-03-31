@@ -102,6 +102,30 @@
       "passthrough": true
     },
     {
+      "match": "nuclearwinter:deadwood",
+      "passthrough": true
+    },
+    {
+      "match": "nuclearwinter:ruined_planks",
+      "passthrough": true
+    },
+    {
+      "match": "nuclearwinter:ruined_planks_stairs",
+      "passthrough": true
+    },
+    {
+      "match": "nuclearwinter:ruined_planks_slab",
+      "passthrough": true
+    },
+    {
+      "match": "nuclearwinter:ruined_planks_fence",
+      "passthrough": true
+    },
+    {
+      "match": "nuclearwinter:ruined_planks_fence_gate",
+      "passthrough": true
+    },
+    {
       "match": "#minecraft:logs",
       "replacement": "nuclearwinter:deadwood",
       "passthrough": true

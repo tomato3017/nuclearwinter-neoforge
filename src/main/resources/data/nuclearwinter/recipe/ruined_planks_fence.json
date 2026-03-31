@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "group": "wooden_fence",
+  "key": {
+    "#": {
+      "item": "nuclearwinter:ruined_planks"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "#S#",
+    "#S#"
+  ],
+  "result": {
+    "count": 3,
+    "id": "nuclearwinter:ruined_planks_fence"
+  }
+}

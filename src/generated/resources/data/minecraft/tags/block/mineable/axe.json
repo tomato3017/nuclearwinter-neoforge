@@ -1,6 +1,10 @@
 {
   "values": [
     "nuclearwinter:deadwood",
-    "nuclearwinter:ruined_planks"
+    "nuclearwinter:ruined_planks",
+    "nuclearwinter:ruined_planks_fence",
+    "nuclearwinter:ruined_planks_fence_gate",
+    "nuclearwinter:ruined_planks_slab",
+    "nuclearwinter:ruined_planks_stairs"
   ]
 }

@@ -22,7 +22,11 @@ public class NWBlockTagsProvider extends BlockTagsProvider {
     protected void addTags(HolderLookup.Provider provider) {
         tag(BlockTags.MINEABLE_WITH_AXE)
                 .add(NWBlocks.DEADWOOD.get())
-                .add(NWBlocks.RUINED_PLANKS.get());
+                .add(NWBlocks.RUINED_PLANKS.get())
+                .add(NWBlocks.RUINED_PLANKS_FENCE.get())
+                .add(NWBlocks.RUINED_PLANKS_FENCE_GATE.get())
+                .add(NWBlocks.RUINED_PLANKS_SLAB.get())
+                .add(NWBlocks.RUINED_PLANKS_STAIRS.get());
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(NWBlocks.WASTELAND_RUBBLE.get())
                 .add(NWBlocks.LEAD_BLOCK.get())
