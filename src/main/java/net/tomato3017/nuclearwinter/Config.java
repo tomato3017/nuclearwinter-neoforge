@@ -56,7 +56,9 @@ public class Config {
     public static final ModConfigSpec.BooleanValue CHUNK_PROCESSING_STOP_AT_FLUIDS;
 
     // --- Mob ---
-    public static final ModConfigSpec.IntValue ANIMAL_SPAWN_BLOCK_MIN_STAGE;
+    public static final ModConfigSpec.IntValue SURFACE_LIVING_SPAWN_BLOCK_MIN_STAGE;
+    public static final ModConfigSpec.IntValue SURFACE_LIVING_DEATH_MIN_STAGE;
+    public static final ModConfigSpec.DoubleValue SURFACE_LIVING_DAMAGE_PER_SEC;
     public static final ModConfigSpec.DoubleValue ENTITY_RADIATION_DAMAGE_SCALE;
 
     static {
@@ -195,10 +197,18 @@ public class Config {
         BUILDER.comment("Mob spawn suppression and non-player radiation damage.")
                 .translation("nuclearwinter.configuration.mob")
                 .push("mob");
-        ANIMAL_SPAWN_BLOCK_MIN_STAGE = BUILDER.comment(
-                        "Minimum stage index at which surface animal spawns are blocked (0=Inactive ... 5=Stage 4). Sky light > 0 counts as surface.")
-                .translation("nuclearwinter.configuration.mob.animalSpawnBlockMinStage")
-                .defineInRange("animalSpawnBlockMinStage", 4, 0, 5);
+        SURFACE_LIVING_SPAWN_BLOCK_MIN_STAGE = BUILDER.comment(
+                        "Minimum stage index at which sky-lit natural living spawns are blocked (0=Inactive ... 5=Stage 4).")
+                .translation("nuclearwinter.configuration.mob.surfaceLivingSpawnBlockMinStage")
+                .defineInRange("surfaceLivingSpawnBlockMinStage", 4, 0, 5);
+        SURFACE_LIVING_DEATH_MIN_STAGE = BUILDER.comment(
+                        "Minimum stage index at which sky-lit non-player living entities take guaranteed wasteland damage (0=Inactive ... 5=Stage 4).")
+                .translation("nuclearwinter.configuration.mob.surfaceLivingDeathMinStage")
+                .defineInRange("surfaceLivingDeathMinStage", 4, 0, 5);
+        SURFACE_LIVING_DAMAGE_PER_SEC = BUILDER.comment(
+                        "Guaranteed damage per second applied to sky-lit non-player living entities once the wasteland kill stage is reached.")
+                .translation("nuclearwinter.configuration.mob.surfaceLivingDamagePerSec")
+                .defineInRange("surfaceLivingDamagePerSec", 6.0, 0.0, Double.MAX_VALUE);
         ENTITY_RADIATION_DAMAGE_SCALE = BUILDER.comment(
                         "Multiplier on radiation exposure (rads/sec) for non-player living entities; damage applied once per second (magic damage).")
                 .translation("nuclearwinter.configuration.mob.entityRadiationDamageScale")

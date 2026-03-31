@@ -10,7 +10,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.item.CreativeModeTab;
@@ -53,6 +52,7 @@ import net.tomato3017.nuclearwinter.radiation.PlayerRadHandler;
 import net.tomato3017.nuclearwinter.radiation.RadiationTier;
 import net.tomato3017.nuclearwinter.stage.StageBase;
 import net.tomato3017.nuclearwinter.stage.StageManager;
+import net.tomato3017.nuclearwinter.tag.NWEntityTypeTags;
 import net.tomato3017.nuclearwinter.world.NWBiomeModifiers;
 import org.slf4j.Logger;
 
@@ -188,17 +188,19 @@ public class NuclearWinter {
     }
 
     /**
-     * Blocks surface (sky-lit) passive animal spawns when the dimension stage is at or above
-     * {@link Config#ANIMAL_SPAWN_BLOCK_MIN_STAGE}. NeoForge 21.1 uses
-     * {@link MobSpawnEvent.SpawnPlacementCheck} for runtime spawn-rule changes instead of the
-     * legacy CheckSpawn event.
+     * Blocks sky-lit natural living spawns once the surface becomes a wasteland. Entity types in
+     * {@link NWEntityTypeTags#SURFACE_RADIATION_IMMUNE} are exempt so custom post-apocalypse mobs
+     * can opt out later.
      */
     @SubscribeEvent
     public void onMobSpawnPlacementCheck(MobSpawnEvent.SpawnPlacementCheck event) {
-        if (!Animal.class.isAssignableFrom(event.getEntityType().getBaseClass())) {
+        if (!LivingEntity.class.isAssignableFrom(event.getEntityType().getBaseClass())) {
             return;
         }
-        if (!isSuppressedAnimalSpawnType(event.getSpawnType())) {
+        if (event.getEntityType().is(NWEntityTypeTags.SURFACE_RADIATION_IMMUNE)) {
+            return;
+        }
+        if (!isSuppressedSurfaceSpawnType(event.getSpawnType())) {
             return;
         }
         ServerLevelAccessor level = event.getLevel();
@@ -211,12 +213,12 @@ public class NuclearWinter {
         if (stage == null) {
             return;
         }
-        if (stage.getStageIndex() >= Config.ANIMAL_SPAWN_BLOCK_MIN_STAGE.get()) {
+        if (stage.getStageIndex() >= Config.SURFACE_LIVING_SPAWN_BLOCK_MIN_STAGE.get()) {
             event.setResult(MobSpawnEvent.SpawnPlacementCheck.Result.FAIL);
         }
     }
 
-    private static boolean isSuppressedAnimalSpawnType(MobSpawnType spawnType) {
+    private static boolean isSuppressedSurfaceSpawnType(MobSpawnType spawnType) {
         return spawnType == MobSpawnType.NATURAL || spawnType == MobSpawnType.CHUNK_GENERATION;
     }
 

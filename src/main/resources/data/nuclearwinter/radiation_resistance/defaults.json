@@ -1,0 +1,23 @@
+{
+  "default_resistance": 1.0,
+  "entries": [
+    { "match": "#minecraft:dirt",                      "resistance": 0.5 },
+    { "match": "#minecraft:logs",                      "resistance": 0.6 },
+    { "match": "#minecraft:planks",                    "resistance": 0.6 },
+    { "match": "#minecraft:wooden_fences",             "resistance": 0.6 },
+    { "match": "#minecraft:wooden_doors",              "resistance": 0.6 },
+    { "match": "#minecraft:wooden_slabs",              "resistance": 0.6 },
+    { "match": "#minecraft:wooden_stairs",             "resistance": 0.6 },
+    { "match": "#minecraft:stone_ore_replaceables",    "resistance": 1.0 },
+    { "match": "#minecraft:deepslate_ore_replaceables","resistance": 2.0 },
+    { "match": "minecraft:obsidian",                   "resistance": 2.0 },
+    { "match": "minecraft:crying_obsidian",            "resistance": 2.0 },
+    { "match": "minecraft:iron_block",                 "resistance": 4.0 },
+    { "match": "minecraft:water",                      "resistance": 8.0 },
+    { "match": "minecraft:gravel",                     "resistance": 0.5 },
+    { "match": "nuclearwinter:lead_block",             "resistance": 16.0 },
+    { "match": "nuclearwinter:reinforced_concrete",    "resistance": 2.5 },
+    { "match": "#minecraft:leaves",                    "resistance": 0.0 },
+    { "match": "#minecraft:snow",                      "resistance": 0.0 }
+  ]
+}

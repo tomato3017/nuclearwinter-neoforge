@@ -128,9 +128,13 @@
   "nuclearwinter.configuration.worldgen.generateLeadOre.tooltip": "When false, lead ore is not placed during world generation (blocks and recipes remain).",
 
   "nuclearwinter.configuration.mob": "Mobs",
-  "nuclearwinter.configuration.mob.tooltip": "Controls animal spawn suppression and non-player radiation damage.",
-  "nuclearwinter.configuration.mob.animalSpawnBlockMinStage": "Animal Spawn Block Min Stage",
-  "nuclearwinter.configuration.mob.animalSpawnBlockMinStage.tooltip": "Minimum stage index at which sky-lit animal spawns are blocked (0 = Inactive ... 5 = Stage 4).",
+  "nuclearwinter.configuration.mob.tooltip": "Controls surface die-off and non-player radiation damage.",
+  "nuclearwinter.configuration.mob.surfaceLivingSpawnBlockMinStage": "Surface Living Spawn Block Min Stage",
+  "nuclearwinter.configuration.mob.surfaceLivingSpawnBlockMinStage.tooltip": "Minimum stage index at which sky-lit natural living spawns are blocked (0 = Inactive ... 5 = Stage 4).",
+  "nuclearwinter.configuration.mob.surfaceLivingDeathMinStage": "Surface Living Death Min Stage",
+  "nuclearwinter.configuration.mob.surfaceLivingDeathMinStage.tooltip": "Minimum stage index at which sky-lit non-player living entities take guaranteed wasteland damage (0 = Inactive ... 5 = Stage 4).",
+  "nuclearwinter.configuration.mob.surfaceLivingDamagePerSec": "Surface Living Damage Per Second",
+  "nuclearwinter.configuration.mob.surfaceLivingDamagePerSec.tooltip": "Guaranteed magic damage per second applied to sky-lit non-player living entities once the wasteland kill stage is reached.",
   "nuclearwinter.configuration.mob.entityRadiationDamageScale": "Entity Radiation Damage Scale",
   "nuclearwinter.configuration.mob.entityRadiationDamageScale.tooltip": "Multiplier applied to non-player living entity radiation exposure before once-per-second damage.",
 

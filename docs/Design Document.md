@@ -51,11 +51,11 @@ Inspired by the [Solar Apocalypse](https://modrinth.com/mod/solar-apocalypse) mo
 |-------|-----------|------------|------------------------------------|-----------------------------|--------------------------|
 | 0     | 0%        | No         | Normal                             | Normal                      | Normal                   |
 | 1     | 1%        | No         | Leaves and grass begin dying in scattered patches | --                          | --                       |
-| 2     | 10%       | No         | Canopies strip, deadwood spreads, world mostly dead | Surface animals dying off   | --                       |
-| 3     | 50%       | No         | Surface vegetation finishes dying before chunk nuking | Surface **animal** spawns blocked (configurable min stage; default Stage 3) | Visibly toxic/hazy       |
+| 2     | 10%       | No         | Canopies strip, deadwood spreads, world mostly dead | Surface life starting to fail | --                       |
+| 3     | 50%       | No         | Surface vegetation finishes dying before chunk nuking | Sky-lit non-player life dies off quickly; natural surface living spawns blocked (configurable min stage; default Stage 3) | Visibly toxic/hazy       |
 | 4     | 100%      | Yes        | Chunk nuking routine begins        | --                          | Rad storms begin         |
 
-**Mobs (implemented):** Non-player living entities take **magic damage** once per second from the same sky raycast as players (no pool, no hazmat). `Animal` surface spawns fail when the dimension stage index is at or above `mob.animalSpawnBlockMinStage` (default 4 = Stage 3) and sky light at the spawn position is &gt; 0; underground spawns still succeed. **TBD:** Sky/weather visual implementation details for Grace, Stage 3, and Stage 4.
+**Mobs (implemented):** Non-player living entities take **magic damage** once per second from the same sky raycast as players (no pool, no hazmat). Starting at `mob.surfaceLivingDeathMinStage` (default 4 = Stage 3), any sky-lit non-player living entity also takes a guaranteed wasteland damage tick each second so outdoor life collapses quickly while fully sheltered livestock can still survive. At `mob.surfaceLivingSpawnBlockMinStage` (default 4 = Stage 3), natural/chunk-generation sky-lit living spawns are denied; underground spawns still succeed. Entity types in `#nuclearwinter:surface_radiation_immune` are exempt for future wasteland-native mobs. **TBD:** Sky/weather visual implementation details for Grace, Stage 3, and Stage 4.
 
 ### Stage Durations
 
@@ -485,7 +485,9 @@ All values listed are defaults. All are configurable.
 
 | Config                         | Default   | Notes                                                                 |
 |--------------------------------|-----------|-----------------------------------------------------------------------|
-| `mob.animalSpawnBlockMinStage` | 4         | Stage index (0–5) at which surface animal spawns are denied           |
+| `mob.surfaceLivingSpawnBlockMinStage` | 4 | Stage index (0–5) at which sky-lit natural living spawns are denied |
+| `mob.surfaceLivingDeathMinStage` | 4 | Stage index (0–5) at which sky-lit non-player living entities start taking guaranteed wasteland damage |
+| `mob.surfaceLivingDamagePerSec` | 6.0 | Guaranteed magic damage per second applied to sky-lit non-player living entities once the wasteland kill stage is reached |
 | `mob.entityRadiationDamageScale` | 0.0001  | Multiplier on rads/sec for non-player living entity damage per second |
 
 ### Worldgen
