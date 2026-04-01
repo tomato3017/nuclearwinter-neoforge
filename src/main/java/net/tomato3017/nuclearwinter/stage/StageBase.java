@@ -56,7 +56,7 @@ public final class StageBase {
 
     public void onChunkLoaded(ServerLevel level, LevelChunk chunk) {
         if (chunkProcessor != null) {
-            chunkProcessor.loadChunk(chunk.getPos());
+            chunkProcessor.loadChunk(level, chunk.getPos());
         }
     }
 

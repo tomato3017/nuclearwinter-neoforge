@@ -44,6 +44,7 @@ public final class ChunkProcessor {
 
     private final Set<ChunkPos> loadedChunks = new HashSet<>();
     private final Queue<ChunkPos> chunks = new LinkedBlockingQueue<>();
+    private final Queue<ChunkPos> chunksNeedingNuke = new LinkedBlockingQueue<>();
 
     public ChunkProcessor(int stageIndex, ServerLevel level, boolean chunkNukingEnabled, int intervalMultiplier) {
         this.stageIndex = stageIndex;
@@ -54,6 +55,9 @@ public final class ChunkProcessor {
             ChunkPos chunkPos = chunkHolder.getPos();
             loadedChunks.add(chunkPos);
             chunks.add(chunkPos);
+            if (chunkNukingEnabled) {
+                chunksNeedingNuke.add(chunkPos);
+            }
         }
     }
 
@@ -76,19 +80,30 @@ public final class ChunkProcessor {
         }
     }
 
-    public void loadChunk(ChunkPos chunkPos) {
+    public void loadChunk(ServerLevel level, ChunkPos chunkPos) {
         loadedChunks.add(chunkPos);
         queueChunk(chunkPos);
+        if (chunkNukingEnabled) {
+            LevelChunk chunk = level.getChunkSource().getChunkNow(chunkPos.x, chunkPos.z);
+            if (chunk != null) {
+                ChunkDataAttachment data = chunk.getData(NWAttachmentTypes.CHUNK_DATA);
+                if (!data.nuked()) {
+                    chunksNeedingNuke.add(chunkPos);
+                }
+            }
+        }
     }
 
     public void unloadChunk(ChunkPos chunkPos) {
         loadedChunks.remove(chunkPos);
         chunks.remove(chunkPos);
+        chunksNeedingNuke.remove(chunkPos);
     }
 
     public void requeueChunk(ChunkPos chunkPos) {
         loadedChunks.add(chunkPos);
         queueChunk(chunkPos);
+        chunksNeedingNuke.add(chunkPos);
     }
 
     public void tick(ServerLevel level) {
@@ -101,26 +116,38 @@ public final class ChunkProcessor {
 
         int processed = 0;
         while (processed < Config.CHUNK_PROCESSING_MAX_CHUNKS_PER_INTERVAL.get()) {
-            ChunkPos pos = chunks.poll();
-            if (pos == null) break;
+            if (!chunksNeedingNuke.isEmpty()) {
+                ChunkPos pos = chunksNeedingNuke.poll();
+                if (pos == null) continue;
 
-            LevelChunk chunk = level.getChunkSource().getChunkNow(pos.x, pos.z);
-            if (chunk != null) {
-                processChunk(level, chunk);
-                processed++;
+                LevelChunk chunk = level.getChunkSource().getChunkNow(pos.x, pos.z);
+                if (chunk != null) {
+                    processChunkNuking(level, chunk);
+                }
+            } else {
+                ChunkPos pos = chunks.poll();
+                if (pos == null) break;
+
+                LevelChunk chunk = level.getChunkSource().getChunkNow(pos.x, pos.z);
+                if (chunk != null) {
+                    processChunk(level, chunk);
+                }
             }
+            processed++;
         }
     }
 
-    public void processChunk(ServerLevel level, LevelChunk chunk) {
+    public void processChunkNuking(ServerLevel level, LevelChunk chunk) {
         if (chunkNukingEnabled) {
             NuclearWinter.LOGGER.trace("Chunk nuking enabled, processing chunk at [{}, {}]", chunk.getPos().x, chunk.getPos().z);
             ChunkDataAttachment data = chunk.getData(NWAttachmentTypes.CHUNK_DATA);
             if (!data.nuked()) {
                 nukeChunk(level, chunk);
-                return;
             }
         }
+    }
+
+    public void processChunk(ServerLevel level, LevelChunk chunk) {
         NuclearWinter.LOGGER.trace("Processing chunk at [{}, {}]", chunk.getPos().x, chunk.getPos().z);
         degradeRandomColumns(level, chunk);
     }
