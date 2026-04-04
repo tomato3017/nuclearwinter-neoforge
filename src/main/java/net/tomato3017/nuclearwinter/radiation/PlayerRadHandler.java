@@ -29,7 +29,10 @@ public class PlayerRadHandler {
         long currentTick = player.level().getGameTime();
 
         if (currentTick % interval != 0) return;
-        if (isImmune(player)) return;
+        if (isImmune(player)) {
+            zeroLastReceivedRads(player);
+            return;
+        }
 
         StageBase stage = NuclearWinter.getStageManager()
                 .getStageForWorld(player.level().dimension());
@@ -45,6 +48,7 @@ public class PlayerRadHandler {
             radsPerSec = radsPerSec * (1.0 - Math.min(hazmatProtection, 1.0));
         }
         double radsThisTick = radsPerSec * (interval / 20.0);
+        double receivedRads = 0.0;
 
         PlayerDataAttachment data = player.getData(NWAttachmentTypes.PLAYER_DATA);
         double pool = data.radiationPool();
@@ -52,12 +56,14 @@ public class PlayerRadHandler {
 
         if (radsPerSec > 0) {
             pool = Math.min(pool + radsThisTick, poolMax);
+            receivedRads = radsThisTick;
         } else {
             double drainAmount = Config.PASSIVE_DRAIN_RATE.get() * (interval / 20.0);
             pool = Math.max(pool - drainAmount, 0.0);
         }
 
-        player.setData(NWAttachmentTypes.PLAYER_DATA, data.withRadiationPool(pool));
+        player.setData(NWAttachmentTypes.PLAYER_DATA,
+                data.withRadiationPool(pool).withLastReceivedRads(receivedRads));
 
         RadiationTier tier = RadiationTier.fromPool(pool, poolMax);
         EffectsGenerator.applyPlayerEffects(player, tier, interval);
@@ -85,10 +91,18 @@ public class PlayerRadHandler {
     private static void drainIfUnexposed(ServerPlayer player, long currentTick, int interval) {
         PlayerDataAttachment data = player.getData(NWAttachmentTypes.PLAYER_DATA);
         double pool = data.radiationPool();
+        PlayerDataAttachment updated = data.withLastReceivedRads(0.0);
         if (pool > 0) {
             double drainAmount = Config.PASSIVE_DRAIN_RATE.get() * (interval / 20.0);
-            pool = Math.max(pool - drainAmount, 0.0);
-            player.setData(NWAttachmentTypes.PLAYER_DATA, data.withRadiationPool(pool));
+            updated = updated.withRadiationPool(Math.max(pool - drainAmount, 0.0));
+        }
+        player.setData(NWAttachmentTypes.PLAYER_DATA, updated);
+    }
+
+    private static void zeroLastReceivedRads(ServerPlayer player) {
+        PlayerDataAttachment data = player.getData(NWAttachmentTypes.PLAYER_DATA);
+        if (data.lastReceivedRads() != 0.0) {
+            player.setData(NWAttachmentTypes.PLAYER_DATA, data.withLastReceivedRads(0.0));
         }
     }
 }

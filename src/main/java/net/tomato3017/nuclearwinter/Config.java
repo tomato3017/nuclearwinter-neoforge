@@ -43,7 +43,7 @@ public class Config {
     public static final ModConfigSpec.IntValue RADAWAY_DURATION_TICKS;
 
     // --- Equipment ---
-    public static final ModConfigSpec.DoubleValue DOSIMETER_FULL_RED;
+    public static final ModConfigSpec.DoubleValue DOSIMETER_MAX_RADS;
     public static final ModConfigSpec.DoubleValue SUIT_TIER1_PROTECTION;
     public static final ModConfigSpec.DoubleValue SUIT_TIER2_PROTECTION;
     public static final ModConfigSpec.DoubleValue SUIT_TIER3_PROTECTION;
@@ -154,9 +154,9 @@ public class Config {
         BUILDER.comment("Controls dosimeter display and hazmat suit protection values.")
                 .translation("nuclearwinter.configuration.equipment")
                 .push("equipment");
-        DOSIMETER_FULL_RED = BUILDER.comment("Dosimeter shows full red at this Rad value")
-                .translation("nuclearwinter.configuration.equipment.dosimeterFullRed")
-                .defineInRange("dosimeterFullRed", 80_000.0, 1.0, Double.MAX_VALUE);
+        DOSIMETER_MAX_RADS = BUILDER.comment("Maximum rads a dosimeter can absorb before it saturates")
+                .translation("nuclearwinter.configuration.equipment.dosimeterMaxRads")
+                .defineInRange("dosimeterMaxRads", 80_000.0, 1.0, Double.MAX_VALUE);
         SUIT_TIER1_PROTECTION = BUILDER.comment("Hazmat Suit Tier 1 radiation reduction (0.0 to 1.0)")
                 .translation("nuclearwinter.configuration.equipment.suitTier1Protection")
                 .defineInRange("suitTier1Protection", 0.67, 0.0, 1.0);

@@ -48,6 +48,7 @@ import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
 import net.tomato3017.nuclearwinter.data.PlayerDataAttachment;
 import net.tomato3017.nuclearwinter.datagen.NWBlockTagsProvider;
 import net.tomato3017.nuclearwinter.effects.NWMobEffects;
+import net.tomato3017.nuclearwinter.item.NWDataComponents;
 import net.tomato3017.nuclearwinter.item.NWItems;
 import net.tomato3017.nuclearwinter.radiation.EntityRadHandler;
 import net.tomato3017.nuclearwinter.radiation.PlayerRadHandler;
@@ -120,6 +121,7 @@ public class NuclearWinter {
         NWAttachmentTypes.ATTACHMENT_TYPES.register(modEventBus);
         NWBlocks.BLOCKS.register(modEventBus);
         NWItems.ITEMS.register(modEventBus);
+        NWDataComponents.DATA_COMPONENTS.register(modEventBus);
         NWMobEffects.MOB_EFFECTS.register(modEventBus);
         NWBiomeModifiers.SERIALIZERS.register(modEventBus);
 

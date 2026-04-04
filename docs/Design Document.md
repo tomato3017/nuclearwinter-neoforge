@@ -271,11 +271,14 @@ Equipment falls into two categories: **informational** (tells the player what th
 - Measures the player's current location -- not directional.
 
 #### Dosimeter
-- **Hotbar passive** -- must be in the hotbar to function.
-- No visibility at all if not in hotbar.
-- Displays a smooth color gradient from `RGB(0, 255, 0)` to `RGB(255, 0, 0)` as accumulation rises.
-- Default max (full red) = **80,000 Rads** -- configurable by server admin.
-- 80,000 is chosen to align with the Critical threshold -- red means act now.
+- **Film badge** -- independently absorbs radiation while in the hotbar.
+- **No passive action bar display** -- the vanilla item durability bar on the item itself is the always-visible exposure indicator.
+- Bar color runs green → red as absorption rises toward the saturation limit.
+- **Right-click** while holding the dosimeter to get a momentary action-bar readout: `▮ Absorbed: X / Y Rads`.
+- Default saturation limit = **80,000 Rads** (configurable via `equipment.dosimeterMaxRads`).
+- Tracks the **net change in the player's radiation pool** per tick (positive delta only). RadAway drain is included in the net, so RadAway also slows dosimeter absorption.
+- **Does not break** when fully saturated -- gains an enchantment glint and right-click shows `⚠ DOSIMETER SATURATED`.
+- Tooltip shows absorbed rads, or `SATURATED` when full.
 
 ### Protective
 

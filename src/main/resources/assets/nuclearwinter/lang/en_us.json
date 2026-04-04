@@ -21,6 +21,9 @@
   "item.nuclearwinter.radaway": "RadAway",
   "item.nuclearwinter.geiger_counter": "Geiger Counter",
   "item.nuclearwinter.dosimeter": "Dosimeter",
+  "item.nuclearwinter.dosimeter.tooltip.no_readings": "No readings yet",
+  "item.nuclearwinter.dosimeter.tooltip.saturated": "SATURATED",
+  "item.nuclearwinter.dosimeter.readout.saturated": "⚠ DOSIMETER SATURATED",
 
   "item.nuclearwinter.hazmat.rad_protection": "☢ Rad Protection: %s%%",
 
@@ -100,9 +103,9 @@
   "nuclearwinter.configuration.radaway.durationTicks.tooltip": "RadAway effect duration in ticks (default 3 min = 3600).",
 
   "nuclearwinter.configuration.equipment": "Equipment",
-  "nuclearwinter.configuration.equipment.tooltip": "Controls dosimeter display and hazmat suit protection values.",
-  "nuclearwinter.configuration.equipment.dosimeterFullRed": "Dosimeter Full Red",
-  "nuclearwinter.configuration.equipment.dosimeterFullRed.tooltip": "Dosimeter shows full red at this Rad value.",
+  "nuclearwinter.configuration.equipment.tooltip": "Controls dosimeter saturation threshold and hazmat suit protection values.",
+  "nuclearwinter.configuration.equipment.dosimeterMaxRads": "Dosimeter Max Rads",
+  "nuclearwinter.configuration.equipment.dosimeterMaxRads.tooltip": "Maximum rads a dosimeter can absorb before it saturates (default 80,000).",
   "nuclearwinter.configuration.equipment.suitTier1Protection": "Tier 1 Suit Protection",
   "nuclearwinter.configuration.equipment.suitTier1Protection.tooltip": "Hazmat Suit Tier 1 radiation reduction (0.0 to 1.0).",
   "nuclearwinter.configuration.equipment.suitTier2Protection": "Tier 2 Suit Protection",
