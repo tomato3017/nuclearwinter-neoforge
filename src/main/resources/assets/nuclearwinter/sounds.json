@@ -1,0 +1,10 @@
+{
+  "geiger_click": {
+    "sounds": [
+      {
+        "name": "nuclearwinter:geiger_click",
+        "pitch_range": 0.1
+      }
+    ]
+  }
+}

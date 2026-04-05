@@ -48,8 +48,10 @@ import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
 import net.tomato3017.nuclearwinter.data.PlayerDataAttachment;
 import net.tomato3017.nuclearwinter.datagen.NWBlockTagsProvider;
 import net.tomato3017.nuclearwinter.effects.NWMobEffects;
+import net.tomato3017.nuclearwinter.item.GeigerCounterItem;
 import net.tomato3017.nuclearwinter.item.NWDataComponents;
 import net.tomato3017.nuclearwinter.item.NWItems;
+import net.tomato3017.nuclearwinter.item.NWSounds;
 import net.tomato3017.nuclearwinter.radiation.EntityRadHandler;
 import net.tomato3017.nuclearwinter.radiation.PlayerRadHandler;
 import net.tomato3017.nuclearwinter.radiation.RadiationTier;
@@ -122,10 +124,13 @@ public class NuclearWinter {
         NWBlocks.BLOCKS.register(modEventBus);
         NWItems.ITEMS.register(modEventBus);
         NWDataComponents.DATA_COMPONENTS.register(modEventBus);
+        NWSounds.SOUND_EVENTS.register(modEventBus);
         NWMobEffects.MOB_EFFECTS.register(modEventBus);
         NWBiomeModifiers.SERIALIZERS.register(modEventBus);
 
         NeoForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedOutEvent e) ->
+                GeigerCounterItem.clearPlayerClickState(e.getEntity().getUUID()));
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
