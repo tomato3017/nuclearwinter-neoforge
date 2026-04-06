@@ -33,6 +33,21 @@
       "match": "#minecraft:planks",
       "replacement": "nuclearwinter:ruined_planks",
       "passthrough": true
+    },
+    {
+      "match": "minecraft:melon",
+      "replacement": "minecraft:air",
+      "passthrough": true
+    },
+    {
+      "match": "minecraft:pumpkin",
+      "replacement": "minecraft:air",
+      "passthrough": true
+    },
+    {
+      "match": "minecraft:cocoa",
+      "replacement": "minecraft:air",
+      "passthrough": true
     }
   ]
 }
