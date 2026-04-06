@@ -8,12 +8,13 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -29,7 +30,6 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -43,9 +43,9 @@ import net.tomato3017.nuclearwinter.block.NWBlocks;
 import net.tomato3017.nuclearwinter.command.DebugCommand;
 import net.tomato3017.nuclearwinter.command.NuclearWinterCommand;
 import net.tomato3017.nuclearwinter.data.DegradationRuleLoader;
-import net.tomato3017.nuclearwinter.data.RadiationResistanceLoader;
 import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
 import net.tomato3017.nuclearwinter.data.PlayerDataAttachment;
+import net.tomato3017.nuclearwinter.data.RadiationResistanceLoader;
 import net.tomato3017.nuclearwinter.datagen.NWBlockTagsProvider;
 import net.tomato3017.nuclearwinter.effects.NWMobEffects;
 import net.tomato3017.nuclearwinter.item.GeigerCounterItem;
@@ -213,9 +213,9 @@ public class NuclearWinter {
         if (event.getEntityType().is(NWEntityTypeTags.SURFACE_RADIATION_IMMUNE)) {
             return;
         }
-        if (!isSuppressedSurfaceSpawnType(event.getSpawnType())) {
-            return;
-        }
+//        if (!isSuppressedSurfaceSpawnType(event.getSpawnType())) {
+//            return;
+//        }
         ServerLevelAccessor level = event.getLevel();
         if (level.getBrightness(LightLayer.SKY, event.getPos()) <= 0) {
             return;
@@ -232,7 +232,10 @@ public class NuclearWinter {
     }
 
     private static boolean isSuppressedSurfaceSpawnType(MobSpawnType spawnType) {
-        return spawnType == MobSpawnType.NATURAL || spawnType == MobSpawnType.CHUNK_GENERATION;
+        return spawnType == MobSpawnType.NATURAL
+                || spawnType == MobSpawnType.CHUNK_GENERATION
+                || spawnType == MobSpawnType.PATROL
+                || spawnType == MobSpawnType.REINFORCEMENT;
     }
 
     @SubscribeEvent
