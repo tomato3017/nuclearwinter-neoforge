@@ -23,7 +23,9 @@ import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
 import net.tomato3017.nuclearwinter.radiation.BlockResolver;
 
 import java.lang.reflect.Method;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
@@ -44,7 +46,7 @@ public final class ChunkProcessor {
 
     private final Set<ChunkPos> loadedChunks = new HashSet<>();
     private final Queue<ChunkPos> chunks = new LinkedBlockingQueue<>();
-    private final Queue<ChunkPos> chunksNeedingNuke = new LinkedBlockingQueue<>();
+    private final Set<ChunkPos> chunksNeedingNuke = new LinkedHashSet<>();
 
     public ChunkProcessor(int stageIndex, ServerLevel level, boolean chunkNukingEnabled, int intervalMultiplier) {
         this.stageIndex = stageIndex;
@@ -114,24 +116,29 @@ public final class ChunkProcessor {
             chunks.addAll(loadedChunks);
         }
 
-        int processed = 0;
-        while (processed < Config.CHUNK_PROCESSING_MAX_CHUNKS_PER_INTERVAL.get()) {
-            if (!chunksNeedingNuke.isEmpty()) {
-                ChunkPos pos = chunksNeedingNuke.poll();
-                if (pos == null) continue;
+        if (!chunksNeedingNuke.isEmpty()) {
+            List<ChunkPos> toNuke = chunksNeedingNuke.stream()
+                .sorted(Comparator.comparingDouble(pos -> nearestPlayerDistSq(level, pos)))
+                .limit(Config.CHUNK_PROCESSING_MAX_NUKE_CHUNKS_PER_INTERVAL.get())
+                .toList();
 
+            for (ChunkPos pos : toNuke) {
+                chunksNeedingNuke.remove(pos);
                 LevelChunk chunk = level.getChunkSource().getChunkNow(pos.x, pos.z);
                 if (chunk != null) {
                     processChunkNuking(level, chunk);
                 }
-            } else {
-                ChunkPos pos = chunks.poll();
-                if (pos == null) break;
+            }
+        }
 
-                LevelChunk chunk = level.getChunkSource().getChunkNow(pos.x, pos.z);
-                if (chunk != null) {
-                    processChunk(level, chunk);
-                }
+        int processed = 0;
+        while (processed < Config.CHUNK_PROCESSING_MAX_CHUNKS_PER_INTERVAL.get()) {
+            ChunkPos pos = chunks.poll();
+            if (pos == null) break;
+
+            LevelChunk chunk = level.getChunkSource().getChunkNow(pos.x, pos.z);
+            if (chunk != null) {
+                processChunk(level, chunk);
             }
             processed++;
         }
@@ -211,6 +218,17 @@ public final class ChunkProcessor {
 
     private void resyncChunkBiomes(ServerLevel level, LevelChunk chunk) {
         level.getChunkSource().chunkMap.resendBiomesForChunks(List.of(chunk));
+    }
+
+    private double nearestPlayerDistSq(ServerLevel level, ChunkPos pos) {
+        return level.players().stream()
+            .mapToDouble(p -> {
+                double dx = p.chunkPosition().x - pos.x;
+                double dz = p.chunkPosition().z - pos.z;
+                return dx * dx + dz * dz;
+            })
+            .min()
+            .orElse(Double.MAX_VALUE);
     }
 
     private void queueChunk(ChunkPos chunkPos) {

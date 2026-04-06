@@ -54,6 +54,7 @@ public class Config {
     // --- Chunk Processing ---
     public static final ModConfigSpec.IntValue CHUNK_PROCESSING_INTERVAL_TICKS;
     public static final ModConfigSpec.IntValue CHUNK_PROCESSING_MAX_CHUNKS_PER_INTERVAL;
+    public static final ModConfigSpec.IntValue CHUNK_PROCESSING_MAX_NUKE_CHUNKS_PER_INTERVAL;
     public static final ModConfigSpec.BooleanValue CHUNK_PROCESSING_STOP_AT_FLUIDS;
 
     // --- Mob ---
@@ -193,6 +194,9 @@ public class Config {
         CHUNK_PROCESSING_MAX_CHUNKS_PER_INTERVAL = BUILDER.comment("Maximum number of chunks to process per interval")
                 .translation("nuclearwinter.configuration.chunkProcessing.maxChunksPerInterval")
                 .defineInRange("maxChunksPerInterval", 32, 1, 256);
+        CHUNK_PROCESSING_MAX_NUKE_CHUNKS_PER_INTERVAL = BUILDER.comment("Maximum number of chunks to nuke per interval (Stage 4 only)")
+                .translation("nuclearwinter.configuration.chunkProcessing.maxNukeChunksPerInterval")
+                .defineInRange("maxNukeChunksPerInterval", 16, 1, 256);
         CHUNK_PROCESSING_STOP_AT_FLUIDS = BUILDER.comment("Whether chunk degradation should stop when it hits a fluid block")
                 .translation("nuclearwinter.configuration.chunkProcessing.stopAtFluids")
                 .define("stopAtFluids", true);
