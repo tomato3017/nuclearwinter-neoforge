@@ -16,8 +16,18 @@ public class NWSounds {
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS =
             DeferredRegister.create(BuiltInRegistries.SOUND_EVENT, NuclearWinter.MODID);
 
-    public static final Supplier<SoundEvent> GEIGER_CLICK =
-            SOUND_EVENTS.register("geiger_click",
+    public static final Supplier<SoundEvent> GEIGER_COUNTER_LOW =
+            SOUND_EVENTS.register("geiger_counter_low",
                     () -> SoundEvent.createVariableRangeEvent(
-                            ResourceLocation.fromNamespaceAndPath(NuclearWinter.MODID, "geiger_click")));
+                            ResourceLocation.fromNamespaceAndPath(NuclearWinter.MODID, "geiger_counter_low")));
+
+    public static final Supplier<SoundEvent> GEIGER_COUNTER_MED =
+            SOUND_EVENTS.register("geiger_counter_med",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(NuclearWinter.MODID, "geiger_counter_med")));
+
+    public static final Supplier<SoundEvent> GEIGER_COUNTER_HIGH =
+            SOUND_EVENTS.register("geiger_counter_high",
+                    () -> SoundEvent.createVariableRangeEvent(
+                            ResourceLocation.fromNamespaceAndPath(NuclearWinter.MODID, "geiger_counter_high")));
 }

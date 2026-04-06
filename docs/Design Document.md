@@ -266,9 +266,17 @@ Equipment falls into two categories: **informational** (tells the player what th
 ### Informational
 
 #### Geiger Counter
-- Must be **held in hand** to activate.
-- Displays **raw Rads/sec** at the player's current position.
-- Measures the player's current location -- not directional.
+
+Both variants must be **held in hand** to activate. Both always measure **raw sky emission at the player's position** — radiation attenuated by blocks overhead, but **before suit protection is applied**. This means readings reflect the environmental intensity of a location, independent of what the player is wearing. Playing a sound loop (low/med/high) and showing an action bar readout are shared behaviors; the variants differ only in the Rads/sec thresholds that trigger each level.
+
+| Variant | Item ID | Use case | MED threshold | HIGH threshold |
+|---|---|---|---|---|
+| Geiger Counter | `geiger_counter` | Indoors — detecting radiation leaking through shelter walls | 50 Rads/sec | 300 Rads/sec |
+| Advanced Geiger Counter | `advanced_geiger_counter` | Surface — hazmat-equipped player locating hot zones or rad storms | 500 Rads/sec | 3000 Rads/sec |
+
+- Measurements are not directional.
+- The low-range variant is tuned to detect small environmental leaks that a casual indoor player would care about.
+- The high-range variant is calibrated for surface conditions where a hazmat suit is expected; it ignores low-level background and only reacts to genuinely dangerous hotspots.
 
 #### Dosimeter
 - **Film badge** -- independently absorbs radiation while in the hotbar.

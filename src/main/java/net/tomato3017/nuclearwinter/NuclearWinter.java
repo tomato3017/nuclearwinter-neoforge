@@ -22,6 +22,9 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import net.tomato3017.nuclearwinter.network.GeigerLevelPayload;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
@@ -100,6 +103,7 @@ public class NuclearWinter {
                         output.accept(NWItems.REINFORCED_CONCRETE.get());
                         output.accept(NWItems.RADAWAY.get());
                         output.accept(NWItems.GEIGER_COUNTER.get());
+                        output.accept(NWItems.ADVANCED_GEIGER_COUNTER.get());
                         output.accept(NWItems.DOSIMETER.get());
                         output.accept(NWItems.HAZMAT_T1_HELMET.get());
                         output.accept(NWItems.HAZMAT_T1_CHESTPLATE.get());
@@ -118,6 +122,7 @@ public class NuclearWinter {
     public NuclearWinter(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(NuclearWinter::onGatherData);
+        modEventBus.addListener(NuclearWinter::onRegisterPayloadHandlers);
 
         CREATIVE_MODE_TABS.register(modEventBus);
         NWAttachmentTypes.ATTACHMENT_TYPES.register(modEventBus);
@@ -130,7 +135,7 @@ public class NuclearWinter {
 
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedOutEvent e) ->
-                GeigerCounterItem.clearPlayerClickState(e.getEntity().getUUID()));
+                GeigerCounterItem.clearPlayerState(e.getEntity().getUUID()));
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
@@ -195,9 +200,8 @@ public class NuclearWinter {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             PlayerRadHandler.onPlayerTick(serverPlayer);
             DebugCommand.onPlayerTick(serverPlayer);
+            GeigerCounterItem.clearPlayerStateIfNotHeld(serverPlayer);
         }
-
-
     }
 
     /**
@@ -297,6 +301,15 @@ public class NuclearWinter {
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
         NuclearWinterCommand.register(event.getDispatcher());
+    }
+
+    private static void onRegisterPayloadHandlers(RegisterPayloadHandlersEvent event) {
+        PayloadRegistrar registrar = event.registrar("1");
+        registrar.playToClient(
+                GeigerLevelPayload.TYPE,
+                GeigerLevelPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(
+                        () -> net.tomato3017.nuclearwinter.client.GeigerSoundHandler.setLevel(payload.level())));
     }
 
     public static void onGatherData(GatherDataEvent event) {

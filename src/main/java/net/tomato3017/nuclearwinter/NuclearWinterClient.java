@@ -7,10 +7,12 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.tomato3017.nuclearwinter.block.NWBlocks;
+import net.tomato3017.nuclearwinter.client.GeigerSoundHandler;
 import net.tomato3017.nuclearwinter.util.SampleWorldInstaller;
 
 /**
@@ -28,6 +30,11 @@ public class NuclearWinterClient {
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event) {
         SampleWorldInstaller.install();
+    }
+
+    @SubscribeEvent
+    static void onClientPlayerLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
+        GeigerSoundHandler.stopAll();
     }
 
     /**

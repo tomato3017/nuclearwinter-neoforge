@@ -2,15 +2,14 @@ package net.tomato3017.nuclearwinter.item;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.tomato3017.nuclearwinter.Config;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.tomato3017.nuclearwinter.NuclearWinter;
-import net.tomato3017.nuclearwinter.data.NWAttachmentTypes;
-import net.tomato3017.nuclearwinter.data.PlayerDataAttachment;
+import net.tomato3017.nuclearwinter.network.GeigerLevel;
+import net.tomato3017.nuclearwinter.network.GeigerLevelPayload;
 import net.tomato3017.nuclearwinter.radiation.RadiationEmitter;
 import net.tomato3017.nuclearwinter.stage.StageBase;
 
@@ -20,64 +19,77 @@ import java.util.UUID;
 
 /**
  * When held in the main hand, periodically shows local sky-raycast Rads/sec on the action bar
- * and plays a click sound whose rate scales with the player's current radiation exposure.
+ * and sends the client a {@link GeigerLevelPayload} so it can play the matching looping ambient track.
+ * Always measures raw sky emission via {@link RadiationEmitter#raycastDown} — before suit protection —
+ * so readings reflect environmental radiation regardless of what the player is wearing.
+ * Threshold calibration is supplied by the {@link GeigerCounterMode} passed at construction time.
  */
 public class GeigerCounterItem extends Item {
     private static final int DISPLAY_INTERVAL = 10;
-    private static final int MIN_CLICK_INTERVAL = 2;
-    private static final int MAX_CLICK_INTERVAL = 40;
 
-    private static final Map<UUID, Long> lastClickTick = new HashMap<>();
+    private static final Map<UUID, GeigerLevel> lastSentLevel = new HashMap<>();
 
-    public GeigerCounterItem(Properties properties) {
+    private final GeigerCounterMode mode;
+
+    public GeigerCounterItem(Properties properties, GeigerCounterMode mode) {
         super(properties);
+        this.mode = mode;
     }
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         if (level.isClientSide) return;
         if (!(entity instanceof ServerPlayer player)) return;
-        if (!isSelected) return;
+
+        // Not the selected (offhand) item — silence the geiger unless the main hand is also a
+        // geiger counter (which will handle sound itself on its own tick).
+        if (!isSelected) {
+            if (!(player.getMainHandItem().getItem() instanceof GeigerCounterItem)) {
+                sendLevelIfChanged(player, GeigerLevel.NONE);
+            }
+            return;
+        }
+
+        double radsPerSec = 0.0;
+        StageBase stage = NuclearWinter.getStageManager().getStageForWorld(level.dimension());
+        if (stage != null && stage.getSkyEmission() > 0) {
+            radsPerSec = RadiationEmitter.raycastDown(level, player.blockPosition(), stage.getSkyEmission());
+        }
 
         long gameTime = level.getGameTime();
-
         if (gameTime % DISPLAY_INTERVAL == 0) {
-            StageBase stage = NuclearWinter.getStageManager().getStageForWorld(level.dimension());
-            double radsPerSec = 0.0;
-            if (stage != null && stage.getSkyEmission() > 0) {
-                radsPerSec = RadiationEmitter.raycastDown(level, player.blockPosition(), stage.getSkyEmission());
-            }
             player.displayClientMessage(Component.literal(String.format("☢ %.1f Rads/sec", radsPerSec)), true);
         }
 
-        tickClickSound(player, gameTime);
+        GeigerLevel newLevel = GeigerLevel.fromRadsPerSec(radsPerSec, mode.thresholdMed(), mode.thresholdHigh());
+        sendLevelIfChanged(player, newLevel);
     }
 
-    private static void tickClickSound(ServerPlayer player, long gameTime) {
-        PlayerDataAttachment data = player.getData(NWAttachmentTypes.PLAYER_DATA);
-        double radsPerSec = data.lastReceivedRads() * 20.0 / Config.RAYCAST_INTERVAL_TICKS.get();
-        int interval = calcClickInterval(radsPerSec);
-        if (interval == 0) return;
+    private static void sendLevelIfChanged(ServerPlayer player, GeigerLevel newLevel) {
+        GeigerLevel current = lastSentLevel.getOrDefault(player.getUUID(), GeigerLevel.NONE);
+        if (current == newLevel) return;
 
-        long last = lastClickTick.getOrDefault(player.getUUID(), 0L);
-        if (gameTime - last >= interval) {
-            float volume = (float) Math.min(0.4 + (radsPerSec * 0.02), 0.8);
-            player.playNotifySound(NWSounds.GEIGER_CLICK.get(), SoundSource.PLAYERS, volume, 1.0f);
-            lastClickTick.put(player.getUUID(), gameTime);
+        if (newLevel == GeigerLevel.NONE) {
+            lastSentLevel.remove(player.getUUID());
+        } else {
+            lastSentLevel.put(player.getUUID(), newLevel);
         }
+        PacketDistributor.sendToPlayer(player, new GeigerLevelPayload(newLevel));
+    }
+
+    public static void clearPlayerState(UUID uuid) {
+        lastSentLevel.remove(uuid);
     }
 
     /**
-     * Maps rads/sec to a click interval in ticks. Returns 0 when there is no exposure.
-     * At 1 rad/sec the interval is {@value MAX_CLICK_INTERVAL} ticks; it shrinks toward
-     * {@value MIN_CLICK_INTERVAL} ticks as exposure rises.
+     * Sends {@link GeigerLevel#NONE} if the player has an active Geiger level tracked but is no
+     * longer holding any Geiger counter in their main hand. Called every server tick to ensure
+     * the client loop stops promptly when the item is dropped or deleted.
      */
-    private static int calcClickInterval(double radsPerSec) {
-        if (radsPerSec <= 0) return 0;
-        return (int) Math.max(MIN_CLICK_INTERVAL, MAX_CLICK_INTERVAL / radsPerSec);
-    }
-
-    public static void clearPlayerClickState(UUID uuid) {
-        lastClickTick.remove(uuid);
+    public static void clearPlayerStateIfNotHeld(ServerPlayer player) {
+        if (!lastSentLevel.containsKey(player.getUUID())) return;
+        if (!(player.getMainHandItem().getItem() instanceof GeigerCounterItem)) {
+            sendLevelIfChanged(player, GeigerLevel.NONE);
+        }
     }
 }

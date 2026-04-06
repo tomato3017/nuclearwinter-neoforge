@@ -39,7 +39,10 @@ public class NWItems {
             () -> new RadAwayItem(new Item.Properties().stacksTo(16)));
 
     public static final DeferredItem<Item> GEIGER_COUNTER = ITEMS.register("geiger_counter",
-            () -> new GeigerCounterItem(new Item.Properties().stacksTo(1)));
+            () -> new GeigerCounterItem(new Item.Properties().stacksTo(1), GeigerCounterMode.LOW_RANGE));
+
+    public static final DeferredItem<Item> ADVANCED_GEIGER_COUNTER = ITEMS.register("advanced_geiger_counter",
+            () -> new GeigerCounterItem(new Item.Properties().stacksTo(1), GeigerCounterMode.HIGH_RANGE));
 
     public static final DeferredItem<Item> DOSIMETER = ITEMS.register("dosimeter",
             () -> new DosimeterItem(new Item.Properties().stacksTo(1)));

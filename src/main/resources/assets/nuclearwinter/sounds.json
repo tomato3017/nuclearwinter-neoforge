@@ -1,9 +1,22 @@
 {
-  "geiger_click": {
+  "geiger_counter_low": {
     "sounds": [
       {
-        "name": "nuclearwinter:geiger_click",
-        "pitch_range": 0.1
+        "name": "nuclearwinter:geiger_counter_low"
+      }
+    ]
+  },
+  "geiger_counter_med": {
+    "sounds": [
+      {
+        "name": "nuclearwinter:geiger_counter_med"
+      }
+    ]
+  },
+  "geiger_counter_high": {
+    "sounds": [
+      {
+        "name": "nuclearwinter:geiger_counter_high"
       }
     ]
   }

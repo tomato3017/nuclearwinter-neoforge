@@ -20,6 +20,7 @@
   "item.nuclearwinter.lead_ingot": "Lead Ingot",
   "item.nuclearwinter.radaway": "RadAway",
   "item.nuclearwinter.geiger_counter": "Geiger Counter",
+  "item.nuclearwinter.advanced_geiger_counter": "Advanced Geiger Counter",
   "item.nuclearwinter.dosimeter": "Dosimeter",
   "item.nuclearwinter.dosimeter.tooltip.no_readings": "No readings yet",
   "item.nuclearwinter.dosimeter.tooltip.saturated": "SATURATED",
