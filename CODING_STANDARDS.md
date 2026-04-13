@@ -144,6 +144,13 @@ public record DegradationRuleEntry(
 
 Use **classes** when mutable state or complex behavior is needed (`StageBase`, `ChunkProcessor`).
 
+## Data Modeling
+
+- Prefer domain-level accessor methods over exposing raw storage shape.
+- Avoid public APIs that expose implementation-driven structures like `List<List<T>>`, `Map<K, List<V>>`, or multi-dimensional arrays when callers really mean a domain concept.
+- Nested collections are acceptable as private implementation details, but public APIs should usually expose a method such as `getVariant(level, index)`, a named type, or an enum-keyed map.
+- Review heuristic: if a caller has to know positional indexes or container nesting to use an API correctly, the abstraction is probably too low-level.
+
 ## Function Size
 
 Keep functions focused on a single responsibility. When a function grows beyond ~30–40 lines or does more than one logical thing, extract the sub-tasks into private helper methods.

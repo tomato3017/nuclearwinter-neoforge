@@ -3,14 +3,9 @@ package net.tomato3017.nuclearwinter.network;
 import net.minecraft.sounds.SoundEvent;
 import net.tomato3017.nuclearwinter.item.NWSounds;
 
-import java.util.function.Supplier;
-
 /**
  * Represents the radiation intensity level as seen by a held Geiger counter.
  * Determines which looping ambient track the client plays.
- *
- * <p>Six active levels map to six sets of sound variants in {@link NWSounds#GEIGER_VARIANTS}.
- * The level index ({@link #levelIndex}) is 0-based and used to index into that list.
  */
 public enum GeigerLevel {
     NONE(-1),
@@ -21,7 +16,9 @@ public enum GeigerLevel {
     LEVEL_5(4),
     LEVEL_6(5);
 
-    /** 0-based index into {@link NWSounds#GEIGER_VARIANTS}, or -1 for {@link #NONE}. */
+    /**
+     * 0-based Geiger sound level, or -1 for {@link #NONE}.
+     */
     private final int levelIndex;
 
     GeigerLevel(int levelIndex) {
@@ -39,7 +36,7 @@ public enum GeigerLevel {
      * @param variantIndex 0-based variant index (0..2)
      */
     public SoundEvent getVariantSound(int variantIndex) {
-        return NWSounds.GEIGER_VARIANTS.get(levelIndex).get(variantIndex).get();
+        return NWSounds.getGeigerSound(this, variantIndex);
     }
 
     /**
