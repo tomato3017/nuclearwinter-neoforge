@@ -44,6 +44,8 @@ public class Config {
 
     // --- Equipment ---
     public static final ModConfigSpec.DoubleValue DOSIMETER_MAX_RADS;
+    public static final ModConfigSpec.DoubleValue GEIGER_LOW_RANGE_MAX_RADS;
+    public static final ModConfigSpec.DoubleValue GEIGER_HIGH_RANGE_MAX_RADS;
     public static final ModConfigSpec.DoubleValue SUIT_TIER1_PROTECTION;
     public static final ModConfigSpec.DoubleValue SUIT_TIER2_PROTECTION;
     public static final ModConfigSpec.DoubleValue SUIT_TIER3_PROTECTION;
@@ -158,6 +160,14 @@ public class Config {
         DOSIMETER_MAX_RADS = BUILDER.comment("Maximum rads a dosimeter can absorb before it saturates")
                 .translation("nuclearwinter.configuration.equipment.dosimeterMaxRads")
                 .defineInRange("dosimeterMaxRads", 80_000.0, 1.0, Double.MAX_VALUE);
+        GEIGER_LOW_RANGE_MAX_RADS = BUILDER.comment(
+                        "Upper Rads/sec bound for the low-range Geiger counter; (0, value] maps to six display/sound bands.")
+                .translation("nuclearwinter.configuration.equipment.geigerLowRangeMaxRads")
+                .defineInRange("geigerLowRangeMaxRads", 500.0, 0.01, Double.MAX_VALUE);
+        GEIGER_HIGH_RANGE_MAX_RADS = BUILDER.comment(
+                        "Upper Rads/sec bound for the high-range Geiger counter; (0, value] maps to six display/sound bands.")
+                .translation("nuclearwinter.configuration.equipment.geigerHighRangeMaxRads")
+                .defineInRange("geigerHighRangeMaxRads", 10_000.0, 0.01, Double.MAX_VALUE);
         SUIT_TIER1_PROTECTION = BUILDER.comment("Hazmat Suit Tier 1 radiation reduction (0.0 to 1.0)")
                 .translation("nuclearwinter.configuration.equipment.suitTier1Protection")
                 .defineInRange("suitTier1Protection", 0.67, 0.0, 1.0);

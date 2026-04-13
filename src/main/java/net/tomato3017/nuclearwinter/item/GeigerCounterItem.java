@@ -58,7 +58,11 @@ public class GeigerCounterItem extends Item {
 
         long gameTime = level.getGameTime();
         if (gameTime % DISPLAY_INTERVAL == 0) {
-            player.displayClientMessage(Component.literal(String.format("☢ %.1f Rads/sec", radsPerSec)), true);
+            if (radsPerSec > this.mode.maxRads()) {
+                player.displayClientMessage(Component.literal("Off Scale"), true);
+            } else {
+                player.displayClientMessage(Component.literal(String.format("☢ %.1f Rads/sec", radsPerSec)), true);
+            }
         }
 
         GeigerLevel newLevel = GeigerLevel.fromRadsPerSec(radsPerSec, mode.maxRads());
