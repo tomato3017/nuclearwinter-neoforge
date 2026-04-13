@@ -1,23 +1,20 @@
 {
-  "geiger_counter_low": {
-    "sounds": [
-      {
-        "name": "nuclearwinter:geiger_counter_low"
-      }
-    ]
-  },
-  "geiger_counter_med": {
-    "sounds": [
-      {
-        "name": "nuclearwinter:geiger_counter_med"
-      }
-    ]
-  },
-  "geiger_counter_high": {
-    "sounds": [
-      {
-        "name": "nuclearwinter:geiger_counter_high"
-      }
-    ]
-  }
+  "geiger_level_1_var1": { "sounds": [{ "name": "nuclearwinter:geiger_level_1_var1" }] },
+  "geiger_level_1_var2": { "sounds": [{ "name": "nuclearwinter:geiger_level_1_var2" }] },
+  "geiger_level_1_var3": { "sounds": [{ "name": "nuclearwinter:geiger_level_1_var3" }] },
+  "geiger_level_2_var1": { "sounds": [{ "name": "nuclearwinter:geiger_level_2_var1" }] },
+  "geiger_level_2_var2": { "sounds": [{ "name": "nuclearwinter:geiger_level_2_var2" }] },
+  "geiger_level_2_var3": { "sounds": [{ "name": "nuclearwinter:geiger_level_2_var3" }] },
+  "geiger_level_3_var1": { "sounds": [{ "name": "nuclearwinter:geiger_level_3_var1" }] },
+  "geiger_level_3_var2": { "sounds": [{ "name": "nuclearwinter:geiger_level_3_var2" }] },
+  "geiger_level_3_var3": { "sounds": [{ "name": "nuclearwinter:geiger_level_3_var3" }] },
+  "geiger_level_4_var1": { "sounds": [{ "name": "nuclearwinter:geiger_level_4_var1" }] },
+  "geiger_level_4_var2": { "sounds": [{ "name": "nuclearwinter:geiger_level_4_var2" }] },
+  "geiger_level_4_var3": { "sounds": [{ "name": "nuclearwinter:geiger_level_4_var3" }] },
+  "geiger_level_5_var1": { "sounds": [{ "name": "nuclearwinter:geiger_level_5_var1" }] },
+  "geiger_level_5_var2": { "sounds": [{ "name": "nuclearwinter:geiger_level_5_var2" }] },
+  "geiger_level_5_var3": { "sounds": [{ "name": "nuclearwinter:geiger_level_5_var3" }] },
+  "geiger_level_6_var1": { "sounds": [{ "name": "nuclearwinter:geiger_level_6_var1" }] },
+  "geiger_level_6_var2": { "sounds": [{ "name": "nuclearwinter:geiger_level_6_var2" }] },
+  "geiger_level_6_var3": { "sounds": [{ "name": "nuclearwinter:geiger_level_6_var3" }] }
 }

@@ -9,6 +9,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.tomato3017.nuclearwinter.block.NWBlocks;
@@ -35,6 +36,11 @@ public class NuclearWinterClient {
     @SubscribeEvent
     static void onClientPlayerLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
         GeigerSoundHandler.stopAll();
+    }
+
+    @SubscribeEvent
+    static void onClientTick(ClientTickEvent.Post event) {
+        GeigerSoundHandler.tick();
     }
 
     /**

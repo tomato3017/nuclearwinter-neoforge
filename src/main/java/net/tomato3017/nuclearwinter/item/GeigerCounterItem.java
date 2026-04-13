@@ -61,7 +61,7 @@ public class GeigerCounterItem extends Item {
             player.displayClientMessage(Component.literal(String.format("☢ %.1f Rads/sec", radsPerSec)), true);
         }
 
-        GeigerLevel newLevel = GeigerLevel.fromRadsPerSec(radsPerSec, mode.thresholdMed(), mode.thresholdHigh());
+        GeigerLevel newLevel = GeigerLevel.fromRadsPerSec(radsPerSec, mode.maxRads());
         sendLevelIfChanged(player, newLevel);
     }
 

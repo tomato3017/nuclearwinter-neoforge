@@ -13,9 +13,9 @@ public class GeigerLoopSound extends AbstractTickableSoundInstance {
 
     public GeigerLoopSound(SoundEvent soundEvent) {
         super(soundEvent, SoundSource.PLAYERS, RandomSource.create());
-        this.looping = true;
+        this.looping = false;
         this.relative = true;
-        this.volume = 1.0f;
+        this.volume = 0.1f;
         this.pitch = 1.0f;
     }
 

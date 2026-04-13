@@ -31,3 +31,4 @@ run-data
 .worktrees/
 .samples-nw
 .agents
+/.plans/
