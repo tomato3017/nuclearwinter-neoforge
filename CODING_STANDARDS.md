@@ -150,6 +150,7 @@ Use **classes** when mutable state or complex behavior is needed (`StageBase`, `
 - Avoid public APIs that expose implementation-driven structures like `List<List<T>>`, `Map<K, List<V>>`, or multi-dimensional arrays when callers really mean a domain concept.
 - Nested collections are acceptable as private implementation details, but public APIs should usually expose a method such as `getVariant(level, index)`, a named type, or an enum-keyed map.
 - Review heuristic: if a caller has to know positional indexes or container nesting to use an API correctly, the abstraction is probably too low-level.
+- When a system needs reusable definitions and per-run mutable state, model them as separate types instead of combining both responsibilities into one object.
 
 ## Function Size
 

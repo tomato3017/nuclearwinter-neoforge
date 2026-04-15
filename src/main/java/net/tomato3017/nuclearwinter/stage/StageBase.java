@@ -2,7 +2,15 @@ package net.tomato3017.nuclearwinter.stage;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.tomato3017.nuclearwinter.NuclearWinter;
 import net.tomato3017.nuclearwinter.chunk.ChunkProcessor;
+import net.tomato3017.nuclearwinter.stage.events.StageEvent;
+import net.tomato3017.nuclearwinter.stage.events.StageEventFactory;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Concrete base for all apocalypse stages. Configured via {@link Builder}; stages that need
@@ -17,8 +25,11 @@ public final class StageBase {
     private final boolean chunkProcessingEnabled;
     private final int chunkProcessingIntervalMultiplier;
     private final boolean nukeMode;
+    private final List<StageEventFactory> stageEventFactories;
 
     private ChunkProcessor chunkProcessor;
+    private final Map<StageEventFactory, Long> lastStageEventTicks = new HashMap<>();
+    private StageEvent currentStageEvent;
 
     private StageBase(Builder builder) {
         this.stageIndex = builder.stageIndex;
@@ -27,6 +38,7 @@ public final class StageBase {
         this.chunkProcessingEnabled = builder.chunkProcessingEnabled;
         this.chunkProcessingIntervalMultiplier = builder.chunkProcessingIntervalMultiplier;
         this.nukeMode = builder.nukeMode;
+        this.stageEventFactories = List.copyOf(builder.stageEventFactories);
     }
 
     public void init(ServerLevel level, long currentTick) {
@@ -34,14 +46,28 @@ public final class StageBase {
         if (chunkProcessingEnabled) {
             chunkProcessor = new ChunkProcessor(stageIndex, level, nukeMode, chunkProcessingIntervalMultiplier);
         }
+        registerStageEvents(currentTick);
     }
 
     public void tick(ServerLevel level, long currentTick) {
-        if (chunkProcessor == null) return;
-        chunkProcessor.tick(level);
+        if (chunkProcessor != null) {
+            chunkProcessor.tick(level);
+        }
+
+        fireStageEvents(currentTick);
+
+        //Fire off the StageEvent if it's active.
+        if (currentStageEvent != null) {
+            var shouldContinue = currentStageEvent.onTick(level);
+            if (!shouldContinue) {
+                currentStageEvent.onEnd();
+                currentStageEvent = null;
+            }
+        }
     }
 
     public void unload() {
+        unregisterStageEvents();
         chunkProcessor = null;
     }
 
@@ -114,6 +140,7 @@ public final class StageBase {
     public static final class Builder {
 
         private final int stageIndex;
+        private final List<StageEventFactory> stageEventFactories = new ArrayList<>();
         private long duration = 0;
         private double skyEmission = 0.0;
         private boolean chunkProcessingEnabled = false;
@@ -157,10 +184,82 @@ public final class StageBase {
             return this;
         }
 
+        public Builder registerStageFactory(StageEventFactory factory) {
+            this.stageEventFactories.add(factory);
+            return this;
+        }
+
+        @SafeVarargs
+        public final Builder withStageEvents(StageEventFactory... factories) {
+            for (var stageFactory : factories) {
+                registerStageFactory(stageFactory);
+            }
+            return this;
+        }
+
         public StageBase build() {
             return new StageBase(this);
         }
 
+    }
+
+    private void registerStageEvents(long currentTick) {
+        if (stageEventFactories.isEmpty()) {
+            return;
+        }
+
+        lastStageEventTicks.clear();
+        for (StageEventFactory stageEventFactory : stageEventFactories) {
+            lastStageEventTicks.put(stageEventFactory, currentTick);
+        }
+    }
+
+
+    private void fireStageEvents(long currentTick) {
+        if (this.stageEventFactories.isEmpty()) {
+            return;
+        }
+
+        if (currentTick % 200 == 0 && currentStageEvent == null) { // Every 10 seconds we check for stage events.
+            tryStartStageEvents(currentTick);
+        }
+    }
+
+    private void tryStartStageEvents(long currentTick) {
+        List<StageEventFactory> firableEvents = new ArrayList<>();
+        for (StageEventFactory stageEventFactory : stageEventFactories) {
+            long lastTick = lastStageEventTicks.getOrDefault(stageEventFactory, initTick);
+            if (!stageEventFactory.canStageActivate(currentTick, lastTick)) {
+                continue;
+            }
+
+            firableEvents.add(stageEventFactory);
+        }
+
+        for (StageEventFactory stageEventFactory : firableEvents) {
+            if (stageEventFactory.tryActivate()) {
+                StageEvent stageEvent = stageEventFactory.create();
+                NuclearWinter.LOGGER.info("Firing stage event: " + stageEvent.getClass().getSimpleName());
+                lastStageEventTicks.put(stageEventFactory, currentTick);
+                stageEvent.onStart();
+                currentStageEvent = stageEvent;
+
+                break;
+            }
+        }
+    }
+
+    private void unregisterStageEvents() {
+        if (stageEventFactories.isEmpty()) {
+            return;
+        }
+
+        if (currentStageEvent != null) {
+            currentStageEvent.onEnd();
+            currentStageEvent = null;
+        }
+
+        lastStageEventTicks.clear();
     }
 
     public static Builder builder(int stageIndex) {

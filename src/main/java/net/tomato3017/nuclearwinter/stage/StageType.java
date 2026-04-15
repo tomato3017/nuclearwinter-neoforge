@@ -1,42 +1,44 @@
 package net.tomato3017.nuclearwinter.stage;
 
 import net.tomato3017.nuclearwinter.Config;
+import net.tomato3017.nuclearwinter.stage.events.RadStormEventFactory;
 
 import java.util.function.Supplier;
 
 public enum StageType {
-    INACTIVE    (0, "Inactive",
+    INACTIVE(0, "Inactive",
             () -> StageBase.builder(0).build()),
     GRACE_PERIOD(1, "Grace Period",
             () -> StageBase.builder(1)
                     .duration(Config.GRACE_DURATION.get())
                     .build()),
-    STAGE_1     (2, "Stage 1",
+    STAGE_1(2, "Stage 1",
             () -> StageBase.builder(2)
                     .duration(Config.STAGE1_DURATION.get())
                     .skyEmission(Config.STAGE1_SKY_EMISSION.get())
                     .withChunkProcessing()
                     .chunkProcessingIntervalMultiplier(1)
                     .build()),
-    STAGE_2     (3, "Stage 2",
+    STAGE_2(3, "Stage 2",
             () -> StageBase.builder(3)
                     .duration(Config.STAGE2_DURATION.get())
                     .skyEmission(Config.STAGE2_SKY_EMISSION.get())
                     .withChunkProcessing()
                     .chunkProcessingIntervalMultiplier(1)
                     .build()),
-    STAGE_3     (4, "Stage 3",
+    STAGE_3(4, "Stage 3",
             () -> StageBase.builder(4)
                     .duration(Config.STAGE3_DURATION.get())
                     .skyEmission(Config.STAGE3_SKY_EMISSION.get())
                     .withChunkProcessing()
                     .chunkProcessingIntervalMultiplier(1)
                     .build()),
-    STAGE_4     (5, "Stage 4",
+    STAGE_4(5, "Stage 4",
             () -> StageBase.builder(5)
                     .skyEmission(Config.STAGE4_SKY_EMISSION.get())
                     .withNukeMode()
                     .chunkProcessingIntervalMultiplier(3)
+                    .withStageEvents(new RadStormEventFactory())
                     .build());
 
     public static final int MAX_INDEX = STAGE_4.index;
@@ -51,9 +53,17 @@ public enum StageType {
         this.factory = factory;
     }
 
-    public int getIndex()          { return index; }
-    public String getDisplayName() { return displayName; }
-    public StageBase create()      { return factory.get(); }
+    public int getIndex() {
+        return index;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public StageBase create() {
+        return factory.get();
+    }
 
     public boolean isAtLeast(StageType other) {
         return this.index >= other.index;
