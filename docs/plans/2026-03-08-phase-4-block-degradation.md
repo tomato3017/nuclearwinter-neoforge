@@ -71,43 +71,9 @@ classDiagram
 **Files:**
 - Modify: `src/main/java/net/tomato3017/nuclearwinter/radiation/BlockResolver.java`
 
-**Step 1: Write GameTest class (for future use)**
+**Step 1: Manually validate degradation behavior**
 
-**Files:**
-- Create: `src/main/java/net/tomato3017/nuclearwinter/test/DegradationGameTest.java`
-
-```java
-package net.tomato3017.nuclearwinter.test;
-
-import net.tomato3017.nuclearwinter.radiation.BlockResolver;
-import net.minecraft.gametest.framework.GameTest;
-import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
-
-@GameTestHolder("nuclearwinter")
-@PrefixGameTestTemplate(false)
-public class DegradationGameTest {
-
-    @GameTest(template = "empty_1x1")
-    public void grassDegradesToDeadGrassAtStage2(GameTestHelper helper) {
-        Block result = BlockResolver.getDegradedBlock(Blocks.GRASS_BLOCK.defaultBlockState(), 3);
-        helper.assertTrue(result != null, "Grass should degrade at stage index 3 (Stage 2)");
-        helper.succeed();
-    }
-
-    @GameTest(template = "empty_1x1")
-    public void stoneDoesNotDegradeAtStage1(GameTestHelper helper) {
-        Block result = BlockResolver.getDegradedBlock(Blocks.STONE.defaultBlockState(), 2);
-        helper.assertTrue(result == null, "Stone should not degrade at stage index 2 (Stage 1)");
-        helper.succeed();
-    }
-}
-```
-
-> **Note:** GameTest execution is skipped for now (no test structure template available). The test class is written for future use. Verify correctness via `./gradlew build` and manual testing.
+Use `./gradlew build` plus in-game/manual checks to confirm degradation mappings behave as expected.
 
 **Step 2: Add degradation maps and method to BlockResolver**
 
@@ -578,45 +544,9 @@ Expected: BUILD SUCCESSFUL
 
 ---
 
-## Task 6: Write GameTests for degradation
+## Task 6: Expand manual degradation validation
 
-**Files:**
-- Modify: `src/main/java/net/tomato3017/nuclearwinter/test/DegradationGameTest.java`
-
-**Step 1: Add more degradation tests (for future use)**
-
-```java
-@GameTest(template = "empty_1x1")
-public void grassDegradesToWastelandDustAtStage4(GameTestHelper helper) {
-    Block result = BlockResolver.getDegradedBlock(Blocks.GRASS_BLOCK.defaultBlockState(), 5);
-    helper.assertTrue(result != null, "Grass should degrade at stage index 5 (Stage 4)");
-    helper.succeed();
-}
-
-@GameTest(template = "empty_1x1")
-public void leavesDegradeToAirAtStage4(GameTestHelper helper) {
-    Block result = BlockResolver.getDegradedBlock(Blocks.OAK_LEAVES.defaultBlockState(), 5);
-    helper.assertTrue(result == Blocks.AIR, "Leaves should become Air at Stage 4");
-    helper.succeed();
-}
-
-@GameTest(template = "empty_1x1")
-public void logsDegradeToDeadwoodAtStage2(GameTestHelper helper) {
-    Block result = BlockResolver.getDegradedBlock(Blocks.OAK_LOG.defaultBlockState(), 3);
-    helper.assertTrue(result != null, "Logs should degrade at stage index 3 (Stage 2)");
-    helper.succeed();
-}
-
-@GameTest(template = "empty_1x1")
-public void waterDoesNotDegrade(GameTestHelper helper) {
-    Block stage2 = BlockResolver.getDegradedBlock(Blocks.WATER.defaultBlockState(), 3);
-    Block stage4 = BlockResolver.getDegradedBlock(Blocks.WATER.defaultBlockState(), 5);
-    helper.assertTrue(stage2 == null && stage4 == null, "Water should never degrade");
-    helper.succeed();
-}
-```
-
-> **Note:** GameTest execution is skipped for now (no test structure template available). The test class is written for future use. Verify correctness via `./gradlew build` and manual testing.
+Add more manual validation coverage for later-stage degradation behavior and confirm it through build health and in-game checks.
 
 **Step 2: Verify it compiles**
 

@@ -6,22 +6,20 @@
 
 **Architecture:** Extend `Config` with per-stage option lists and teach `BlockResolver` to parse stage-owned rules plus stage options into effective, first-match-wins rule lists. Keep `ChunkProcessor` unchanged so runtime behavior still flows through the existing lookup API.
 
-**Tech Stack:** NeoForge 21.1.219, Minecraft 1.21.1, Java 21, ModConfigSpec, GameTest
+**Tech Stack:** NeoForge 21.1.219, Minecraft 1.21.1, Java 21, ModConfigSpec
 
 ---
 
-## Chunk 1: Config Surface And Tests
+## Chunk 1: Config Surface
 
-### Task 1: Add failing GameTests for inheritance behavior
+### Task 1: Add config support for inheritance behavior
 
 **Files:**
-- Create: `src/main/java/net/tomato3017/nuclearwinter/test/StageRuleInheritanceGameTest.java`
 - Modify: `src/main/java/net/tomato3017/nuclearwinter/Config.java`
 - Modify: `src/main/java/net/tomato3017/nuclearwinter/radiation/BlockResolver.java`
 
-- [ ] **Step 1: Write the failing tests**
-- [ ] **Step 2: Run `./gradlew runGameTestServer` to verify the new tests fail for the expected missing behavior**
-- [ ] **Step 3: Add list-valued stage option config entries and parsing hooks needed by the tests**
+- [ ] **Step 1: Add list-valued stage option config entries**
+- [ ] **Step 2: Add parsing hooks in `BlockResolver` for stage options**
 
 ## Chunk 2: Merge Behavior
 
@@ -33,7 +31,7 @@
 - [ ] **Step 1: Parse stage option lists into `inheritPrevious` state**
 - [ ] **Step 2: Merge own rules ahead of inherited effective rules**
 - [ ] **Step 3: Remove exact duplicate inherited matchers while preserving first-match ordering**
-- [ ] **Step 4: Re-run `./gradlew runGameTestServer` and confirm the new tests pass**
+- [ ] **Step 4: Re-run `./gradlew build` and confirm the merged behavior compiles cleanly**
 
 ## Chunk 3: Verification
 
@@ -42,7 +40,6 @@
 **Files:**
 - Modify: `src/main/java/net/tomato3017/nuclearwinter/Config.java`
 - Modify: `src/main/java/net/tomato3017/nuclearwinter/radiation/BlockResolver.java`
-- Create: `src/main/java/net/tomato3017/nuclearwinter/test/StageRuleInheritanceGameTest.java`
 
 - [ ] **Step 1: Run `./gradlew build`**
 - [ ] **Step 2: Review logs for config parsing warnings or test regressions**

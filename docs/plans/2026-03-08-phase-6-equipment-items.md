@@ -84,37 +84,9 @@ classDiagram
 - Create: `src/main/java/net/tomato3017/nuclearwinter/effects/NWMobEffects.java`
 - Modify: `src/main/java/net/tomato3017/nuclearwinter/NuclearWinter.java`
 
-**Step 1: Write GameTest class (for future use)**
+**Step 1: Manually validate RadAway math**
 
-**Files:**
-- Create: `src/main/java/net/tomato3017/nuclearwinter/test/RadAwayGameTest.java`
-
-```java
-package net.tomato3017.nuclearwinter.test;
-
-import net.tomato3017.nuclearwinter.Config;
-import net.minecraft.gametest.framework.GameTest;
-import net.minecraft.gametest.framework.GameTestHelper;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
-
-@GameTestHolder("nuclearwinter")
-@PrefixGameTestTemplate(false)
-public class RadAwayGameTest {
-
-    @GameTest(template = "empty_1x1")
-    public void radAwayDrainRate(GameTestHelper helper) {
-        double totalReduction = Config.RADAWAY_REDUCTION.get();
-        int durationTicks = Config.RADAWAY_DURATION_TICKS.get();
-        double drainPerTick = totalReduction / durationTicks;
-        helper.assertTrue(Math.abs(drainPerTick - (50000.0 / 3600.0)) < 1.0,
-                "Drain per tick should be ~13.89, got " + drainPerTick);
-        helper.succeed();
-    }
-}
-```
-
-> **Note:** GameTest execution is skipped for now (no test structure template available). The test class is written for future use. Verify correctness via `./gradlew build` and manual testing.
+Verify the RadAway config math through `./gradlew build` and manual checks.
 
 **Step 2: Write RadAwayEffect**
 
@@ -716,39 +688,9 @@ Expected: BUILD SUCCESSFUL
 
 ---
 
-## Task 8: Write GameTests for equipment
+## Task 8: Expand manual equipment validation
 
-**Files:**
-- Modify: `src/main/java/net/tomato3017/nuclearwinter/test/RadAwayGameTest.java`
-
-**Step 1: Add hazmat protection tests (for future use)**
-
-```java
-@GameTest(template = "empty_1x1")
-public void hazmatTier1Protection(GameTestHelper helper) {
-    double protection = Config.SUIT_TIER1_PROTECTION.get();
-    helper.assertTrue(Math.abs(protection - 0.67) < 0.01,
-            "Tier 1 protection should be 0.67, got " + protection);
-
-    double rads = 333.0;
-    double reduced = rads * (1.0 - protection);
-    helper.assertTrue(reduced < 120.0 && reduced > 100.0,
-            "333 Rads with Tier 1 should give ~110, got " + reduced);
-    helper.succeed();
-}
-
-@GameTest(template = "empty_1x1")
-public void hazmatTier3Protection(GameTestHelper helper) {
-    double protection = Config.SUIT_TIER3_PROTECTION.get();
-    double rads = 5000.0;
-    double reduced = rads * (1.0 - protection);
-    helper.assertTrue(reduced < 60.0,
-            "5000 Rads with Tier 3 should give ~50, got " + reduced);
-    helper.succeed();
-}
-```
-
-> **Note:** GameTest execution is skipped for now (no test structure template available). The test class is written for future use. Verify correctness via `./gradlew build` and manual testing.
+Add manual validation coverage for hazmat protection values and confirm the resulting math matches the intended balance.
 
 **Step 2: Verify it compiles**
 

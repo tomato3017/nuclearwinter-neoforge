@@ -45,9 +45,9 @@
 - Effective rule lists are rebuilt during `BlockResolver.init()` so config reloads pick up both rules and options.
 - `ChunkProcessor.java` stays unchanged because it already consumes `BlockResolver.getDegradationResult(...)`.
 
-## Testing
+## Verification
 
-- Add GameTests that temporarily override stage option/rule config values, rebuild `BlockResolver`, and assert:
+- Manually validate stage option/rule overrides by rebuilding `BlockResolver` and confirming:
   - stage 3 inherits stage 2 by default
   - stage 4 can disable inheritance with `inherit=false`
   - later-stage rules run before inherited broader rules

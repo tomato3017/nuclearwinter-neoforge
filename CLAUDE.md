@@ -15,7 +15,6 @@ advance.
 ./gradlew runClient          # Launch Minecraft client with mod loaded
 ./gradlew runServer          # Launch dedicated server with mod loaded
 ./gradlew runData            # Run data generator (produces resources)
-./gradlew runGameTestServer  # Run game tests and exit
 ./gradlew clean              # Clean build artifacts
 ```
 
