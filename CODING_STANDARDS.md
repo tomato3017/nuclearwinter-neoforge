@@ -163,6 +163,25 @@ Good signals that a function needs splitting:
 
 Avoid going overboard: don't split trivially short code just for the sake of it. The goal is clarity, not a call stack maze. Helpers should have names descriptive enough that the caller reads like a summary.
 
+## Dependency Direction
+
+Keep dependencies flowing in one direction to avoid cyclic references:
+
+```
+commands/ → stage/, radiation/, chunk/
+stage/, radiation/, chunk/ → data/, item/, block/
+data/, item/, block/ → (no mod-internal deps)
+NuclearWinter.java / NuclearWinterClient.java → all packages (top-level wiring only)
+```
+
+Rules:
+- A package may only depend on packages **below** it in the hierarchy above. Never introduce a reverse edge.
+- `NWItems` and `NWBlocks` are **leaf registration holders** — they must not reference each other or any handler/manager class. Other classes reference them, not the other way around.
+- Two classes must not hold direct references to each other. If two subsystems need to communicate, introduce a third mediator, a shared interface, or pass data through events.
+- Avoid `static` fields that reference another class's `static` field at initialization time across different registration holders — this can cause silent `null` DeferredHolder values due to Java's class-loading order.
+
+When you find yourself wanting to import a higher-level package from a lower-level one, stop and ask whether the dependency is really needed or whether it can be inverted (pass the value in, use an interface, fire an event).
+
 ## Error Handling
 
 - Early return on null/invalid: `if (stage == null) return;`
