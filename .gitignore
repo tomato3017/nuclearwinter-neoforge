@@ -32,3 +32,6 @@ run-data
 .samples-nw
 .agents
 /.plans/
+/.agent-work/
+.agentbridge
+.codex
